@@ -12,8 +12,12 @@
       </section>
     </aside>
     <div class="span8">
-      <h3>Micropost Feed</h3>
-      <%= render 'shared/feed' %>
+    	<% if has_microposts? %>
+     	  <h3>Micropost Feed</h3>
+      	  <%= render 'shared/feed' %>
+      	<% else %>
+      	  <h3>sucker</h3>
+      	<% end %>
     </div>
   </div>
 <% else %>
