@@ -28,7 +28,9 @@ def make_microposts
   users = User.all(limit: 6)
   50.times do
     content = Faker::Lorem.sentence(5)
-    users.each { |user| user.microposts.create!(content: content) }
+    location = Faker::Name.name
+    time = Time.now
+    users.each { |user| user.microposts.create!(content: content, location: location, time: time) }
   end
 end
 
