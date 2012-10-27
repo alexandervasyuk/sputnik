@@ -7,6 +7,9 @@ class Micropost < ActiveRecord::Base
   validates :time, presence: true
   validates :location, presence: true, length: { maximum: 60 }
 
+  #Participations
+  has_many :participations, dependent: :destroy
+
   default_scope order: 'microposts.created_at DESC'
 
   def self.from_users_followed_by(user)

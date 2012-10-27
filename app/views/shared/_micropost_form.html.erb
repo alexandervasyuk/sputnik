@@ -1,22 +1,22 @@
 <%= form_for(@micropost) do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   <div class="field">
-    <%= f.label :location, "Where?" %>
+    <%= f.label :content, "What you want?" %>
+  </div>
+   <div class="field">
+    <%= f.text_field :content, placeholder: "hungry for sushi" %>
+  </div>
+  <div class="field">
+    <%= f.label :location, "Meeting @" %>
   </div>
   <div class="field">
     <%= f.text_field :location, placeholder: "Asian Ghetto" %>
   </div>
   <div class="field">
-    <%= f.label :time, "When?" %>
+    <%= f.label :time, "In about" %>
   </div>
   <div class="field">
-    <%= f.text_field :time, placeholder: "10:15" %>
-  </div>
-  <div class="field">
-    <%= f.label :content, "What are you gonna do?" %>
-  </div>
-   <div class="field">
-    <%= f.text_area :content, placeholder: "Compose new micropost..." %>
+    <%= f.text_field :time, placeholder: "10 minutes" %>
   </div>
   <%= f.submit "Post", class: "btn btn-large btn-primary" %>
 <% end %>
