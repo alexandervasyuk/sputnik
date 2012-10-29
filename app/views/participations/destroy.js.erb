@@ -1,0 +1,2 @@
+$("#participate_form_<%=@user_and_post[1].id%>").html("<%= escape_javascript(render('users/participate', feed_item: @user_and_post[1])) %>")
+$("#participating").html('<%= @user_and_post[0].participations.count %>')

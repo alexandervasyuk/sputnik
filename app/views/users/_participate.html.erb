@@ -1,0 +1,7 @@
+
+<%= form_for(current_user.participations.build(micropost_id: feed_item.id), remote: true) do |f| %>
+	<div>
+		<%= f.hidden_field :micropost_id %>
+	</div>
+	<%= f.submit "Participate", class: "btn btn-small" %>
+<% end %>

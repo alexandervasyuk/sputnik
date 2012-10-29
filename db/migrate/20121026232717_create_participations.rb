@@ -8,6 +8,6 @@ class CreateParticipations < ActiveRecord::Migration
     end
     add_index :participations, :user_id
     add_index :participations, :micropost_id
-    add_index :participations, [:user_id, :micropost_id], unique: true
+    add_index :participations, [:user_id, :micropost_id], unique: true	
   end
 end
