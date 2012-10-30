@@ -10,6 +10,9 @@ class Micropost < ActiveRecord::Base
   #Participations
   has_many :participations, dependent: :destroy
 
+  #Post
+  has_many :posts, dependent: :destroy
+  
   default_scope order: 'microposts.created_at DESC'
 
   def self.from_users_followed_by(user)

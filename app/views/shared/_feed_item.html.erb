@@ -12,6 +12,7 @@
   <span class="participate">
     <%= render 'users/participate_form', feed_item: feed_item if signed_in? %>
   </span>
+  <span><%= link_to "Details", controller: "microposts", action: "detail", id:feed_item.id %></span>
 
   <% if current_user?(feed_item.user) %>
     <%= link_to "delete", feed_item, method: :delete,

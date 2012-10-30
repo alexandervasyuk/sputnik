@@ -1,0 +1,30 @@
+<% if signed_in? %>
+  <div class="row">
+    <aside class="span4">
+      <section>
+        <%= render 'shared/user_info' %>
+      </section>
+      <section>
+        <%= render 'shared/stats' %>
+      </section>
+      <section>
+        <%= render partial:'post_form', locals: {post:@post} %>
+      </section>
+    </aside>
+    <div class="span8">
+      <h3>Event</h3>
+      <%= render partial:'detailed_post_info', locals: {micropost:@micropost, participants:@participants, post_items:@post_items} %>
+    </div>
+  </div>
+<% else %>
+  <div class="center hero-unit">
+    <h1>Sputnik</h1>
+    <h2>Beta Version</h2>
+
+    <p>Some fancy message, supposed to appeal to your rebellious spirit. </p>
+    <p>Click the button below, its worth it.</p>
+
+    <%= link_to "Sign up", signup_path, 
+                                class: "btn btn-large btn-primary" %>
+  </div>
+<% end %>

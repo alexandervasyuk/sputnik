@@ -18,6 +18,16 @@ class MicropostsController < ApplicationController
     redirect_to root_url
   end
 
+  def detail
+    @micropost = Micropost.find(params[:id])
+    @post = current_user.posts.build(micropost_id:params[:id])
+    @participants = []
+    @micropost.participations.each do |participation|
+      @participants << User.find(participation.user_id)
+    end
+    @post_items = @micropost.posts.paginate(page: params[:page])
+  end
+
   private
 
     def correct_user

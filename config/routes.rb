@@ -5,10 +5,16 @@ Sputnik::Application.routes.draw do
     end
   end
 
+  resources :microposts do 
+    member do
+      get 'detail'
+    end
+  end
+
   resources :sessions, only: [:new, :create, :destroy]
-  resources :microposts, only: [:create, :destroy]
   resources :relationships, only: [:create, :destroy]
   resources :participations, only: [:create, :destroy]
+  resources :posts, only: [:create, :destroy]
       
   root to: 'static_pages#home'
 
@@ -19,6 +25,8 @@ Sputnik::Application.routes.draw do
   match '/help',    to: 'static_pages#help'
   match '/about',   to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
+
+  #match '/microposts/detail/:id', to: 'microposts#detail'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
