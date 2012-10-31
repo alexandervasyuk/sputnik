@@ -1,7 +1,13 @@
 <% @user ||= current_user %>
 <div class="stats">
+  Currently participating in events <br>
 
-  <a href="<%= created_user_path(@user) %>">
+  <% @user.participations.each do |participation| %>
+      <%=link_to participation.micropost.content, detail_micropost_path(participation.micropost_id) %>
+      <%=link_to participation.micropost.user.name, participation.micropost.user%>
+  <% end %> 
+
+  <!-- <a href="<%= created_user_path(@user) %>">
     created
     <strong id="created" class="stat">
       <%= @user.microposts.count %>
@@ -28,6 +34,6 @@
       <%= @user.followers.count %>
     </strong>
     followers
-  </a>
+  </a> -->
 
 </div>

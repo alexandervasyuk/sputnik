@@ -5,7 +5,7 @@
   </span>
   <span class="content"><%= feed_item.content %></span>
   <span class="location"><%= feed_item.location %></span>
-  <span class="time">@ <%= feed_item.time.to_s(:time) %></span>
+  <span class="time">@ <%= feed_item.time.strftime('%d %b %I:%M %p') %></span>
   <span class="timestamp">
     Posted <%= time_ago_in_words(feed_item.created_at) %> ago.
   </span>

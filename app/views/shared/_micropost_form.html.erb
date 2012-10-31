@@ -13,10 +13,10 @@
     <%= f.text_field :location, placeholder: "Asian Ghetto" %>
   </div>
   <div class="field">
-    <%= f.label :time, "In about" %>
+    <%= f.label :time, "At" %>
   </div>
   <div class="field">
-    <%= f.text_field :time, placeholder: "10 minutes" %>
+    <%= f.time_select :time, {default: Time.now, :ampm => true} %>
   </div>
   <%= f.submit "Post", class: "btn btn-large btn-primary" %>
 <% end %>
