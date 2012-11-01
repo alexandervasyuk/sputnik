@@ -13,6 +13,15 @@
     </aside>
     <div class="span8">
       <h3>Event</h3>
+      <span class="participate">
+        <%= render 'users/participate_form', feed_item: @micropost%>
+      </span>
+      <% if current_user?(@micropost.user) %>
+      <span class="edit microposts">
+        <%= link_to "Edit", action:'edit', id:@micropost.id%>
+      </span>
+      <% end %>
+  
       <%= render partial:'detailed_post_info', locals: {micropost:@micropost, participants:@participants, post_items:@post_items} %>
     </div>
   </div>

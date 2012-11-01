@@ -7,7 +7,7 @@ Sputnik::Application.routes.draw do
 
   resources :microposts do 
     member do
-      get 'detail'
+      get :detail
     end
   end
 
@@ -25,6 +25,7 @@ Sputnik::Application.routes.draw do
   match '/help',    to: 'static_pages#help'
   match '/about',   to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
+
 
   #match '/microposts/detail/:id', to: 'microposts#detail'
 

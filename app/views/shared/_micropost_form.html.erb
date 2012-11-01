@@ -1,22 +1,26 @@
-<%= form_for(@micropost) do |f| %>
-  <%= render 'shared/error_messages', object: f.object %>
-  <div class="field">
-    <%= f.label :content, "What you want?" %>
-  </div>
-   <div class="field">
-    <%= f.text_field :content, placeholder: "hungry for sushi" %>
-  </div>
-  <div class="field">
-    <%= f.label :location, "Meeting @" %>
-  </div>
-  <div class="field">
-    <%= f.text_field :location, placeholder: "Asian Ghetto" %>
-  </div>
-  <div class="field">
-    <%= f.label :time, "At" %>
-  </div>
-  <div class="field">
-    <%= f.time_select :time, {default: Time.now, :ampm => true} %>
-  </div>
-  <%= f.submit "Post", class: "btn btn-large btn-primary" %>
-<% end %>
+  <%= form_for(@micropost) do |f| %>
+    <%= render 'shared/error_messages', object: f.object %>
+    <div class="field">
+      <%= f.label :content, "What you want?" %>
+    </div>
+     <div class="field">
+      <%= f.text_field :content, placeholder: "hungry for sushi" %>
+    </div>
+    <div class="field">
+      <%= f.label :location, "Meeting @" %>
+    </div>
+    <div class="field">
+      <%= f.text_field :location, placeholder: "Asian Ghetto" %>
+    </div>
+    <div class="field">
+      <%= f.label :time, "At" %>
+    </div>
+    <div class="field">
+      <% if @micropost.time.nil? %>
+        <%= f.text_field :time, placeholder: "today, in 2 hours" %>
+      <% else %>
+        <%= f.text_field :time, value:@micropost.time.strftime('%d %b %I:%M %p') %>
+      <% end %>
+    </div>
+    <%= f.submit "Post", class: "btn btn-large btn-primary" %>
+  <% end %>

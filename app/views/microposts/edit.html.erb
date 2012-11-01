@@ -1,0 +1,21 @@
+<% provide(:title, "Edit micropost") %> 
+<h1>Update micropost</h1>
+<%= link_to "Go back", {action:'detail'} %>
+<div class="row">
+  <div class="span6 offset3">
+  <%= form_for(@micropost, action:'update', id:@micropost.id) do |f| %>
+      <%= render 'shared/error_messages', object: f.object %>
+
+      <%= f.label :content, 'content' %>
+      <%= f.text_field :content %>
+
+      <%= f.label :location, 'Location' %>
+      <%= f.text_field :location %>
+
+      <%= f.label :time, 'Time'%>
+      <%= f.text_field :time, value:@micropost.time.strftime('%d %b %I:%M %p') %>
+
+      <%= f.submit "Save changes", class: "btn btn-large btn-primary" %>
+    <% end %>
+  </div>
+</div>

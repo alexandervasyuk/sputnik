@@ -1,0 +1,1 @@
+    <%= f.time_select :time, {default: Time.now, :ampm => true} %>

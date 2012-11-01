@@ -4,7 +4,7 @@ class MicropostsController < ApplicationController
 
   def create
     @micropost = current_user.microposts.build(params[:micropost])
-
+    @micropost.time = Chronic.parse(params[:micropost][:time])
     if @micropost.save
       current_user.participate!(@micropost)
       flash[:success] = "Micropost created!"
@@ -20,6 +20,21 @@ class MicropostsController < ApplicationController
     redirect_to root_url
   end
 
+  def edit
+    @micropost = Micropost.find(params[:id])
+  end
+
+  def update
+    @micropost = Micropost.find(params[:id])
+    params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
+    if @micropost.update_attributes(params[:micropost])
+      flash[:success] = "Micropost updated"
+      redirect_to(action:'detail', id:@micropost.id)
+    else
+      render "edit"
+    end
+  end
+
   def detail
     @micropost = Micropost.find(params[:id])
     @post = current_user.posts.build(micropost_id:params[:id])
@@ -27,7 +42,7 @@ class MicropostsController < ApplicationController
     @micropost.participations.each do |participation|
       @participants << User.find(participation.user_id)
     end
-    @post_items = @micropost.posts.paginate(page: params[:page])
+    @post_items = @micropost.posts.reverse!
   end
 
   private

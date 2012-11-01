@@ -7,6 +7,9 @@ class Micropost < ActiveRecord::Base
   validates :time, presence: true
   validates :location, presence: true, length: { maximum: 60 }
 
+  #Setting time in the past is prohibitted
+  validate :happened_in_the_past?
+
   #Participations
   has_many :participations, dependent: :destroy
 
@@ -20,5 +23,11 @@ class Micropost < ActiveRecord::Base
                          WHERE follower_id = :user_id"
     where("user_id IN (#{followed_user_ids}) OR user_id = :user_id", 
           user_id: user.id)
+  end
+
+  private
+
+  def happened_in_the_past?
+    errors.add(:time, 'Time can not be set in the past') if (time.past?)
   end
 end
