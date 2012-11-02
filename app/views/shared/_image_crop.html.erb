@@ -1,0 +1,27 @@
+<%= stylesheet_link_tag "jquery.Jcrop.min" %>
+<%= javascript_include_tag "jquery.Jcrop.min" %>
+
+<div id="overlay" style="display: none">
+	
+</div>
+
+<div id="crop_div" style="display: none">
+	<div id = "file_selection">
+        <%= form_tag '/crop', multipart: true, remote: true do%>	
+			<%= file_field_tag :file %>
+			<%= submit_tag "Upload"%>
+		<% end %>
+	</div>
+	
+	<div id="image_area" style="display: none">
+		<img id="crop_image" src="">
+		<%= form_tag '/crop/finish' do%>
+			<%= hidden_field_tag :x%>
+			<%= hidden_field_tag :y%>
+			<%= hidden_field_tag :w%>
+			<%= hidden_field_tag :h%>
+			
+			<%= submit_tag "Crop"%>
+		<% end %>
+	</div>
+</div>

@@ -15,4 +15,8 @@ class Micropost < ActiveRecord::Base
     where("user_id IN (#{followed_user_ids}) OR user_id = :user_id", 
           user_id: user.id)
   end
+  
+  def self.from_users(users)
+    where("user_id IN (?)", users)
+  end
 end

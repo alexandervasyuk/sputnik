@@ -5,7 +5,18 @@
       <%= link_to "Sputnik", root_path, id: "logo" %>
       <nav>
         <ul class="nav pull-right">
+          <% if signed_in? %>
+            <%= form_tag("/search", {id: "search"}) do%>
+              <%= search_field_tag('query', nil, {placeholder: "Search"})%>
+            <% end %>
+          <% end %>	
+        	
           <li><%= link_to "Home", root_path %></li>
+          
+          <% if signed_in? %>
+          	<li><%= link_to "Friends", friend_path%></li>
+          <% end %>
+          
           <li><%= link_to "Help", help_path %></li>
           <% if signed_in? %>
             <li><%= link_to "Users", users_path %></li>

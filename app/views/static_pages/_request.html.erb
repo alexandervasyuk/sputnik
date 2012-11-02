@@ -1,0 +1,14 @@
+<li id = "friend<% request.id %>">
+	<%= gravatar_for request, size: 40%>
+	<%= link_to request.name, request%>
+	<%= form_for(Relationship.where(follower_id: request.id, followed_id: current_user.id)[0], 
+				remote: true) do |f|%>
+		<div>
+			<%= f.hidden_field :followed_id %>
+  			<%= f.hidden_field :follower_id %>
+  			<%= hidden_field_tag :type, 'ACCEPT'%>
+  			<%= hidden_field_tag :func, 'COMPLETE'%>
+  		</div>
+  		<%= f.submit "Accept", class: "btn btn-large btn-primary" %>
+	<% end %>
+</li>

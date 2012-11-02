@@ -6,7 +6,7 @@ SampleApp::Application.routes.draw do
   end
   resources :sessions, only: [:new, :create, :destroy]
   resources :microposts, only: [:create, :destroy]
-  resources :relationships, only: [:create, :destroy]
+  resources :relationships, only: [:create, :update, :destroy]
       
   root to: 'static_pages#home'
 
@@ -15,8 +15,14 @@ SampleApp::Application.routes.draw do
   match '/signout', to: 'sessions#destroy', via: :delete
       
   match '/help',    to: 'static_pages#help'
+  match '/friend', to: 'static_pages#friend'
   match '/about',   to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
+  
+  match '/search', to: 'static_pages#search'
+  
+  match '/crop', to: 'static_pages#crop'
+  match '/crop/finish', to: 'static_pages#crop_finish'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

@@ -1,0 +1,11 @@
+<%if @type_and_user[0] == 'ACCEPT'%>
+	<%if @type_and_user[2] == 'COMPLETE'%>
+		$("#friend<%@type_and_user[1].id%>").fadeOut(300, function() { $(this).remove(); })
+	<% else %>
+		$("#friend_form<%=@type_and_user[1].id%>").html("<%= escape_javascript(render('users/unfollow', user: @type_and_user[1])) %>")
+	<% end %>
+<%elsif @type_and_user[0] == 'UNFOLLOW'%>
+	$("#friend_form<%=@type_and_user[1].id%>").html("<%= escape_javascript(render('users/follow', user: @type_and_user[1])) %>")
+<%elsif @type_and_user[0] == 'FOLLOW'%>
+	$("#friend_form<%=@type_and_user[1].id%>").html("<%= escape_javascript(render('users/unfollow', user: @type_and_user[1])) %>")
+<%end%>
