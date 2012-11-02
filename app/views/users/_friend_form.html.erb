@@ -1,0 +1,7 @@
+<% unless current_user?(@user) %>
+  <div id="friend_form<%=@user.id%>">
+  <% if not_friends?(@user) %>
+    <%= render 'friend' %>
+  <% end %>
+  </div>
+<% end %>

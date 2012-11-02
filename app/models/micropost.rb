@@ -25,11 +25,17 @@ class Micropost < ActiveRecord::Base
           user_id: user.id)
   end
 
+
   private
 
   def happened_in_the_past?
     if !time.nil?
       errors.add(:time, 'Time can not be set in the past') if (time.past?)
     end
+  end
+  
+  def self.from_users(users)
+    where("user_id IN (?)", users)
+
   end
 end

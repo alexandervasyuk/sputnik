@@ -1,0 +1,9 @@
+<%= form_for(Relationship.where(follower_id: @user.id, followed_id: current_user.id)[0],
+             remote: true) do |f| %>
+  <div>
+  	<%= f.hidden_field :followed_id %>
+  	<%= f.hidden_field :follower_id %>
+  	<%= hidden_field_tag :type, 'ACCEPT'%>
+  </div>
+  <%= f.submit "Accept", class: "btn btn-large btn-primary" %>
+<% end %>

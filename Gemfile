@@ -7,7 +7,12 @@ gem 'faker', '1.0.1'
 gem 'will_paginate', '3.0.3'
 gem 'bootstrap-will_paginate', '0.0.6'
 gem 'jquery-rails', '2.0.2'
+
 gem "chronic", "~> 0.8.0"
+gem 'paperclip', '~> 3.0'
+gem 'remotipart', '~> 1.0'
+gem 'rmagick', '2.13.1'
+
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'
@@ -15,6 +20,7 @@ group :development, :test do
   gem 'guard-rspec', '1.2.1'
   gem 'guard-spork', '1.2.0'  
   gem 'spork', '0.9.2'
+  gem 'pg', '0.14.1'
 end
 
 # Gems used only for assets and not required
