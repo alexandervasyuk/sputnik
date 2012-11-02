@@ -28,7 +28,13 @@ class User < ActiveRecord::Base
   validates :password_confirmation, presence: true
 
   def feed
-    Micropost.from_users_followed_by(self)
+    feed = Micropost.from_users_followed_by(self)
+    # feed.each do |micro|
+    #   if micro.time.past?
+    #     feed.delete(micro)
+    #   end
+    # end
+    # return feed
   end
 
   #Following

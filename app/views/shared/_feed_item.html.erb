@@ -10,7 +10,9 @@
     Posted <%= time_ago_in_words(feed_item.created_at) %> ago.
   </span>
   <span class="participate">
+    <% if feed_item.time.future? %>
     <%= render 'users/participate_form', feed_item: feed_item if signed_in? %>
+    <% end %>
   </span>
   <span><%= link_to "Details", controller: "microposts", action: "detail", id:feed_item.id %></span>
 
