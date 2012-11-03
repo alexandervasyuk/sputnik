@@ -140,6 +140,37 @@ footer {
 #crop_div {
   background-color: white;
   z-index: 11;
+  padding: 5px;
+  
+  border-radius: 3px;
+  
+  width: 340px;
+  height: 170px;
+  position:fixed;
+  top:50%;
+  left:50%;
+  margin-top: -160px;
+  margin-left: -170px;
+}
+
+#crop_btn_div {
+  width: 62px;
+  margin: 0 auto;
+  
+  margin-top: 5px;
+}
+
+/* user profile */
+#profile_image{
+  width: 75px;
+  height: 75px;
+  
+  cursor: pointer;
+}
+
+#user_name{
+  display: inline-block;
+  margin-left: 10px;
 }
 
 /* sidebar */

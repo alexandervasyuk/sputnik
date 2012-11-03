@@ -56,7 +56,7 @@ class StaticPagesController < ApplicationController
   
   def crop_finish
     if signed_in?
-      current_user.crop_x = params[:x]
+      current_user.crop_x = params[:x] 
       current_user.crop_y = params[:y]
       current_user.crop_w = params[:w]
       current_user.crop_h = params[:h]

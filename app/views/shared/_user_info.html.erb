@@ -5,11 +5,11 @@
 <script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
 <%= render "shared/image_crop"%>
 
-<%= image_tag current_user.avatar.url(:thumb), id: "profile_image", rel: "#crop_div"%>
+<%= image_tag current_user.avatar.url(:thumb), id: "profile_image", class: "img-polaroid", rel: "#crop_div"%>
 
-<h1>
+<h3 id = "user_name">
 	<%= link_to @user.name, @user %>
-</h1>
+</h3>
 <span>
   created <%= pluralize(@user.microposts.count, "event") %>
 </span>

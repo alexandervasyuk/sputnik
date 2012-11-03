@@ -5,7 +5,6 @@ class User < ActiveRecord::Base
   #Additional Attributes
   has_secure_password
 
-  
   has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "rails.png",
      :url  => "/assets/profile/:id/:style/:basename.:extension",
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
@@ -68,6 +67,10 @@ class User < ActiveRecord::Base
     self.followers.where("friend_status = 'PENDING'")
   end
   
+  def num_received_friend_requests
+    received_friend_requests.count
+  end
+  
   def sent_friend_requests
     self.followed_users.where("friend_status = 'PENDING'")
   end
@@ -124,7 +127,7 @@ class User < ActiveRecord::Base
     relationship.save
   end
   
-  def add_profile(picture)
+  def add_profile(picture)    
     self.update_attribute(:avatar, picture)
     
     reprocess_avatar
