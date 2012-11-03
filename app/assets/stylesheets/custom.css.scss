@@ -65,6 +65,15 @@ p {
 
 /* header */
 
+#header_search{
+  float: left;
+  margin-top: 7px;
+}
+
+#header_search_bar{
+  border-radius: 10px;
+}
+
 #logo {
   float: left;
   margin-right: 10px;
@@ -176,6 +185,11 @@ footer {
 .profile_image {
   width: 50px;
   height: 50px;
+}
+
+.participant_image {
+  width: 40px;
+  height: 40px;
 }
 
 #username {
