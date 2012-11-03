@@ -1,26 +1,32 @@
   <%= form_for(@micropost) do |f| %>
     <%= render 'shared/error_messages', object: f.object %>
+    <div class="well well-small">
+    <h3>Create a happening</h3>
     <div class="field">
-      <%= f.label :content, "What you want?" %>
+    <div class="input-prepend">
+    <span class="add-on"><i class="icon-globe"></i></span>
+    <%= f.text_field :content, placeholder: "hungry for sushi", class:"micropost_field", :id=>"prependedInput" %>
     </div>
-     <div class="field">
-      <%= f.text_field :content, placeholder: "hungry for sushi" %>
     </div>
+
     <div class="field">
-      <%= f.label :location, "Meeting @" %>
+    <div class="input-prepend">
+    <span class="add-on"><i class="icon-map-marker"></i></span>
+    <%= f.text_field :location, placeholder: "asian ghetto", class:"micropost_field", :id=>"prependedInput" %>
     </div>
-    <div class="field">
-      <%= f.text_field :location, placeholder: "Asian Ghetto" %>
     </div>
+
     <div class="field">
-      <%= f.label :time, "At" %>
-    </div>
-    <div class="field">
-      <% if @micropost.time.nil? %>
-        <%= f.text_field :time, placeholder: "today, in 2 hours" %>
+    <div class="input-prepend">
+    <span class="add-on"><i class="icon-time"></i></span>
+    <% if @micropost.time.nil? %>
+        <%= f.text_field :time, placeholder: "in 30 min, in 1 hour, in 3 hours", class:"micropost_field", :id=>"prependedInput" %>
       <% else %>
-        <%= f.text_field :time, value:@micropost.time.strftime('%d %b %I:%M %p') %>
+        <%= f.text_field :time, value:@micropost.time.strftime('%d %b %I:%M %p'), class:"micropost_field", :id=>"prependedInput" %>
       <% end %>
     </div>
-    <%= f.submit "Post", class: "btn btn-large btn-primary" %>
+    </div>
+    <%= f.submit "Post", class: "btn btn-primary" %>
+    </div>
+
   <% end %>
