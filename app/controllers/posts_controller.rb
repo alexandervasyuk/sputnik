@@ -15,13 +15,13 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    redirect_to root_url
+    redirect_to :back
   end
 
   private
 
     def correct_user
-      @micropost = current_user.microposts.find_by_id(params[:id])
-      redirect_to root_url if @micropost.nil?
+      @post = current_user.posts.find_by_id(params[:id])
+      redirect_to root_url if @post.nil?
     end
 end

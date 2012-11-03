@@ -374,3 +374,15 @@ span.add-on {
 .field_with_errors {
   display: inline;
 }
+
+/* Detail micropost area */
+
+#by-user {
+  display:inline;
+}
+
+.micropost_edit_button {
+  position:absolute;
+  bottom:0;
+  right:0;
+}

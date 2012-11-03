@@ -12,16 +12,25 @@
       </section>
     </aside>
     <div class="span8">
-      <h3>Event</h3>
+      <div class="micropost-info">
+        <h3 class="content"><%=@micropost.content%></h3> 
+        Meeting: <span class="location"><%=@micropost.location%></span> @ <span class="time"><%=@micropost.time.strftime('%d %b %I:%M %p')%></span>
+        <br/>by
+        <h4 id="by-user">
+          <%= link_to @micropost.user.name, @micropost.user %>
+        </h4>
+      </div>
+
       <span class="participate">
         <%= render 'users/participate_form', feed_item: @micropost%>
       </span>
+
       <% if current_user?(@micropost.user) %>
       <span class="edit microposts">
-        <%= link_to "Edit", action:'edit', id:@micropost.id%>
+        <%= link_to "Edit", {action:'edit', id:@micropost.id}, class:"micropost_edit_button"%>
       </span>
       <% end %>
-  
+
       <%= render partial:'detailed_post_info', locals: {micropost:@micropost, participants:@participants, post_items:@post_items} %>
     </div>
   </div>

@@ -17,7 +17,7 @@ class MicropostsController < ApplicationController
 
   def destroy
     @micropost.destroy
-    redirect_to root_url
+    redirect_to :back
   end
 
   def edit
@@ -28,7 +28,6 @@ class MicropostsController < ApplicationController
     @micropost = Micropost.find(params[:id])
     params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
     if @micropost.update_attributes(params[:micropost])
-      flash[:success] = "Micropost updated"
       redirect_to(action:'detail', id:@micropost.id)
     else
       render "edit"
