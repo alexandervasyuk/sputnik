@@ -9,8 +9,10 @@
     <%= link_to feed_item.user.name, feed_item.user %>
   </span>
   <span class="content"><%= feed_item.content %></span>
+  <span><i class="icon-map-marker"></i></span>
   <span class="location"><%= feed_item.location %></span>
-  @ <span class="time"> <%= feed_item.time.strftime('%d %b %I:%M %p') %></span>
+  <span><i class="icon-time"></i></span>
+  <span class="time"> <%= feed_item.time.strftime('%I:%M %p %d %b') %></span>
 
   <% if feed_item.time.future? %>
     <span class="participate">

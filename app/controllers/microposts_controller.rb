@@ -7,7 +7,6 @@ class MicropostsController < ApplicationController
     @micropost.time = Chronic.parse(params[:micropost][:time])
     if @micropost.save
       current_user.participate!(@micropost)
-      flash[:success] = "Micropost created!"
       redirect_to root_url
     else
       @feed_items = current_user.feed.paginate(page: params[:page])
@@ -17,7 +16,7 @@ class MicropostsController < ApplicationController
 
   def destroy
     @micropost.destroy
-    redirect_to root_url
+    redirect_to :back
   end
 
   def edit
@@ -27,11 +26,19 @@ class MicropostsController < ApplicationController
   def update
     @micropost = Micropost.find(params[:id])
     params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
-    if @micropost.update_attributes(params[:micropost])
-      flash[:success] = "Micropost updated"
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts (params[:micropost][:time])
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    if @micropost.update_attributes!(params[:micropost])
       redirect_to(action:'detail', id:@micropost.id)
     else
-      render "edit"
+      redirect_to :back
     end
   end
 

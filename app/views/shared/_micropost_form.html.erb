@@ -22,7 +22,7 @@
           <% if @micropost.time.nil? %>
             <%= f.text_field :time, placeholder: "in 30 min, in 1 hour, in 3 hours", class:"micropost_field", :id=>"prependedInput" %>
           <% else %>
-            <%= f.text_field :time, value:@micropost.time.strftime('%d %b %I:%M %p'), class:"micropost_field", :id=>"prependedInput" %>
+            <%= f.text_field :time, value:@micropost.time.strftime('%I:%M %p %d %b '), class:"micropost_field", :id=>"prependedInput" %>
           <% end %>
         </div>
       </div>
