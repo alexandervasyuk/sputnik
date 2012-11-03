@@ -6,8 +6,8 @@
       <nav>
         <ul class="nav pull-right">
           <% if signed_in? %>
-            <%= form_tag("/search", {id: "search", class: 'form-search'}) do%>
-              <%= search_field_tag('query', nil, {placeholder: "Search", :class => "input-medium search-query"})%>
+            <%= form_tag("/search", {class: 'navbar-search pull-left'}) do%>
+              <%= text_field_tag('query', nil, {placeholder: "Search", :class => "search-query"})%>
             <% end %>
           <% end %>	
         	
