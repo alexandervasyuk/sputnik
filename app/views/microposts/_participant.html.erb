@@ -1,1 +1,1 @@
-<%= link_to gravatar_for(participant, size: 30), participant, class: "participant", rel: 'tooltip'%>
+<%= link_to image_tag(participant.avatar.url(:thumb), class: "profile_image"), participant, class: "participant", rel: 'tooltip'%>

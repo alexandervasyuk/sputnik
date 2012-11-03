@@ -1,8 +1,10 @@
 <% provide(:title, 'Search Results')%>
 <h1>Search Results</h1>
 
-<% if @search_results.any? %>
-	<%= render @search_results %>
-<% else %>
-No Results to Display
-<% end %>
+<ol class="users">
+	<% if @search_results.any? %>
+		<%= render @search_results %>
+	<% else %>
+		<p>No Results to Display</p>
+	<% end %>
+</ol>

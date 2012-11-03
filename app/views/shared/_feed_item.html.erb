@@ -4,7 +4,7 @@
                                      data: { confirm: "You sure?" },
                                      title: feed_item.content %>
   <% end %>
-  <%= link_to gravatar_for(feed_item.user), feed_item.user %>
+  <%= link_to image_tag(feed_item.user.avatar.url(:thumb), class: 'gravatar profile_image'), feed_item.user %>
   <span class="user">
     <%= link_to feed_item.user.name, feed_item.user %>
   </span>

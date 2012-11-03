@@ -2,10 +2,14 @@
 <div class="stats">
   <h3 id="participating-in">Participating in</h3>
 
-  <% @user.participations.each do |participation| %>
-      <span class="label label-info label-custom"><%=link_to participation.micropost.content, detail_micropost_path(participation.micropost_id) %></span>
-      
-  <% end %> 
+  <% if @user.has_participations? %>
+	  <% @user.participations.each do |participation| %>
+	      <span class="label label-info label-custom"><%=link_to participation.micropost.content, detail_micropost_path(participation.micropost_id) %></span>
+	      
+	  <% end %>
+  <% else %>
+  	  <small></small>Not participating in any events</small>	   
+  <% end %>
 
   <!-- <a href="<%= created_user_path(@user) %>">
     created

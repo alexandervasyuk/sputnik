@@ -5,7 +5,7 @@
 <script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
 <%= render "shared/image_crop"%>
 
-<%= image_tag current_user.avatar.url(:thumb), class:"image-circle", id: "profile_image", rel: "#crop_div"%>
+<%= image_tag current_user.avatar.url(:thumb), id: "profile_image", rel: "#crop_div"%>
 
 <h3 id = "username">
 	<%= link_to @user.name, @user %>

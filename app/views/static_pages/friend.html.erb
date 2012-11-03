@@ -1,6 +1,9 @@
 <% provide(:title, 'Friends')%>
-<h1>Friend Requests</h1>
 
 <ul class="users">
-	<%= render partial: "request", collection: @requests %>
+	<% if @requests.any?%>
+		<%= render partial: "request", collection: @requests %>
+	<% else %>
+		<p>No friend requests to display</p>
+	<% end %>
 </ul>

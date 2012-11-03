@@ -155,6 +155,10 @@ class User < ActiveRecord::Base
   def unparticipate!(micropost)
     participations.find_by_micropost_id(micropost.id).destroy
   end
+  
+  def has_participations?
+    participations.any?
+  end
 
   private
     def create_remember_token

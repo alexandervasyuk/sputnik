@@ -1,5 +1,5 @@
 <li id="<%= post_item.id %>">
-  <%= link_to gravatar_for(post_item.user), post_item.user %>
+  <%= link_to post_item.user.avatar.url(:thumb), post_item.user %>
   <span class="user">
     <%= link_to post_item.user.name, post_item.user %>
   </span>
