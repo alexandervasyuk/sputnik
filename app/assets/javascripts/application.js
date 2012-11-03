@@ -25,9 +25,12 @@ function initialize(){
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
 	});
 
-	initializeParticipantsTooltips();
+	//initializeParticipantsTooltips();
 }
 
 function initializeParticipantsTooltips(){
-	$('.participant').tooltip();
+	jQuery('.participant').popover({
+		title: "sup",
+		content:"SOme tasd"
+	});
 }

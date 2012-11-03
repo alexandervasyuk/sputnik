@@ -400,6 +400,7 @@ span.add-on {
 
 #by-user {
   display:inline;
+  font-size: 13px;
 }
 .micropost-info {
   position:relative;
@@ -408,10 +409,20 @@ span.add-on {
   position:absolute;
   bottom:0;
   right:0;
+  cursor:pointer;
+  &:hover {
+  text-decoration:none;  
+  }
+
 }
 
 ol.detailed_post_info {
   margin:0;
   padding: 10px 0;
   border-top: 1px solid #EEE;
+}
+
+.detail_content {
+  font-size:37px;
+  margin-bottom:4px;
 }
