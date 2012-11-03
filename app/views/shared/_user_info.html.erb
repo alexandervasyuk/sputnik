@@ -7,9 +7,6 @@
 
 <%= image_tag current_user.avatar.url(:thumb), class:"image-circle", id: "profile_image", rel: "#crop_div"%>
 
-<h1>
+<h3 id = "username">
 	<%= link_to @user.name, @user %>
-</h1>
-<span>
-  created <%= pluralize(@user.microposts.count, "event") %>
-</span>
+</h3>

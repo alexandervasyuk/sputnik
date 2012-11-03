@@ -140,6 +140,37 @@ footer {
 #crop_div {
   background-color: white;
   z-index: 11;
+  padding: 5px;
+  
+  border-radius: 3px;
+  
+  width: 340px;
+  height: 170px;
+  position:fixed;
+  top:50%;
+  left:50%;
+  margin-top: -160px;
+  margin-left: -170px;
+}
+
+#crop_btn_div {
+  width: 62px;
+  margin: 0 auto;
+  
+  margin-top: 5px;
+}
+
+/* user profile */
+#profile_image{
+  width: 75px;
+  height: 75px;
+  
+  cursor: pointer;
+}
+
+#username{
+  display: inline-block;
+  margin-left: 10px;
 }
 
 /* sidebar */
@@ -198,6 +229,10 @@ aside {
   .gravatar {
     margin: 1px 1px;
   }
+}
+
+#participating-in {
+  margin-bottom: 9px;
 }
 
 /* forms */
@@ -315,9 +350,27 @@ span.add-on {
 }
 
 .micropost_field {
-  width: 250px;
+  width: 248px;
 }
 
-.field {
+.micropost_create_field {
   margin: 9px 0;
+}
+
+/* boostrap customizations */
+
+.label-custom{
+  display: inline-block;
+  a {
+    color: white;
+    text-decoration: none;
+    padding-right: 0px;
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.field_with_errors {
+  display: inline;
 }

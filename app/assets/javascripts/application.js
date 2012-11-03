@@ -24,4 +24,10 @@ function initialize(){
 	$(".feed_item").click(function(){
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
 	});
+
+	initializeParticipantsTooltips();
+}
+
+function initializeParticipantsTooltips(){
+	$('.participant').tooltip();
 }
