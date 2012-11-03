@@ -25,17 +25,13 @@ class MicropostsController < ApplicationController
 
   def update
     @micropost = Micropost.find(params[:id])
-    params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts (params[:micropost][:time])
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    puts 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    if @micropost.update_attributes!(params[:micropost])
+    if  !Chronic.parse(params[:micropost][:time])
+      params[:micropost][:time] = Time.parse(params[:micropost][:time])
+    else
+      params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
+    end
+
+    if @micropost.update_attributes(params[:micropost])
       redirect_to(action:'detail', id:@micropost.id)
     else
       redirect_to :back
