@@ -6,7 +6,7 @@
   <%= form_for(@micropost, action:'update', id:@micropost.id) do |f| %>
       <%= render 'shared/error_messages', object: f.object %>
 
-      <%= f.label :content, 'content' %>
+      <%= f.label :content, 'Content' %>
       <%= f.text_field :content %>
 
       <%= f.label :location, 'Location' %>

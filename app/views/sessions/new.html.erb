@@ -10,6 +10,7 @@
 
       <%= f.label :password %>
       <%= f.password_field :password %>
+      <%= f.hidden_field :timezone, :id=>"timezone"%>
 
       <%= f.submit "Sign in", class: "btn btn-large btn-primary" %>
     <% end %>
@@ -17,3 +18,8 @@
     <p>New user? <%= link_to "Sign up!", signup_path %></p>
   </div>
 </div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#timezone').set_timezone(); 
+  });
+</script>

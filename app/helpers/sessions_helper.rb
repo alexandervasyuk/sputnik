@@ -1,8 +1,10 @@
 module SessionsHelper
 
-  def sign_in(user)
+  def sign_in(user, timezone)
     cookies.permanent[:remember_token] = user.remember_token
+    cookies.permanent[:timezone] = timezone
     self.current_user = user
+    self.user_timezone = timezone
   end
 
   def signed_in?
@@ -41,4 +43,13 @@ module SessionsHelper
   def store_location
     session[:return_to] = request.url
   end
+
+  def user_timezone=(timezone)
+    @user_timezone = timezone
+  end
+
+  def user_timezone
+    @user_timezone ||= cookies[:timezone]
+  end
+
 end
