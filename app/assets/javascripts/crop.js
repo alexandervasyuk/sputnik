@@ -1,3 +1,5 @@
+var jcrop_api = null;
+
 $(function(){
 	$('#profile_image').click(displayOverlay);
 	
@@ -30,13 +32,18 @@ function switchToCropDisplay(){
 	$('#crop_div').css("margin-top", "-230px");
 	$('#crop_div').css("margin-left", "-275px");
 	
-  	$('#crop_image').Jcrop({
-    	onChange: update_crop,
-    	onSelect: update_crop,
-    	aspectRatio: 1,
-    	boxWidth: 550,
-    	boxHeight: 550
-  	});
+	if (jcrop_api != null){
+		jcrop_api.setImage($('#crop_image').attr('src'));
+	}
+	else{
+	  	jcrop_api = $.Jcrop('#crop_image', {
+	    	onChange: update_crop,
+	    	onSelect: update_crop,
+	    	aspectRatio: 1,
+	    	boxWidth: 550,
+	    	boxHeight: 550
+	  	});
+  	}
   	
   	$('#image_area').show();
 }

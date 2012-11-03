@@ -1,2 +1,2 @@
-$('#crop_image').attr('src', '<%=image_path(session[:temp_profile])%>')
+$('#crop_image').attr('src', '<%=image_path(session[:temp_profile])%>' + '?r=' + Math.random())
 $('#crop_image').load(switchToCropDisplay);

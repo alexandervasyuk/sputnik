@@ -7,7 +7,6 @@ class MicropostsController < ApplicationController
     @micropost.time = Chronic.parse(params[:micropost][:time])
     if @micropost.save
       current_user.participate!(@micropost)
-      flash[:success] = "Micropost created!"
       redirect_to root_url
     else
       @feed_items = current_user.feed.paginate(page: params[:page])
