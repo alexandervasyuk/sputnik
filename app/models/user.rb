@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
      :processors => [:cropper],
      :storage => :s3,
-     :s3_credentials => S3_CREDENTIALS
+     :s3_credentials => "#{Rails.root}/config/s3.yml"
     
   #Associations
 

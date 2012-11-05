@@ -2,3 +2,7 @@ development:
   access_key_id: AKIAINWU5XU7344V7L3A
   secret_access_key: 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
   bucket: happening_profile_pic
+production:
+  access_key_id: AKIAINWU5XU7344V7L3A
+  secret_access_key: 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
+  bucket: happening_profile_pic
