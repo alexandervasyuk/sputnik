@@ -31,42 +31,11 @@
 
       <% if current_user?(@micropost.user) %>
       <span class="edit microposts">
-        <a class="micropost_edit_button" type="button" data-toggle="modal" data-target="#edit_modal">edit</a>
+        <%= link_to "edit", {action:'edit', id:@micropost.id}, class:"micropost_edit_button"%>
       </span>
       <% end %>
-
-      <div id="edit_modal" class="modal hide fade">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h3>Update happening</h3>
-        </div>
-        <div class="modal-body">        
-        <%= form_for(@micropost, action:'update', id:@micropost.id) do |f| %>
-              <%= render 'shared/error_messages', object: f.object %>
-
-              <%= f.label :content, 'content' %>
-              <%= f.text_field :content %>
-
-              <%= f.label :location, 'Location' %>
-              <%= f.text_field :location %>
-
-              <%= f.label :time, 'Time'%>
-              <%= f.text_field :time, value:@micropost.time.strftime('%I:%M %p %d %b') %>
-
-        </div>
-        <div class="modal-footer">
-          <%= f.submit "Save changes", class: "btn btn-large btn-primary" %>
-        </div>
-        <% end %>
       </div>
-
-
-
-
-      </div>
-
       <%= render partial:'detailed_post_info', locals: {micropost:@micropost, participants:@participants, post_items:@post_items} %>        
-
 
     </div>
   </div>

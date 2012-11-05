@@ -62,7 +62,7 @@ class StaticPagesController < ApplicationController
       current_user.crop_h = params[:h]
       
       if current_user.add_profile(File.open("#{Rails.root}/app/assets/images/#{session[:temp_profile]}"))
-        sign_in(current_user)
+        sign_in(current_user, user_timezone)
         redirect_to root_url
       end
     end

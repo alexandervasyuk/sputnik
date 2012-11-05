@@ -17,9 +17,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      sign_in @user
+      sign_in(@user, params[:timezone])
       flash[:success] = "Welcome to the Sputnik!"
-      redirect_to @user
+      redirect_to root_path
     else
       render 'new'
     end

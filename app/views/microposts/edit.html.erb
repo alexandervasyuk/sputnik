@@ -1,12 +1,12 @@
 <% provide(:title, "Edit micropost") %> 
-<h1>Update micropost</h1>
+<h1>Update the happening</h1>
 <%= link_to "Go back", {action:'detail'} %>
 <div class="row">
   <div class="span6 offset3">
   <%= form_for(@micropost, action:'update', id:@micropost.id) do |f| %>
       <%= render 'shared/error_messages', object: f.object %>
 
-      <%= f.label :content, 'content' %>
+      <%= f.label :content, 'Content' %>
       <%= f.text_field :content %>
 
       <%= f.label :location, 'Location' %>
