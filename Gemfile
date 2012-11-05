@@ -14,6 +14,8 @@ gem 'remotipart', '~> 1.0'
 gem 'rmagick', '2.13.1'
 gem 'detect_timezone_rails'
 
+gem 'carrierwave'
+
 group :development, :test do
   gem 'sqlite3', '1.3.5'
   gem 'rspec-rails', '2.11.0'
