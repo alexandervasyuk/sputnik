@@ -6,9 +6,10 @@ class User < ActiveRecord::Base
   has_secure_password
 
   has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "rails.png",
-     :url  => "/assets/profile/:id/:style/:basename.:extension",
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
-     :processors => [:cropper]
+     :processors => [:cropper],
+     :storage => :s3,
+     :s3_credentials => "#{Rails.root}/config/s3.yml"
     
   #Associations
 
