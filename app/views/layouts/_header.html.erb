@@ -11,7 +11,9 @@
 	            <% end %>
 	          <% end %>
 	        <ul class="nav pull-right">
-	          <li><%= link_to "Home", root_path %></li>
+	          <% if signed_in? %>
+	          	<li><%= link_to "Feed", root_path %></li>
+	          <% end %>
 	          
 	          <% if signed_in? %>
 	          	<li>
