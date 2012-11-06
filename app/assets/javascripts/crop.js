@@ -4,6 +4,8 @@ $(function(){
 	$('#profile_image').click(displayOverlay);
 	
 	$('#overlay').click(closeOverlay);
+	
+	$('.test-tooltip').tooltip();
 });
 
 function displayOverlay(){

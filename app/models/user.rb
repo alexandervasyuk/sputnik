@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   #Additional Attributes
   has_secure_password
 
-  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "rails.png",
+  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "default_profile.jpg",
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
      :processors => [:cropper],
      :storage => :s3,

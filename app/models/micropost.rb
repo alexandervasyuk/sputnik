@@ -36,6 +36,5 @@ class Micropost < ActiveRecord::Base
   
   def self.from_users(users)
     where("user_id IN (?)", users)
-
   end
 end
