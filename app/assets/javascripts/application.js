@@ -18,6 +18,7 @@
 //= require detect_timezone
 //= require jquery.detect_timezone
 
+
 $(function(){
 	initialize();
 });

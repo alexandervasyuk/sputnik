@@ -4,16 +4,16 @@
                                      data: { confirm: "You sure?" },
                                      title: feed_item.content %>
   <% end %>
+  <% Time.zone = user_timezone %>
   <%= link_to image_tag(feed_item.user.avatar.url(:thumb), class: 'gravatar profile_image'), feed_item.user %>
   <span class="user">
     <%= link_to feed_item.user.name, feed_item.user %>
   </span>
   
-  <% if feed_item.time.future? %>
-    <span class="feed_participate">
+  <span class="feed_participate">
     <%= render 'users/participate_form', feed_item: feed_item if signed_in? %>
-    </span>
-  <% end %>
+  </span>
+ 
   
   <span class="content"><%= feed_item.content %></span>
   <span><i class="icon-map-marker"></i></span>

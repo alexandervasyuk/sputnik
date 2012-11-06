@@ -1,46 +1,52 @@
-<header>
 <header class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <%= link_to "Sputnik", root_path, id: "logo" %>
+      <%= link_to "Happening", root_path, id: "logo" %>
       <nav>
       	<div class="span8 pull-right">
-      		<% if signed_in? %>
-	            <%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
-	              <%= text_field_tag('query', nil, {placeholder: "Search", :class => "input-xlarge search-query", id: "header_search_bar"})%>
-	            <% end %>
-	          <% end %>
-	        <ul class="nav pull-right">
-	          <% if signed_in? %>
-	          	<li><%= link_to "Feed", root_path %></li>
-	          <% end %>
-	          
-	          <% if signed_in? %>
-	          	<li>
-	          		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
-	          		<%= link_to text.html_safe, friend_path%>
-	          	</li>
-	          <% end %>
-	  
-	          <% if signed_in? %>
-	            <li id="fat-menu" class="dropdown">
-	              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-	                Account <b class="caret"></b>
-	              </a>
-	              <ul class="dropdown-menu">
-	                <li><%= link_to "Profile", current_user %></li>
-	                <li><%= link_to "Settings", edit_user_path(current_user) %></li>
-	                <li><%= link_to "Help", help_path %></li>
-	                <li class="divider"></li>
-	                <li>
-	                  <%= link_to "Sign out", signout_path, method: "delete" %>
-	                </li>
-	              </ul>
-	            </li>
-	          <% else %>
-	            <li><%= link_to "Sign in", signin_path %></li>
-	          <% end %>
-	        </ul>
+      			<% if signed_in? %>
+		        	<%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
+		        	  <%= text_field_tag('query', nil, {placeholder: "Search", :class => "input-xlarge search-query", id: "header_search_bar"})%>
+	        	<% end %>
+	        	<ul class="nav pull-right">
+	        		<li><%= link_to "Feed", root_path %></li>
+	        		<li>
+		          		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
+		          		<%= link_to text.html_safe, friend_path%>
+	          		</li>
+	          		<li id="fat-menu" class="dropdown">
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		                Account <b class="caret"></b>
+		              </a>
+		              <ul class="dropdown-menu">
+		                <li><%= link_to "Profile", current_user %></li>
+		                <li><%= link_to "Settings", edit_user_path(current_user) %></li>
+		                <li><%= link_to "Help", help_path %></li>
+		                <li class="divider"></li>
+		                <li>
+		                  <%= link_to "Sign out", signout_path, method: "delete" %>
+		                </li>
+		              </ul>
+		            </li>
+		        <% else %>
+		          	<div class="row">
+					  <div class="span6 offset3">
+					    <%= form_for(:session, url: sessions_path, html: {:class=>'form-inline pull-right', id:"signin"}) do |f| %>
+					      <%= f.text_field :email, class:"input-medium", placeholder:"Email"%>
+					      <%= f.password_field :password, class:"input-medium", placeholder:"password" %>
+					      <%= f.hidden_field :timezone, :id=>"timezone"%>
+					      <%= f.submit "Sign in", class: "btn btn-primary" %>
+					    <% end %>
+					  </div>
+					</div>
+
+					<script type="text/javascript">
+					  $(document).ready(function(){
+					    $('#timezone').set_timezone(); 
+					  });
+					</script>
+		        <% end %>
+	        	</ul>
         </div>
       </nav>
     </div>
