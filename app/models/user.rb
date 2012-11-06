@@ -75,11 +75,29 @@ class User < ActiveRecord::Base
   def sent_friend_requests
     self.followed_users.where("friend_status = 'PENDING'")
   end
+  
+  def friends?(other)
+    if other == self
+      return true
+    end    
+    
+    relationship = get_relationship(other)
+    
+    if !relationship.nil? && relationship.friend_status == "FRIENDS"
+      return true
+    end
+    
+    return false
+  end
+  
+  def get_relationship(other_user)
+    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
+  end
 
   #Following
 
   def following?(other_user)
-    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
+    relationship = get_relationship(other_user)
     
     if relationship.follower_id == self.id
         return relationship.follow1
@@ -157,6 +175,21 @@ class User < ActiveRecord::Base
   
   def has_participations?
     participations.any?
+  end
+  
+  def common_participations(user)
+    if user == self
+      return self.participations
+    end
+    
+    mutual_participations = []
+    if self.friends?(user)
+      self.participations.each do |participation|
+        
+      end
+    end
+    
+    return mutual_participations
   end
 
   private
