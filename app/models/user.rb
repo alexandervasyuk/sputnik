@@ -5,10 +5,11 @@ class User < ActiveRecord::Base
   #Additional Attributes
   has_secure_password
 
-  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "rails.png",
-     :url  => "/assets/profile/:id/:style/:basename.:extension",
+  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "default_profile.jpg",
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
-     :processors => [:cropper]
+     :processors => [:cropper],
+     :storage => :s3,
+     :s3_credentials => "#{Rails.root}/config/s3.yml"
     
   #Associations
 
@@ -74,11 +75,29 @@ class User < ActiveRecord::Base
   def sent_friend_requests
     self.followed_users.where("friend_status = 'PENDING'")
   end
+  
+  def friends?(other)
+    if other == self
+      return true
+    end    
+    
+    relationship = get_relationship(other)
+    
+    if !relationship.nil? && relationship.friend_status == "FRIENDS"
+      return true
+    end
+    
+    return false
+  end
+  
+  def get_relationship(other_user)
+    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
+  end
 
   #Following
 
   def following?(other_user)
-    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
+    relationship = get_relationship(other_user)
     
     if relationship.follower_id == self.id
         return relationship.follow1
@@ -127,9 +146,7 @@ class User < ActiveRecord::Base
     relationship.save
   end
   
-  def add_profile(picture)    
-    self.update_attribute(:avatar, picture)
-    
+  def crop_profile()
     reprocess_avatar
   end
   
@@ -159,12 +176,26 @@ class User < ActiveRecord::Base
   def has_participations?
     participations.any?
   end
+  
+  def common_participations(user)
+    if user == self
+      return self.participations
+    end
+    
+    mutual_participations = []
+    if self.friends?(user)
+      self.participations.each do |participation|
+        
+      end
+    end
+    
+    return mutual_participations
+  end
 
   private
-    def create_remember_token
-      self.remember_token = SecureRandom.urlsafe_base64
-    end
-
+  def create_remember_token
+    self.remember_token = SecureRandom.urlsafe_base64
+  end
   
   def reprocess_avatar
     avatar.reprocess!

@@ -13,7 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.remotipart
-//= require bootstrap
 //= require_tree .
 //= require detect_timezone
 //= require jquery.detect_timezone
@@ -26,14 +25,5 @@ $(function(){
 function initialize(){
 	$(".feed_item").click(function(){
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
-	});
-
-	//initializeParticipantsTooltips();
-}
-
-function initializeParticipantsTooltips(){
-	jQuery('.participant').popover({
-		title: "sup",
-		content:"SOme tasd"
 	});
 }

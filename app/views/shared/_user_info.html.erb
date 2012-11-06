@@ -2,7 +2,6 @@
 <% @user ||= current_user %>
 
 <%= javascript_include_tag "crop"%>
-<script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
 <%= render "shared/image_crop"%>
 
 <%= image_tag current_user.avatar.url(:thumb), id: "profile_image", rel: "#crop_div"%>
