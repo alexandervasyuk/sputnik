@@ -3,13 +3,11 @@ class StaticPagesController < ApplicationController
     if signed_in?
       @micropost  = current_user.microposts.build
       @feed_items = []
-      Time.zone = user_timezone
       current_user.feed.each do |feed_item|
         if feed_item.time.future?
           @feed_items << feed_item
         end
       end
-      # @feed_items = @feed_items.paginate(page: params[:page]) 
     else
       @user = User.new
     end
