@@ -58,6 +58,18 @@ class User < ActiveRecord::Base
     Micropost.from_users(friends)
   end
   
+  def future_feed
+    feed = []
+    
+    self.feed.each do |feed_item|
+      if feed_item.time.future?
+        @feed_items << feed_item
+      end
+    end
+    
+    return feed
+  end
+  
   def self.text_search(query)
     if query.present?
       where("name @@ :query", query: query)
