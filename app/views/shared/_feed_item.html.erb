@@ -10,11 +10,10 @@
     <%= link_to feed_item.user.name, feed_item.user %>
   </span>
   
-  <span class="feed_participate">
+  <span class="participating_feed">
     <%= render 'users/participate_form', feed_item: feed_item if signed_in? %>
   </span>
  
-  
   <span class="content"><%= feed_item.content %></span>
   <span><i class="icon-map-marker"></i></span>
   <span class="location"><%= feed_item.location %></span>
