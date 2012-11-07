@@ -2,12 +2,7 @@ class StaticPagesController < ApplicationController
   def home
     if signed_in?
       @micropost  = current_user.microposts.build
-      @feed_items = []
-      current_user.feed.each do |feed_item|
-        if feed_item.time.future?
-          @feed_items << feed_item
-        end
-      end
+      @feed_items = current_user.future_feed
     else
       @user = User.new
     end

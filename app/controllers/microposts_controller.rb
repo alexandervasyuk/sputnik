@@ -13,7 +13,7 @@ class MicropostsController < ApplicationController
       current_user.participate!(@micropost)
       redirect_to root_url
     else
-      @feed_items = current_user.feed.paginate(page: params[:page])
+      @feed_items = current_user.future_feed
       render 'static_pages/home'
     end
   end
