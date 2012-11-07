@@ -26,4 +26,8 @@ function initialize(){
 	$(".feed_item").click(function(){
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
 	});
+	
+    setInterval(function(){
+      $('#div_feed').load('/micropost/refresh');
+    }, 5000);
 }

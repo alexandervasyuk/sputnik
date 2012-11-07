@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
     
     self.feed.each do |feed_item|
       if feed_item.time.future?
-        @feed_items << feed_item
+        feed << feed_item
       end
     end
     

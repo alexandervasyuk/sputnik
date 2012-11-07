@@ -63,6 +63,12 @@ class MicropostsController < ApplicationController
     end
     @post_items = @micropost.posts.reverse!
   end
+  
+  #Action responsible for rendering an updated user feed
+  def refresh
+    @feed_items = current_user.future_feed
+    render partial:'shared/feed'
+  end
 
   private
 
