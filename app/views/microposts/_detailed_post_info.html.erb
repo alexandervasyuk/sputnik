@@ -12,7 +12,6 @@
 		</div>
   	</ol>
   	<% if post_items.any? %>
-      <% Time.zone = user_timezone %>
 	  	<ol class="microposts">
 			<%= render partial: 'microposts/post_item', collection: post_items %>
 	  	</ol>

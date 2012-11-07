@@ -1,5 +1,4 @@
 <% if signed_in? %>
-  <% Time.zone = user_timezone %>
   <div class="row">
     <aside class="span4">
       <section>
@@ -18,7 +17,7 @@
         <span><i class="icon-map-marker"></i></span>
         <span class="location"><%=@micropost.location%></span> 
         <span><i class="icon-time"></i></span> 
-        <span class="time"><%=@micropost.time.strftime('%I:%M %p %d %b')%></span>
+        <span class="time"><%=@micropost.time.in_time_zone(user_timezone).strftime('%I:%M %p %d %b')%></span>
         <br/>
         <span><i class="icon-user"></i></span> 
         <h4 id="by-user">
