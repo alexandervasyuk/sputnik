@@ -1,7 +1,6 @@
 <% if signed_in? %>
   <div class="row">
     <aside class="span4">
-      <%= user_timezone%>
       <section>
         <%= render 'shared/user_info' %>
       </section>
@@ -18,14 +17,18 @@
     </div>
   </div>
 <% else %>
-  <div class="center hero-unit">
-    <h1>Sputnik</h1>
-    <h2>Beta Version</h2>
-
-    <p>Some fancy message, supposed to appeal to your rebellious spirit. </p>
-    <p>Click the button below, its worth it.</p>
-
-    <%= link_to "Sign up", signup_path, 
-                                class: "btn btn-large btn-primary" %>
+  <div class="container">
+    <div class="row">
+      <div class="span4">
+        <h1>Happening</h1>
+        <h2>Beta Version</h2>
+        <p>Actions speak louder than words.</p>
+        <p>We believe in doing. The un</p>
+        <p>Be a part of the web-evolution. Create a happening.</p>
+      </div>
+      <div class="span8">    
+        <%= render template:'users/new'%> 
+      </div>
+    </div>
   </div>
 <% end %>

@@ -21,7 +21,7 @@ class UsersController < ApplicationController
       flash[:success] = "Welcome to the Sputnik!"
       redirect_to root_path
     else
-      render 'new'
+      render 'static_pages/home'
     end
   end
 

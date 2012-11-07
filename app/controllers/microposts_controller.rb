@@ -1,11 +1,14 @@
 class MicropostsController < ApplicationController
   before_filter :signed_in_user
   before_filter :correct_user,   only: :destroy
-  before_filter :setTimeZone
 
   def create
     @micropost = current_user.microposts.build(params[:micropost])
-    @micropost.time = Chronic.parse(params[:micropost][:time])
+    if params[:micropost][:time][0..1] == "at"
+      @micropost.time = Time.parse(params[:micropost][:time])
+    else
+      @micropost.time = Chronic.parse(params[:micropost][:time])
+    end
     if @micropost.save
       current_user.participate!(@micropost)
       redirect_to root_url
@@ -30,6 +33,12 @@ class MicropostsController < ApplicationController
     if params[:micropost][:time].empty?
       render 'edit'
       return
+    end
+
+    if params[:micropost][:time][0..1] == "at"
+      @micropost.time = Time.parse(params[:micropost][:time])
+    else
+      @micropost.time = Chronic.parse(params[:micropost][:time])
     end
 
     if  !Chronic.parse(params[:micropost][:time])
@@ -60,9 +69,5 @@ class MicropostsController < ApplicationController
     def correct_user
       @micropost = current_user.microposts.find_by_id(params[:id])
       redirect_to root_url if @micropost.nil?
-    end
-
-    def setTimeZone
-      Time.zone=user_timezone
     end
 end
