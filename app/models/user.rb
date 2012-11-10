@@ -189,15 +189,39 @@ class User < ActiveRecord::Base
     participations.any?
   end
   
+  def has_future_participations?
+    future_participations = []
+    
+    participations.each do |participation|
+      if participation.micropost.time.future?
+        future_participations.append(participation)
+      end
+    end
+    
+    future_participations.any?
+  end
+  
+  #Method that returns all of the future events that both users are attending. It is important to do this because
+  #we do not want users to be able to see events that are not created by themselves or their friends
   def common_participations(user)
     if user == self
-      return self.participations
+      future_participations = []
+      
+      participations.each do |participation|
+        if participation.micropost.time.future?
+          future_participations.append(participation)
+        end
+      end
+      
+      return future_participations
     end
     
     mutual_participations = []
     if self.friends?(user)
       self.participations.each do |participation|
-        
+        if participation.micropost.time.future?
+          mutual_participations.append(participation)
+        end
       end
     end
     
