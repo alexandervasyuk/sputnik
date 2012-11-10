@@ -67,7 +67,13 @@ class MicropostsController < ApplicationController
   #Action responsible for rendering an updated user feed
   def refresh
     @feed_items = current_user.future_feed
-    render partial:'shared/feed'
+    
+    if params[:num].to_i == @feed_items.count
+      render text: "cancel"
+    else  
+      render partial:'shared/feed'
+    end
+    
   end
 
   private

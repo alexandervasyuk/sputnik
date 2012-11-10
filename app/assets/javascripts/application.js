@@ -10,13 +10,12 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
+//= require_tree .
 //= require jquery
 //= require jquery_ujs
 //= require jquery.remotipart
-//= require_tree .
 //= require detect_timezone
 //= require jquery.detect_timezone
-
 
 $(function(){
 	initialize();
@@ -26,8 +25,4 @@ function initialize(){
 	$(".feed_item").click(function(){
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
 	});
-	
-    setInterval(function(){
-      $('#div_feed').load('/micropost/refresh');
-    }, 5000);
 }
