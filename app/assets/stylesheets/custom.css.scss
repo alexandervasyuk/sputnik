@@ -1,5 +1,5 @@
 @import "bootstrap";
-/* @import "bootstrap-responsive"; */
+@import "bootstrap-responsive";
 
 /* mixins, variables, etc. */
 
@@ -18,7 +18,7 @@ html {
 }
 
 body {
-  padding-top: 60px;
+  padding:0;
 }
 
 section {
@@ -453,6 +453,11 @@ ol.detailed_post_info {
 }
 
 /*Header*/
-form#signin {
-  margin:0;
+
+.navbar-form input {
+  margin-bottom:6px;
+}
+
+#signin input.btn {
+  margin-bottom:5px;
 }

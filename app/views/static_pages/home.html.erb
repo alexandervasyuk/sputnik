@@ -17,18 +17,17 @@
     </div>
   </div>
 <% else %>
-  <div class="container">
-    <div class="row">
-      <div class="span4">
+    <div class="row-fluid">
+      <section class="span8 hero-unit">
         <h1>Happening</h1>
         <h2>Beta Version</h2>
         <p>Actions speak louder than words.</p>
         <p>We believe in doing. The un</p>
         <p>Be a part of the web-evolution. Create a happening.</p>
-      </div>
-      <div class="span8">    
+      </section>
+      <section class="span4">    
         <%= render template:'users/new'%> 
-      </div>
+      </section>
     </div>
   </div>
 <% end %>
