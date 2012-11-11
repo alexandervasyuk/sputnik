@@ -20,7 +20,7 @@
   <span><i class="icon-time"></i></span>
   <!-- Displaying time according to user's timezone. Using in_time_zone method.-->
   <span class="time"> <%= feed_item.time.in_time_zone(user_timezone).strftime('%I:%M %p') %></span>
-  <% if feed_item.time < Time.now.end_of_day() %>
+  <% if Time.now.beginning_of_day() < feed_item.time and feed_item.time < Time.now.end_of_day() %>
     Today
   <% elsif Time.now.beginning_of_day.tomorrow < feed_item.time and feed_item.time < Time.now.beginning_of_day.advance(days: 2)  %>
     Tomorrow

@@ -11,10 +11,12 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery
+//= require bootstrap
 //= require jquery_ujs
 //= require jquery.remotipart
 //= require detect_timezone
 //= require jquery.detect_timezone
+
 
 $(function(){
 	initialize();

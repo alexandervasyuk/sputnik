@@ -101,6 +101,21 @@ class User < ActiveRecord::Base
     
     return false
   end
+
+  def friends
+    friends = []
+    friendships = Relationship.where("follower_id = :user_id and friend_status = 'FRIENDS' or followed_id = :user_id and friend_status = 'FRIENDS'", {user_id: self.id})
+
+    friendships.each do |friendship|
+      if friendship.followed_id == self.id
+        friends.append(friendship.follower)
+      else
+        friends.append(friendship.followed)
+      end
+    end
+
+    return friends  
+  end
   
   def get_relationship(other_user)
     relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
