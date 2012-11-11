@@ -10,14 +10,20 @@
     <%= render 'layouts/shim' %>
   </head>
   <body>
-    <%= render 'layouts/header' %>
-    <div class="container-fluid">
+  <header class="navbar navbar-inverse navbar-fixed-top">
+      <nav class="navbar-inner">
+        <div class="container">
+          <%= render 'layouts/header' %>
+        </div>
+      </nav>
+  </header>
+    <div class="container main_content">
       <% flash.each do |key, value| %>
         <%= content_tag(:div, value, class: "alert alert-#{key}") %>
       <% end %>
       <%= yield %>
-      <%= render 'layouts/footer' %>
     </div>
+    <%= render 'layouts/footer' %>
     <script type="text/javascript">
       $(document).ready(function(){
         $('#timezone').set_timezone(); 

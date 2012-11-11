@@ -1,45 +1,46 @@
-<header>
-	<nav class="navbar">
-	  	<div class="navbar-inner">
-	     	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-	            <span>Login</span>
-			</a>
-			<%= link_to "Happening", root_path, id: "logo", class:"brand" %>
-			<div class="nav-collapse">
-	      			<% if signed_in? %>
-					    <%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
-					   		<%= text_field_tag('query', nil, {placeholder: "Search", :class => "input-xlarge search-query", id: "header_search_bar"})%>
+<%= link_to "Happening", root_path, id: "logo", class:"brand" %>
+<% if signed_in? %>
+	  			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+				</a>
+				<div class="nav-collapse collapse">
+			       	<ul class="nav pull-right">
+			       		<%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
+					   		<%= text_field_tag('query', nil, {placeholder: "Search for friends", :class => "input-xlarge search-query", id: "header_search_bar"})%>
 				   		<% end %>
-			       		<ul class="nav pull-right">
-				        		<li><%= link_to "Feed", root_path %></li>
-				        		<li>
-					          		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
-					          		<%= link_to text.html_safe, friend_path%>
-				          		</li>
-				          		<li id="fat-menu" class="dropdown">
-					              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-					                Account <b class="caret"></b>
-					              </a>
-					              <ul class="dropdown-menu">
-					                <li><%= link_to "Profile", current_user %></li>
-					                <li><%= link_to "Settings", edit_user_path(current_user) %></li>
-					                <li><%= link_to "Help", help_path %></li>
-					                <li class="divider"></li>
-					                <li>
-					                  <%= link_to "Sign out", signout_path, method: "delete" %>
-					                </li>
-					              </ul>
+				        <li><%= link_to "Feed", root_path %></li>
+				        <li>
+				     		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
+			          		<%= link_to text.html_safe, friend_path%>
+				        </li>
+				        <li id="fat-menu" class="dropdown">
+			          		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					        	Account <b class="caret"></b>
+					        </a>
+					        <ul class="dropdown-menu">
+						        <li><%= link_to "Profile", current_user %></li>
+					            <li><%= link_to "Settings", edit_user_path(current_user) %></li>
+				                <li><%= link_to "Help", help_path %></li>
+				                <li class="divider"></li>
+				                <li>
+			                  		<%= link_to "Sign out", signout_path, method: "delete" %>
 					            </li>
-					    </ul>
-			    	<% else %>
-						    <%= form_for(:session, url: sessions_path, html: {:class=>'navbar-form pull-right', id:"signin"}) do |f| %>
+					        </ul>
+					    </li>
+					</ul>
+				</div>
+<% else %>
+		     	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+		            <span>Sign in</span>
+				</a>
+				<div class="nav-collapse collapse">
+					<%= form_for(:session, url: sessions_path, html: {:class=>'navbar-form pull-right', id:"signin"}) do |f| %>
 						    	<%= f.text_field :email, class:"span2", placeholder:"Email"%>
 						     	<%= f.password_field :password, class:"span2", placeholder:"Password" %>
 						      	<%= f.hidden_field :timezone, :id=>"timezone"%>
 						      	<%= f.submit "Sign in", class: "btn btn-primary" %>
-						    <% end %>	
-			     	<% end %>
-			</div>
-  		</div>
-  	</nav>
-</header>
+					<% end %>
+				</div>
+<% end %>
