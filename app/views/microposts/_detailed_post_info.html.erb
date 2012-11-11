@@ -10,11 +10,17 @@
         	</div>
   			</div>
 		</div>
-  	</ol>
-  	<% if post_items.any? %>
-	  	<ol class="microposts">
-			<%= render partial: 'microposts/post_item', collection: post_items %>
-	  	</ol>
-	<% end %>
+    <ol class="microposts">
+      <div class="row">
+        <div class="span8">
+          <h3>Replies</h3>
+        	<% if post_items.any? %>
+      	  	<ol class="microposts">
+      			<%= render partial: 'microposts/post_item', collection: post_items %>
+      	  	</ol>
+          <% end %>
+        </div>
+      </div>
+    </ol>
   	</ol>
 </ol>
