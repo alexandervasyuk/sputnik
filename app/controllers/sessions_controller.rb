@@ -10,6 +10,7 @@ class SessionsController < ApplicationController
       sign_in(user, timezone)
       redirect_back_or root_url
     else
+      cookies.delete(:timezone)
       flash.now[:error] = 'Invalid email/password combination'
       render 'new'
     end
