@@ -56,12 +56,17 @@ class MicropostsController < ApplicationController
 
   def detail
     @micropost = Micropost.find(params[:id])
-    @post = current_user.posts.build(micropost_id:params[:id])
-    @participants = []
-    @micropost.participations.each do |participation|
-      @participants << User.find(participation.user_id)
+    
+    if current_user.friends?(@micropost.user)
+      @post = current_user.posts.build(micropost_id:params[:id])
+      @participants = []
+      @micropost.participations.each do |participation|
+        @participants << User.find(participation.user_id)
+      end
+      @post_items = @micropost.posts.reverse!
+    else  
+      redirect_to root_url
     end
-    @post_items = @micropost.posts.reverse!
   end
   
   #Action responsible for rendering an updated user feed
