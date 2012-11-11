@@ -158,7 +158,7 @@ class User < ActiveRecord::Base
     relationship.save
   end
   
-  def crop_profile()
+  def crop_profile
     reprocess_avatar
   end
   

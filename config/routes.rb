@@ -35,6 +35,8 @@ Sputnik::Application.routes.draw do
   match '/crop/finish', to: 'static_pages#crop_finish'
   
   match '/micropost/refresh', to: 'microposts#refresh'
+  
+  match '/crop/image', to: 'static_pages#crop_image_render'
   #match '/microposts/detail/:id', to: 'microposts#detail'
 
   # The priority is based upon order of creation:
