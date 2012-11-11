@@ -33,6 +33,7 @@ module SessionsHelper
   def sign_out
     current_user = nil
     cookies.delete(:remember_token)
+    cookies.delete(:timezone)
   end
 
   def redirect_back_or(default)
