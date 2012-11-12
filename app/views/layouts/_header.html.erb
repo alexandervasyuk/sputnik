@@ -42,10 +42,10 @@
 						      	<%= f.hidden_field :timezone, :id=>"timezone"%>
 						      	<%= f.submit "Sign in", class: "btn btn-primary" %>
 					<% end %>
+					<script type="text/javascript">
+					    $(document).ready(function(){
+						    $('#timezone').set_timezone(); 
+					    });
+	    			</script>
 				</div>
-				<script type="text/javascript">
-				    $(document).ready(function(){
-					    $('#timezone').set_timezone(); 
-				    });
-    			</script>
 <% end %>
