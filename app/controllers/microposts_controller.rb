@@ -6,7 +6,7 @@ class MicropostsController < ApplicationController
     @micropost = current_user.microposts.build(params[:micropost])
     if params[:micropost][:time][0..1] == "at"
       Time.use_zone(user_timezone) do
-       @micropost.time = Time.parse(params[:micropost][:time])
+       @micropost.time = Time.zone.parse(params[:micropost][:time])
       end
     else
       Time.use_zone(user_timezone) do
@@ -45,7 +45,7 @@ class MicropostsController < ApplicationController
     # els
     if  !Chronic.parse(params[:micropost][:time])
       Time.use_zone(user_timezone) do
-        params[:micropost][:time] = Time.parse(params[:micropost][:time])
+        params[:micropost][:time] = Time.zone.parse(params[:micropost][:time])
       end
     else
       Time.use_zone(user_timezone) do
