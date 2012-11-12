@@ -7,8 +7,10 @@ class MicropostsController < ApplicationController
     if params[:micropost][:time][0..1] == "at"
       @micropost.time = Time.parse(params[:micropost][:time])
     else
-      Time.zone = 'UTC'
-      @micropost.time = Time.zone.parse(Chronic.parse(params[:micropost][:time]).strftime("%Y-%m-%d %H:%M:%S"))
+      Time.use_zone(user_timezone) do
+        Chronic.time_class = Time.zone
+        @micropost.time = Chronic.parse(params[:micropost][:time])
+      end
     end
     if @micropost.save
       current_user.participate!(@micropost)
@@ -39,13 +41,19 @@ class MicropostsController < ApplicationController
     if params[:micropost][:time][0..1] == "at"
       @micropost.time = Time.parse(params[:micropost][:time])
     else
-      @micropost.time = Chronic.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+        Chronic.time_class = Time.zone
+        @micropost.time = Chronic.parse(params[:micropost][:time])
+      end
     end
 
     if  !Chronic.parse(params[:micropost][:time])
       params[:micropost][:time] = Time.parse(params[:micropost][:time])
     else
-      params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+        Chronic.time_class = Time.zone
+        @micropost.time = Chronic.parse(params[:micropost][:time])
+      end
     end
 
     if @micropost.update_attributes(params[:micropost])
