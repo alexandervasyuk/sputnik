@@ -7,7 +7,7 @@ class MicropostsController < ApplicationController
     if params[:micropost][:time][0..1] == "at"
       @micropost.time = Time.parse(params[:micropost][:time])
     else
-      @micropost.time = Chronic.parse(params[:micropost][:time])
+      @micropost.time = Time.zone.parse(Chronic.parse(params[:micropost][:time]).strftime("%Y-%m-%d %H:%M:%S"))
     end
     if @micropost.save
       current_user.participate!(@micropost)
