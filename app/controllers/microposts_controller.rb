@@ -46,11 +46,11 @@ class MicropostsController < ApplicationController
     else
       Time.use_zone(user_timezone) do
         Chronic.time_class = Time.zone
-        @micropost.time = Chronic.parse(params[:micropost][:time])
+        params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
       end
     end
 
-    if @micropost.update_attributes(@micropost)
+    if @micropost.update_attributes(params[:micropost])
       redirect_to(action:'detail', id:@micropost.id)
     else
       render 'edit'
