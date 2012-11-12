@@ -40,14 +40,13 @@ class MicropostsController < ApplicationController
 
     if params[:micropost][:time][0..1] == "at"
       @micropost.time = Time.parse(params[:micropost][:time])
-    else
-      @micropost.time = Chronic.parse(params[:micropost][:time])
-    end
-
-    if  !Chronic.parse(params[:micropost][:time])
+    elsif  !Chronic.parse(params[:micropost][:time])
       params[:micropost][:time] = Time.parse(params[:micropost][:time])
     else
-      params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+        Chronic.time_class = Time.zone
+        @micropost.time = Chronic.parse(params[:micropost][:time])
+      end
     end
 
     if @micropost.update_attributes(params[:micropost])
