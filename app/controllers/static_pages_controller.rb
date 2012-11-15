@@ -32,11 +32,8 @@ class StaticPagesController < ApplicationController
   
   def crop
     if signed_in?
-      session[:temp_pic] = Rails.root.join('public', 'uploads', params[:file].original_filename)
-      
-      File.open(Rails.root.join('public', 'uploads', params[:file].original_filename), 'wb') do |file|
-        file.write(params[:file].read)
-      end
+      clear_temp_profile_pic
+      set_temp_profile_pic(params[:file])
       
       respond_to do |format|
         format.js
@@ -60,6 +57,8 @@ class StaticPagesController < ApplicationController
       current_user.update_attribute(:avatar, file)
       current_user.crop_profile
       sign_in(current_user, user_timezone)
+      
+      clear_temp_profile_pic
       
       redirect_to root_url
     end
