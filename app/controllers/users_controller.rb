@@ -18,7 +18,11 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     if @user.save
       sign_in(@user, params[:timezone])
-      flash[:success] = "Welcome to the Sputnik!"
+      flash[:success] = "Welcome to Happening!"
+      
+      #Send the email to the newly signed up user with instructions/welcome message
+      UserMailer.signed_up(@user).deliver
+      
       redirect_to root_path
     else
       render 'static_pages/home'

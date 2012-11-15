@@ -41,8 +41,8 @@ Sputnik::Application.configure do
     :enable_starttls_auto => true,  
     :address        => "smtp.gmail.com",
     :port           => 587,
-    :user_name      => "bochen303@gmail.com",
-    :password       => "HINDUKUSH",
+    :user_name      => "notification@happpening.com",
+    :password       => "Jr:)(gluT",
     :authentication => :plain
   }
   

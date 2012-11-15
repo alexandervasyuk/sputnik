@@ -29,6 +29,17 @@ Sputnik::Application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+  
+  #Action mailer settings
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :enable_starttls_auto => true,  
+    :address        => "smtp.gmail.com",
+    :port           => 587,
+    :user_name      => "notification@happpening.com",
+    :password       => "Jr:)(gluT",
+    :authentication => :plain
+  }
 
   # See everything in the log (default is :info)
   # config.log_level = :debug

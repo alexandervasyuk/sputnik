@@ -31,8 +31,14 @@ module SessionsHelper
   end
 
   def sign_out
+    clean_up
+    
     current_user = nil
     cookies.delete(:remember_token)
+  end
+  
+  def clean_up
+    clear_temp_profile_pic
   end
 
   def redirect_back_or(default)
