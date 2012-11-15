@@ -18,6 +18,10 @@ class MicropostsController < ApplicationController
       current_user.participate!(@micropost)
       redirect_to root_url
     else
+      if !params[:micropost][:time].empty? and !Chronic.parse(params[:micropost][:time])
+        @micropost.errors[:time].clear
+        @micropost.errors.add(:time, "needs to follow this format: 4:15 pm, tomorrow 3am, in 10 min, in 2 days, 1:14 pm 15 Nov ")
+      end
       @feed_items = current_user.future_feed
       render 'static_pages/home'
     end
