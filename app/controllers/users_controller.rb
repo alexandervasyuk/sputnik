@@ -21,7 +21,7 @@ class UsersController < ApplicationController
       flash[:success] = "Welcome to the Happpening!"
       redirect_to root_path
     else
-      render 'static_pages/home'
+      render 'users/new'
     end
   end
 
