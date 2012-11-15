@@ -289,7 +289,7 @@ aside {
 
 input, select, .uneditable-input {
   border: 1px solid #bbb;
-  width: 100%;
+  width: 100;
   padding: 10px;
   height: auto !important;
   margin-bottom: 15px;
@@ -405,6 +405,10 @@ span.add-on {
 
 .micropost_create_field {
   margin: 9px 0;
+  input#prependedInput {
+    width:92% !important;
+  }
+  
 }
 
 /* boostrap customizations */
