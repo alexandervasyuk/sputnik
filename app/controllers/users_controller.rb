@@ -22,7 +22,9 @@ class UsersController < ApplicationController
       flash[:success] = "Welcome to Happpening!"
       
       #Send the email to the newly signed up user with instructions/welcome message
-      UserMailer.signed_up(@user).deliver
+
+      UserMailer.delay.signed_up(@user)
+
       redirect_to root_path
     else
       render 'users/new'

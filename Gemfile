@@ -13,6 +13,7 @@ gem 'paperclip', '~> 3.0'
 gem 'remotipart', '~> 1.0'
 gem 'rmagick', '2.13.1'
 gem 'detect_timezone_rails'
+gem 'delayed_job_active_record'
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'

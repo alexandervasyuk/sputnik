@@ -6,6 +6,9 @@ class RelationshipsController < ApplicationController
   def create
     @user = User.find(params[:relationship][:followed_id])
     current_user.friend_request!(@user)
+    
+    UserMailer.delay.friend_requested(current_user, @user)
+    
     respond_with @user
   end
   
@@ -15,6 +18,9 @@ class RelationshipsController < ApplicationController
       current_user.accept_friend!(@user)
       
       @type_and_user = [params[:type], @user, params[:func]]
+      
+      #Send the success mail out
+      UserMailer.delay.friend_accepted(@user, current_user)
       
       respond_with @type_and_user
     elsif params[:type] == 'UNFOLLOW'

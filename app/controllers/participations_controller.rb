@@ -5,10 +5,9 @@ class ParticipationsController < ApplicationController
 	def create
 		@micropost = Micropost.find(params[:participation][:micropost_id])
 		current_user.participate!(@micropost)
-		
-		#Send the email out
-		#MicropostMailer.participated(@micropost.user, @micropost).deliver
 
+		MicropostMailer.delay.participated(current_user, @micropost)
+		
 		redirect_to :back
 		# @user_and_post = [current_user, @micropost]
 		# respond_with @user_and_post
