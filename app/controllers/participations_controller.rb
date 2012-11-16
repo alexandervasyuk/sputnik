@@ -7,7 +7,7 @@ class ParticipationsController < ApplicationController
 		current_user.participate!(@micropost)
 		
 		#Send the email out
-		MicropostMailer.participated(@micropost.user, @micropost).deliver
+		MicropostMailer.delay.participated(current_user, @micropost)
 		
 		@user_and_post = [current_user, @micropost]
 		respond_with @user_and_post
