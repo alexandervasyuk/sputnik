@@ -4,7 +4,7 @@ $(function(){
 
 function initialize(){	
 	$(".feed_item").click(function(event){
-		if(event.target != this){ return true; }
+		if(event.target == $(".icon-trash")[0]){ return true; }
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
 	});
 	

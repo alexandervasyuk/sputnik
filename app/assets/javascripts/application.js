@@ -17,8 +17,9 @@
 //= require detect_timezone
 //= require jquery.detect_timezone
 //= require crop
-//= require confirm_delete
 //= require detail
+//= require confirm_delete
+
 
 
 
