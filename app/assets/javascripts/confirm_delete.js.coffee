@@ -25,7 +25,7 @@ $.rails.allowAction = (element) ->
                    <h3>#{message}</h3>
                  </div>
                  <div class="modal-body">
-                   <p>Be certain, sonny.</p>
+                   <p>This will permanently delete your event</p>
                  </div>
                  <div class="modal-footer">
                    <a data-dismiss="modal" class="btn">Cancel</a>

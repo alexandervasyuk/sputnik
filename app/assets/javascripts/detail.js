@@ -2,8 +2,9 @@ $(function(){
 	initialize();
 });
 
-function initialize(){
-	$(".feed_item").click(function(){
+function initialize(){	
+	$(".feed_item").click(function(event){
+		if(event.target != this){ return true; }
 		window.location = "/microposts/" + $(this).attr('id') + "/detail";
 	});
 	
