@@ -1,4 +1,4 @@
-    require File.expand_path('../boot', __FILE__)
+require File.expand_path('../boot', __FILE__)
 
 # Pick the frameworks you want:
 require "active_record/railtie"
@@ -63,5 +63,7 @@ module Sputnik
     config.assets.version = '1.0'
     
     config.autoload_paths += Dir["#{config.root}/lib/jobs/"]
+
+    config.assets.initialize_on_precompile = false
   end
 end
