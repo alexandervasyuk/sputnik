@@ -19,6 +19,7 @@
 //= require crop
 //= require detail
 //= require confirm_delete
+//= require bootstrap_custom
 
 
 
