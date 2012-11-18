@@ -16,16 +16,10 @@
 //= require jquery.remotipart
 //= require detect_timezone
 //= require jquery.detect_timezone
+//= require crop
+//= require detail
+//= require confirm_delete
 
-$(function(){
-	initialize();
-});
 
-function initialize(){
-	$(".feed_item").click(function(){
-		window.location = "/microposts/" + $(this).attr('id') + "/detail";
-	});
-	
-	//$('#image_crop_upload').submit(setUploadButtonToLoading);
-	//$('#crop_btn').click(setCropButtonToLoading);
-}
+
+

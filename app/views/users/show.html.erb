@@ -17,6 +17,9 @@
     <section>
       <%= render 'shared/stats' %>
     </section>
+    <section>
+      <%= render 'shared/friends' %>
+     </section>
   </aside>
   <div class="span8">
   	<%= render 'friend_action'%>
@@ -26,6 +29,12 @@
         <%= render @microposts %>
       </ol>
       <%= will_paginate @microposts %>
+    <% end %>
+    <h3> My happenings </h3>
+    <% if @user.participations.any? %>
+      <ol class="microposts">
+        <%= render partial: 'shared/feed_item', collection: @user.followed_posts, as:'feed_item' %>
+      </ol>
     <% end %>
   </div>
 </div>

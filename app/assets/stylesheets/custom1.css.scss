@@ -2,7 +2,7 @@
 
 body {
   padding-top:60px;
-  height:600px;
+
 }
 
 /*@import "bootstrap-responsive";*/
@@ -87,15 +87,12 @@ p {
 #logo {
   float: left;
   margin-right: 10px;
-  font-size: 1.7em;
   color: white;
-  text-transform: uppercase;
-  letter-spacing: -1px;
   padding-top: 9px;
   font-weight: bold;
   line-height: 1;
   &:hover {
-    color: white;
+    color: $grayMediumLight;
     text-decoration: none;
   }
 }app
@@ -292,7 +289,7 @@ aside {
 
 input, select, .uneditable-input {
   border: 1px solid #bbb;
-  width: 100%;
+  width: 100;
   padding: 10px;
   height: auto !important;
   margin-bottom: 15px;
@@ -312,7 +309,7 @@ textarea {
   color:#f00;
   ul {
     list-style: none;
-    margin: 0 0 18px 0;
+    margin: 0;
   }
 }
 
@@ -350,10 +347,10 @@ textarea {
     &:hover {
       background-color: $grayLighter;
     }
-    transition: 0.2s;
-    -moz-transition: 0.2s; /* Firefox 4 */
-    -webkit-transition: 0.2s; /* Safari and Chrome */
-    -o-transition: 0.2s; /* Opera */
+    transition: 0.3s;
+    -moz-transition: 0.3s; /* Firefox 4 */
+    -webkit-transition: 0.3s; /* Safari and Chrome */
+    -o-transition: 0.3s; /* Opera */
   }
 }
 
@@ -408,6 +405,14 @@ span.add-on {
 
 .micropost_create_field {
   margin: 9px 0;
+  input#prependedInput {
+    width:87% !important;
+  }
+  
+}
+
+.new_micropost {
+  overflow:hidden;
 }
 
 /* boostrap customizations */
@@ -462,7 +467,7 @@ ol.detailed_post_info {
 /*Header*/  
 
 .navbar-form input {
-  margin:6px 0 6px;
+  margin-top:5px;
 }
 
 .form-horizontal {

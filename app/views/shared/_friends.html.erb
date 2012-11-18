@@ -1,0 +1,11 @@
+  <h3 id="friends">Friends</h3>
+
+  <% if @user.friends == nil %>
+    You haven't got any friends yet.
+  <%else%>
+    <div class="user_avatars">
+    <% @user.friends.each do |friend| %>
+      <%= link_to image_tag(friend.avatar.url(:thumb), class: "profile_image"), friend, {class: "test-tooltip", title: friend.name} %>
+    <% end %>
+    </div>
+  <%end%>

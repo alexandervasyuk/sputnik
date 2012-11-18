@@ -5,14 +5,23 @@ class MicropostsController < ApplicationController
   def create
     @micropost = current_user.microposts.build(params[:micropost])
     if params[:micropost][:time][0..1] == "at"
-      @micropost.time = Time.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+       @micropost.time = Time.zone.parse(params[:micropost][:time])
+      end
     else
-      @micropost.time = Chronic.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+        Chronic.time_class = Time.zone
+        @micropost.time = Chronic.parse(params[:micropost][:time])
+      end
     end
     if @micropost.save
       current_user.participate!(@micropost)
       redirect_to root_url
     else
+      if !params[:micropost][:time].empty? and !Chronic.parse(params[:micropost][:time])
+        @micropost.errors[:time].clear
+        @micropost.errors.add(:time, "needs to follow this format: 4:15 pm, tomorrow 3am, in 10 min, in 2 days, 1:14 pm 15 Nov ")
+      end
       @feed_items = current_user.future_feed
       render 'static_pages/home'
     end
@@ -35,16 +44,18 @@ class MicropostsController < ApplicationController
       return
     end
 
-    if params[:micropost][:time][0..1] == "at"
-      @micropost.time = Time.parse(params[:micropost][:time])
-    else
-      @micropost.time = Chronic.parse(params[:micropost][:time])
-    end
-
+    # if params[:micropost][:time][0..1] == "at"
+    #   @micropost.time = Time.parse(params[:micropost][:time])
+    # els
     if  !Chronic.parse(params[:micropost][:time])
-      params[:micropost][:time] = Time.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+        params[:micropost][:time] = Time.zone.parse(params[:micropost][:time])
+      end
     else
-      params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
+      Time.use_zone(user_timezone) do
+        Chronic.time_class = Time.zone
+        params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
+      end
     end
 
     if @micropost.update_attributes(params[:micropost])

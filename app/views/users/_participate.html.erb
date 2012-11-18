@@ -1,4 +1,4 @@
- 	<%= form_for(current_user.participations.build(micropost_id: feed_item.id), remote: true) do |f| %>
+ <%= form_for(current_user.participations.build(micropost_id: feed_item.id)) do |f| %>
 	<div>
 		<%= f.hidden_field :micropost_id %>
 	</div>

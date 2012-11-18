@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
     feed = []
     
     self.feed.each do |feed_item|
-      if feed_item.time.future?
+      if (feed_item.time + 180).future?
         feed << feed_item
       end
     end
@@ -113,6 +113,21 @@ class User < ActiveRecord::Base
     end
     
     return false
+  end
+
+  def friends
+    friends = []
+    friendships = Relationship.where("follower_id = :user_id and friend_status = 'FRIENDS' or followed_id = :user_id and friend_status = 'FRIENDS'", {user_id: self.id})
+
+    friendships.each do |friendship|
+      if friendship.followed_id == self.id
+        friends.append(friendship.follower)
+      else
+        friends.append(friendship.followed)
+      end
+    end
+
+    return friends  
   end
   
   def get_relationship(other_user)
