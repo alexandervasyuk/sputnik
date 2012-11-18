@@ -1,11 +1,13 @@
 <% if !current_user?(feed_item.user) %>
-	<% if feed_item.time > Time.current().beginning_of_day() %>
-		<div id="participate_form_<%=feed_item.id%>">
-		 	<% if current_user.participates?(feed_item) %>
-		 		<%= render 'users/unparticipate', feed_item: feed_item %> 
-		 	<% else %>
-		 		<%= render 'users/participate', feed_item: feed_item %> 
-		 	<% end %>
-	 	</div>
+	<% Time.use_zone(user_timezone) do %>
+		<% if feed_item.time.in_time_zone(user_timezone) > Time.current().beginning_of_day() %>
+			<div id="participate_form_<%=feed_item.id%>">
+			 	<% if current_user.participates?(feed_item) %>
+			 		<%= render 'users/unparticipate', feed_item: feed_item %> 
+			 	<% else %>
+			 		<%= render 'users/participate', feed_item: feed_item %> 
+			 	<% end %>
+		 	</div>
+	 	<% end %>
  	<% end %>
 <% end %>
