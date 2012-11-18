@@ -48,6 +48,9 @@ class MicropostsController < ApplicationController
     end
 
     if @micropost.update_attributes(params[:micropost])
+      #Micropost has been successfully updated
+      MicropostMailer.delay.changed(@micropost)
+      
       redirect_to(action:'detail', id:@micropost.id)
     else
       render 'edit'

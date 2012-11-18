@@ -5,7 +5,7 @@ class PostsController < ApplicationController
   def create
     @post = Post.create(params[:post])
     if @post.save
-      MicropostMailer.delay.replied(@post)
+      #MicropostMailer.delay.replied(@post)
       
       redirect_to :back
     else

@@ -16,8 +16,8 @@ Sputnik::Application.routes.draw do
   resources :posts, only: [:create, :destroy]
   resources :microposts, only: [:create, :destroy]
   resources :relationships, only: [:create, :update, :destroy]
-
-      
+  resources :password_resets
+  
   root to: 'static_pages#home'
 
   match '/signup',  to: 'users#new'
