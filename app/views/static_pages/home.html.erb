@@ -14,20 +14,20 @@
     <div class="span8">
     	  <script type="text/javascript">
     	  	$(function(){
-				setInterval(function(){
-					var numFeed = $('.feed_item').length
+				    setInterval(function(){
+					     var numFeed = $('.feed_item').length
 					
-					$.ajax({
-						url: '/micropost/refresh',
-						data: {num: numFeed},
-						success: function(data) {
-							if (data != "cancel"){
-						  		$('#div_feed').html(data);
-						 	}
-						 }
-					});
-				}, 10000);
-			})
+					     $.ajax({
+						    url: '/micropost/refresh',
+						    data: {num: numFeed},
+						    success: function(data) {
+							   if (data != "cancel"){
+						  	 	$('#div_feed').html(data);
+						 	   }
+						     }
+					     });
+				    }, 10000);
+			    });
     	  </script>
     	
      	  <h3>Happenings</h3>

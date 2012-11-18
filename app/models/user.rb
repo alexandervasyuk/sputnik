@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
     feed = []
     
     self.feed.each do |feed_item|
-      if feed_item.time.future?
+      if (feed_item.time + 180).future?
         feed << feed_item
       end
     end

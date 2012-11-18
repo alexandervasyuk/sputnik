@@ -28,9 +28,10 @@ class Micropost < ActiveRecord::Base
 
   private
 
-  def happened_in_the_past?
+  def happened_in_the_past? 
     if !time.nil?
-      errors.add(:time, 'Time can not be set in the past') if (time.past?)
+      (return false) if ((Time.current() - time) < 180.0)
+      errors.add(:time, 'can not be set in the past') if (time.past?)
     end
   end
   
