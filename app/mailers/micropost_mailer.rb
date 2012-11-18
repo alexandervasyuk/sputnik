@@ -2,6 +2,7 @@ class MicropostMailer < ActionMailer::Base
   def participated(participant, micropost)
     @participant = participant
     @micropost = micropost
+    
     return mail(to: micropost.user.email, from: participant.name + " via Happening <notification@happpening.com>", subject: participant.name + " is now participating in \"" + micropost.content + "\"")
   end
   

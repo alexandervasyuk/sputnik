@@ -5,11 +5,12 @@ class User < ActiveRecord::Base
   #Additional Attributes
   has_secure_password
 
-  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "default_profile.jpg",
+  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, 
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
      :processors => [:cropper],
      :storage => :s3,
-     :s3_credentials => "#{Rails.root}/config/s3.yml"
+     :s3_credentials => "#{Rails.root}/config/s3.yml",
+     default_url: "default_profile.jpg"
     
   #Associations
 
@@ -38,6 +39,8 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+  
+  validates_attachment_content_type :avatar, content_type: ['image/jpeg', 'image/png', 'image/gif']
   
   def generate_token(column)
     begin

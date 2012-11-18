@@ -12,7 +12,7 @@ class RelationshipsController < ApplicationController
     respond_with @user
   end
   
-  def update    
+  def update
     if params[:type] == 'ACCEPT'
       @user = User.find(params[:relationship][:follower_id])
       current_user.accept_friend!(@user)
@@ -20,7 +20,7 @@ class RelationshipsController < ApplicationController
       @type_and_user = [params[:type], @user, params[:func]]
       
       #Send the success mail out
-      UserMailer.delay.friend_accepted(@user, current_user)
+      #UserMailer.delay.friend_accepted(@user, current_user)
       
       respond_with @type_and_user
     elsif params[:type] == 'UNFOLLOW'

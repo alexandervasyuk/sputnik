@@ -79,7 +79,7 @@ class MicropostsController < ApplicationController
       end
       @post_items = @micropost.posts.reverse!
     else  
-      redirect_to root_url
+      redirect_to :back, :flash => { :error => "You must become friends with the user who created that event to view its details" } 
     end
   end
   

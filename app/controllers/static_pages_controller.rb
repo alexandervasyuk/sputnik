@@ -31,7 +31,7 @@ class StaticPagesController < ApplicationController
   end
   
   def crop
-    if signed_in?
+    if signed_in? and params[:file].content_type == 'image/jpeg' || params[:file].content_type == 'image/png'
       clear_temp_profile_pic
       set_temp_profile_pic(params[:file])
       
