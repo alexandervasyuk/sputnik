@@ -22,7 +22,7 @@ class MicropostsController < ApplicationController
         @micropost.errors[:time].clear
         @micropost.errors.add(:time, "needs to follow this format: 4:15 pm, tomorrow 3am, in 10 min, in 2 days, 1:14 pm 15 Nov ")
       end
-      @feed_items = current_user.future_feed
+      @feed_items = current_user.feed
       render 'static_pages/home'
     end
   end
@@ -82,7 +82,7 @@ class MicropostsController < ApplicationController
   
   #Action responsible for rendering an updated user feed
   def refresh
-    @feed_items = current_user.future_feed
+    @feed_items = current_user.feed
     
     if params[:num].to_i == @feed_items.count
       render text: "cancel"

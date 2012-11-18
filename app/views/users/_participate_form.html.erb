@@ -1,9 +1,11 @@
 <% if !current_user?(feed_item.user) %>
-	<div id="participate_form_<%=feed_item.id%>">
-	 	<% if current_user.participates?(feed_item) %>
-	 		<%= render 'users/unparticipate', feed_item: feed_item %> 
-	 	<% else %>
-	 		<%= render 'users/participate', feed_item: feed_item %> 
-	 	<% end %>
- 	</div>
+	<% if feed_item.time > Time.current().beginning_of_day() %>
+		<div id="participate_form_<%=feed_item.id%>">
+		 	<% if current_user.participates?(feed_item) %>
+		 		<%= render 'users/unparticipate', feed_item: feed_item %> 
+		 	<% else %>
+		 		<%= render 'users/participate', feed_item: feed_item %> 
+		 	<% end %>
+	 	</div>
+ 	<% end %>
 <% end %>
