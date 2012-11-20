@@ -220,7 +220,7 @@ footer {
 .edit_relationship {
   display: inline-block;
   float: right;
-  margin-top: 16px;
+  margin-top: 0px;
 }
 
 /* sidebar */
@@ -472,5 +472,12 @@ ol.detailed_post_info {
 
 .form-horizontal {
   overflow:hidden;
+}
+
+.user_info{
+  float:left;
+  h1 {
+    display:inline;
+  }
 }
 
