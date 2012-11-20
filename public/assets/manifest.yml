@@ -1,9 +1,12 @@
 ---
-Jcrop.gif: Jcrop-439599ec2f8447453c1a0ba7c9f1b229.gif
-ajax-loader.gif: ajax-loader-edb18ea7e75fc071162a25961ef24cb6.gif
-default_profile.jpg: default_profile-1911f5fc031616af88b776418bb3dfaf.jpg
-game.png: game-4f108bd785ea2dcb52cc324097929ca3.png
-application.js: application-45393b5137c38faa47920b715e533c04.js
-application.css: application-474bbe63c40fd8b39745b0adae261bbc.css
-glyphicons-halflings-white.png: glyphicons-halflings-white-13553a5bf21ae3cc374006592488ec64.png
-glyphicons-halflings.png: glyphicons-halflings-ab3144065a860d198f1d7d9a4882640c.png
+!binary "SmNyb3AuZ2lm": Jcrop-439599ec2f8447453c1a0ba7c9f1b229.gif
+!binary "YWpheC1sb2FkZXIuZ2lm": ajax-loader-edb18ea7e75fc071162a25961ef24cb6.gif
+!binary "ZGVmYXVsdF9wcm9maWxlLmpwZw==": default_profile-1911f5fc031616af88b776418bb3dfaf.jpg
+!binary "Z2FtZS5wbmc=": game-4f108bd785ea2dcb52cc324097929ca3.png
+!binary "cmFpbHMucG5n": rails-be8732dac73d845ac5b142c8fb5f9fb0.png
+!binary "YXBwbGljYXRpb24uanM=": application-45393b5137c38faa47920b715e533c04.js
+!binary "YXBwbGljYXRpb24uY3Nz": application-17a79889a8cd659b233b0a8b4839956a.css
+!binary "dW50aXRsZWQ=": !binary |-
+  dW50aXRsZWQ=
+!binary "Z2x5cGhpY29ucy1oYWxmbGluZ3Mtd2hpdGUucG5n": glyphicons-halflings-white-13553a5bf21ae3cc374006592488ec64.png
+!binary "Z2x5cGhpY29ucy1oYWxmbGluZ3MucG5n": glyphicons-halflings-ab3144065a860d198f1d7d9a4882640c.png
