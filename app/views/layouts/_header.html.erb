@@ -10,25 +10,16 @@
 			       		<%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
 					   		<%= text_field_tag('query', nil, {placeholder: "Search for friends", :class => "input-xlarge search-query", id: "header_search_bar"})%>
 				   		<% end %>
-				        <li><%= link_to "Feed", root_path %></li>
-				        <li>
+				   		<li>
 				     		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
 			          		<%= link_to text.html_safe, friend_path%>
 				        </li>
-				        <li id="fat-menu" class="dropdown">
-			          		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-					        	Account <b class="caret"></b>
-					        </a>
-					        <ul class="dropdown-menu">
-						        <li><%= link_to "Profile", current_user %></li>
-					            <li><%= link_to "Settings", edit_user_path(current_user) %></li>
-				                <li><%= link_to "Help", help_path %></li>
-				                <li class="divider"></li>
-				                <li>
-			                  		<%= link_to "Sign out", signout_path, method: "delete" %>
-					            </li>
-					        </ul>
-					    </li>
+				        <li><%= link_to "Feed", root_path %></li>
+				        <li><%= link_to "Profile", current_user %></li>
+					    <li><%= link_to "Settings", edit_user_path(current_user) %></li>
+				        <li>
+			       		<%= link_to "Sign out", signout_path, method: "delete" %>
+			            </li>
 					</ul>
 				</div>
 <% else %>

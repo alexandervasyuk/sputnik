@@ -1,4 +1,4 @@
-class MicropostMailer < ActionMailer::Base
+ class MicropostMailer < ActionMailer::Base
   def participated(participant, micropost)
     @participant = participant
     @micropost = micropost

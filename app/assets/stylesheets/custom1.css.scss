@@ -2,7 +2,7 @@
 
 body {
   padding-top:60px;
-
+  height: 100%;
 }
 
 /*@import "bootstrap-responsive";*/
@@ -21,6 +21,7 @@ $grayMediumLight: #eaeaea;
 
 html {
   overflow-y: scroll;
+  height: 100%;
 }
 
 section {
@@ -40,6 +41,10 @@ textarea {
 
 .container-fluid {
   margin:0 5%;
+}
+
+.container{
+ min-height:100%;
 }
 
 .main_content {
@@ -107,10 +112,10 @@ p {
 
 /* footer */
 
-footer {
+/*footer {
   width: inherit;
   
-  margin-top: 45px;
+  margin-top: 0px;
   padding-top: 5px;
   border-top: 1px solid $grayMediumLight;
   color: $grayLight;
@@ -133,6 +138,35 @@ footer {
   }
 }
 
+.wrapper {
+    min-height:100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -60px;
+}
+.push,
+.footer {
+    height: 60px;
+}*/
+
+#wrap {
+  min-height: 100%;
+}
+
+#main {
+  overflow:auto;
+  padding-bottom:115px; /* this needs to be bigger than footer height*/
+}
+
+.footer {
+  position: relative;
+  margin-top: -115px; /* negative value of footer height */
+  height: 60px;
+  clear:both;
+  padding-top:20px;
+}
+
+
 /* miscellaneous */
 
 .debug_dump {
@@ -152,6 +186,11 @@ footer {
   top: 0;
   left: 0;
   position: fixed;
+}
+
+.emphasize {
+  color:#08C;
+  font-weight:bold;
 }
 
 /* cropping */
@@ -289,7 +328,7 @@ aside {
 
 input, select, .uneditable-input {
   border: 1px solid #bbb;
-  width: 100;
+  width: 100%;
   padding: 10px;
   height: auto !important;
   margin-bottom: 15px;

@@ -4,6 +4,12 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <p>Thanks for participating dude</p>
+    <div class="mail-logo">
+  		<img src="logo.png">
+  	</div>
+    <p>Hey <%=@micropost.user.name%>,</p>
+    <p><%=@participant.name%> has participated in your happpening: <%= @micropost.content %></p>
+    <p>This is a no-reply email.</p>
+    <p>The Happpening team</p>
   </body>
 </html>

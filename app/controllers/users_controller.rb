@@ -18,13 +18,9 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     if @user.save
       sign_in(@user, params[:timezone])
-
       flash[:success] = "Welcome to Happpening!"
-      
       #Send the email to the newly signed up user with instructions/welcome message
-
       UserMailer.delay.signed_up(@user)
-
       redirect_to root_path
     else
       render 'users/new'
