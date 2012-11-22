@@ -1,3 +1,9 @@
+<script type="text/javascript">
+	$(function(){
+		postsUpdate(<%=micropost.id%>, "/post/refresh", '.post_item', $('#post_feed'));
+	});
+</script>
+
 <ol class="detailed_post_info">
   	<ol class="users">
   		<div class="row">
@@ -14,11 +20,14 @@
       <div class="row">
         <div class="span8">
           <h3>Replies</h3>
-        	<% if post_items.any? %>
+        	
       	  	<ol class="microposts">
-      			<%= render partial: 'microposts/post_item', collection: post_items %>
-      	  	</ol>
-          <% end %>
+      	  		<div id="post_feed">
+	      	  		<% if post_items.any? %>
+	      				<%= render partial: 'microposts/post_item', collection: post_items %>
+	      			<% end %>
+      			</div>
+  			</ol>
         </div>
       </div>
     </ol>

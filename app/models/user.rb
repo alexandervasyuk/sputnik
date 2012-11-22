@@ -151,6 +151,10 @@ class User < ActiveRecord::Base
     return false
   end
   
+  def suggested_friends
+  	query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.followed_id != 1 and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.follower_id != 1 and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
+  end
+  
   def friend_request!(other_user)
     relationships.create!(followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
   end

@@ -89,7 +89,7 @@ class MicropostsController < ApplicationController
     
     if params[:num].to_i == @feed_items.count
       render text: "cancel"
-    else  
+    else
       render partial:'shared/feed'
     end
     

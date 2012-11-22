@@ -1,5 +1,4 @@
-<%= form_for(Relationship.where(follower_id: @user.id, followed_id: current_user.id)[0],
-             remote: true) do |f| %>
+<%= form_for(Relationship.where(follower_id: @user.id, followed_id: current_user.id)[0]) do |f| %>
   <div>
   	<%= f.hidden_field :followed_id %>
   	<%= f.hidden_field :follower_id %>

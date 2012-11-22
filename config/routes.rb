@@ -36,8 +36,11 @@ Sputnik::Application.routes.draw do
   
   match '/micropost/refresh', to: 'microposts#refresh'
   
+  match '/post/refresh', to: 'posts#refresh'
+  
   match '/crop/image', to: 'static_pages#crop_image_render'
 
+  #Mobile routes
   match '/mobile/signin', to: 'mobile#signin'
   #match '/microposts/detail/:id', to: 'microposts#detail'
 

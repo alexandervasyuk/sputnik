@@ -12,22 +12,10 @@
       </section>
     </aside>
     <div class="span8">
-    	  <script type="text/javascript">
+    	  <script type="text/javascript">    	  
     	  	$(function(){
-				    setInterval(function(){
-					     var numFeed = $('.feed_item').length
-					
-					     $.ajax({
-						    url: '/micropost/refresh',
-						    data: {num: numFeed},
-						    success: function(data) {
-							   if (data != "cancel"){
-						  	 	$('#div_feed').html(data);
-						 	   }
-						     }
-					     });
-				    }, 10000);
-			    });
+    	  		ajaxUpdate('/micropost/refresh', '.feed_item', $('#div_feed'));
+			});
     	  </script>
     	
      	  <h3>Happenings</h3>

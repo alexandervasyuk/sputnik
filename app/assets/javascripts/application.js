@@ -18,6 +18,7 @@
 //= require jquery.detect_timezone
 //= require crop
 //= require detail
+//= require ajax_update
 //= require confirm_delete
 //= require bootstrap_custom
 

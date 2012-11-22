@@ -12,7 +12,7 @@
 				   		<% end %>
 				        <li><%= link_to "Feed", root_path %></li>
 				        <li>
-				     		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
+				     		<% text = "Friend Requests <span id=\"friend_requests\" class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
 			          		<%= link_to text.html_safe, friend_path%>
 				        </li>
 				        <li id="fat-menu" class="dropdown">

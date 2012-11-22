@@ -16,13 +16,14 @@ class RelationshipsController < ApplicationController
     if params[:type] == 'ACCEPT'
       @user = User.find(params[:relationship][:follower_id])
       current_user.accept_friend!(@user)
+		
+      redirect_to :back
+    elsif params[:type] == 'IGNORE'
+      relationship = Relationship.find(params[:id])
+      relationship.friend_status = "IGNORED"
+      relationship.save
       
-      @type_and_user = [params[:type], @user, params[:func]]
-      
-      #Send the success mail out
-      #UserMailer.delay.friend_accepted(@user, current_user)
-      
-      respond_with @type_and_user
+      redirect_to :back
     elsif params[:type] == 'UNFOLLOW'
       @user = User.find(params[:side])
       current_user.unfollow!(@user)
@@ -41,8 +42,7 @@ class RelationshipsController < ApplicationController
   end
 
   def destroy
-    @user = Relationship.find(params[:id]).followed
-    current_user.unfollow!(@user)
-    respond_with @user
+    Relationship.find(params[:id]).destroy
+    redirect_to :back
   end
 end
