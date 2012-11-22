@@ -1,4 +1,4 @@
-<li id="<%= post_item.id %>">
+<li id="<%= post_item.id %>" class="post_item">
   <%= link_to image_tag(post_item.user.avatar.url(:thumb), class: 'gravatar profile_image'), post_item.user %>
   <span class="user">
     <%= link_to post_item.user.name, post_item.user %>

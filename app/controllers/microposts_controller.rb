@@ -59,6 +59,9 @@ class MicropostsController < ApplicationController
     end
 
     if @micropost.update_attributes(params[:micropost])
+      #Micropost has been successfully updated
+      MicropostMailer.delay.changed(@micropost)
+      
       redirect_to(action:'detail', id:@micropost.id)
     else
       render 'edit'
@@ -76,7 +79,7 @@ class MicropostsController < ApplicationController
       end
       @post_items = @micropost.posts.reverse!
     else  
-      redirect_to root_url
+      redirect_to :back, :flash => { :error => "You must become friends with the user who created that event to view its details" } 
     end
   end
   
@@ -86,7 +89,7 @@ class MicropostsController < ApplicationController
     
     if params[:num].to_i == @feed_items.count
       render text: "cancel"
-    else  
+    else
       render partial:'shared/feed'
     end
     

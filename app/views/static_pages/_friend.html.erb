@@ -1,0 +1,11 @@
+<li id = "friend<%= friend.id %>">
+	<div>
+		<%= image_tag friend.avatar.url(:thumb), class: "profile_image_friend"%>
+		<h3 class="friend_name">
+			<%= link_to friend.name, friend%>
+		</h3>
+		<% @user = friend%>
+		<%= render partial: "users/follow_form"%>
+		<%= render "users/unfriend_form", user: @user%>
+	</div>
+</li>

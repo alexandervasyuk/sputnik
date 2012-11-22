@@ -5,8 +5,6 @@ class PostsController < ApplicationController
   def create
     @post = Post.create(params[:post])
     if @post.save
-      MicropostMailer.delay.replied(@post)
-      
       redirect_to :back
     else
       flash[:error] = 'Post can not be empty'
@@ -18,6 +16,21 @@ class PostsController < ApplicationController
   def destroy
     @post.destroy
     redirect_to :back
+  end
+  
+  #Code to handle ajax pulling requests
+  def refresh
+  	@micropost = Micropost.find(params[:id])
+  	
+  	if @micropost
+  		@post_items = @micropost.posts
+  		
+  		if params[:num].to_i == @post_items.count
+  			render text: "cancel"
+  		else
+  			render partial: 'microposts/post_item', collection: @post_items
+  		end
+  	end
   end
 
   private

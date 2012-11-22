@@ -1,9 +1,21 @@
 <% provide(:title, 'Friends')%>
 
-<ul class="users">
-	<% if @requests.any?%>
-		<%= render partial: "request", collection: @requests %>
-	<% else %>
-		<p>No friend requests to display</p>
-	<% end %>
-</ul>
+<div class="row">
+	<div class="span7">
+		<ul class="users">
+			<% if @requests.any?%>
+				<h4>Friend Requests</h4>
+				<%= render partial: "request", collection: @requests %>
+			<% end %>
+		</ul>
+		<ul class="users">
+			<h4>My Friends</h4>
+			<% if @friends.any?%>
+				<%= render partial: "friend", collection: @friends%>
+			<% end %>
+		</ul>
+	</div>
+	<div class="span5">
+		<h4>People You May Know</h4>
+	</div>
+</div>

@@ -20,6 +20,7 @@ class StaticPagesController < ApplicationController
   def friend
     if signed_in?
       @requests = current_user.received_friend_requests
+      @friends = current_user.friends
       @sent_friend_requests = current_user.sent_friend_requests      
     end
   end
@@ -31,7 +32,7 @@ class StaticPagesController < ApplicationController
   end
   
   def crop
-    if signed_in?
+    if signed_in? and params[:file].content_type == 'image/jpeg' || params[:file].content_type == 'image/png'
       clear_temp_profile_pic
       set_temp_profile_pic(params[:file])
       

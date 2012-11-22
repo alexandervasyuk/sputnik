@@ -17,4 +17,9 @@ class UserMailer < ActionMailer::Base
     
     mail(to: @requester.email, from: @requestee.name + " via Happening <notification@happpening.com>", subject: @requestee.name + " has accepted your friend request")
   end
+  
+  def password_reset(user)
+    @user = user
+    mail(to: @user.email, from: "Happening <notification@happpening.com>", subject: "Password Reset")
+  end
 end

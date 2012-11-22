@@ -5,11 +5,12 @@ class User < ActiveRecord::Base
   #Additional Attributes
   has_secure_password
 
-  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, default_url: "default_profile.jpg",
+  has_attached_file :avatar, styles: {medium: "300x300>", thumb: "52x52>"}, 
      :path => ":rails_root/public/assets/profile/:id/:style/:basename.:extension",
      :processors => [:cropper],
      :storage => :s3,
-     :s3_credentials => "#{Rails.root}/config/s3.yml"
+     :s3_credentials => "#{Rails.root}/config/s3.yml",
+     default_url: "default_profile.jpg"
     
   #Associations
 
@@ -36,8 +37,23 @@ class User < ActiveRecord::Base
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
-  validates :password, length: { minimum: 6 }, on: :create
-  validates :password_confirmation, presence: true, on: :create
+  validates :password, length: { minimum: 6 }
+  validates :password_confirmation, presence: true
+  
+  validates_attachment_content_type :avatar, content_type: ['image/jpeg', 'image/png', 'image/gif']
+  
+  def generate_token(column)
+    begin
+      self[column] = SecureRandom.urlsafe_base64
+    end while User.exists?(column => self[column])
+  end
+  
+  def send_password_reset
+    generate_token(:password_reset_token)
+    self.password_reset_sent_at = Time.zone.now
+    save!(validate:false)
+    UserMailer.delay.password_reset(self)
+  end
 
   def feed
 
@@ -72,7 +88,7 @@ class User < ActiveRecord::Base
   
   def self.text_search(query)
     if query.present?
-      where("name @@ :query", query: query)
+      search(query)
     end
   end
   
@@ -133,6 +149,10 @@ class User < ActiveRecord::Base
       end
     
     return false
+  end
+  
+  def suggested_friends
+  	query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.followed_id != 1 and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.follower_id != 1 and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
   end
   
   def friend_request!(other_user)
