@@ -17,7 +17,6 @@
     @micropost = micropost
     @creator = @micropost.user
     @participations = @micropost.participations
-    
     mails = []
     
     @participations.each do |participation|

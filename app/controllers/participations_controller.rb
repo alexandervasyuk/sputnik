@@ -9,8 +9,6 @@ class ParticipationsController < ApplicationController
 		MicropostMailer.delay.participated(current_user, @micropost)
 		
 		redirect_to :back
-		# @user_and_post = [current_user, @micropost]
-		# respond_with @user_and_post
 	end
 
 	def destroy

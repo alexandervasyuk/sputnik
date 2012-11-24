@@ -8,12 +8,7 @@
   		<img src="logo.png">
   	</div>
     <p>Hey <%=@micropost.user.name%>,</p>
-    <div>
-      <img src = "<%=@participant.avatar.url%>">
-      <span><%=@participant.name%></span>
-    </div>
-    <p><%=@participant.name%> has participated in your happpening: <%= @micropost.content %></p>
-    <p>This is a no-reply email.</p>
+    <p><strong><%=@participant.name%></strong> has participated in your happpening: <%= @micropost.content %></p>
     <p>The Happpening team</p>
   </body>
 </html>
