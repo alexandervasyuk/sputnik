@@ -21,6 +21,7 @@ class StaticPagesController < ApplicationController
     if signed_in?
       @requests = current_user.received_friend_requests
       @friends = current_user.friends
+      @suggestions = current_user.suggested_friends
       @sent_friend_requests = current_user.sent_friend_requests      
     end
   end

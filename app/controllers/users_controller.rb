@@ -3,7 +3,7 @@ class UsersController < ApplicationController
                 only: [:index, :edit, :update, :destroy, :following, :followers]
   before_filter :correct_user,   only: [:edit, :update]
   before_filter :admin_user,     only: :destroy
-
+  before_filter :not_temp, only: :show
 
   def show
     @user = User.find(params[:id])
@@ -15,13 +15,29 @@ class UsersController < ApplicationController
   end
 
   def create
+  	@tempuser = User.find_by_email(params[:user][:email])
+  	
+  	temp_created = false
+  	
     @user = User.new(params[:user])
+    if !@tempuser.nil? && @tempuser.temp
+    	@user = @tempuser
+    	@user.update_attributes(params[:user])	
+    	@user.temp = false
+    	temp_created = true
+    end
+
     if @user.save
-      sign_in(@user, params[:timezone])
+      sign_in(@user, params[:timezone])      
       flash[:success] = "Welcome to Happpening!"
-      #Send the email to the newly signed up user with instructions/welcome message
+	
       UserMailer.delay.signed_up(@user)
-      redirect_to root_path
+	
+      if temp_created
+      	redirect_to "/friend"	
+  	  else
+  		redirect_to root_path
+  	  end
     else
       render 'users/new'
     end
@@ -62,12 +78,17 @@ class UsersController < ApplicationController
 
   private
 
-    def correct_user
-      @user = User.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
-    end
-
-    def admin_user
-      redirect_to(root_url) unless current_user.admin?
-    end
+	def correct_user
+	  @user = User.find(params[:id])
+	  redirect_to(root_url) unless current_user?(@user)
+	end
+	
+	def not_temp
+		user = User.find(params[:id])
+		redirect_to root_url if user.temp
+	end
+	
+	def admin_user
+	  redirect_to(root_url) unless current_user.admin?
+	end
 end

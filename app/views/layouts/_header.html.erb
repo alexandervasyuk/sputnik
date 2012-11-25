@@ -10,8 +10,9 @@
 			       		<%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
 					   		<%= text_field_tag('query', nil, {placeholder: "Search for friends", :class => "input-xlarge search-query", id: "header_search_bar"})%>
 				   		<% end %>
-				   		<li>
-				     		<% text = "Friend Requests <span class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
+
+				        <li>
+				     		<% text = "Friends<span id=\"friend_requests\" class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
 			          		<%= link_to text.html_safe, friend_path%>
 				        </li>
 				        <li>

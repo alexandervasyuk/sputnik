@@ -215,11 +215,54 @@ li.unread {
   padding-top:20px;
 }
 
+/* Modals */
+.modal { 
+	outline: none; 
+}
+
+/* Inviting */
+.invitee {
+	margin-top: 5px;
+}
+
+.invitee_name {
+	display: inline;
+}
+
+.invite_form {
+	display: inline-block;
+	float: right
+}
+
+#emails {
+	float: left;
+	clear: left;
+	width: 65% !important;
+}
+
+#email_label {
+	float: left;
+}
+
+#email_invite_form {
+	margin-bottom: 10px;
+}
+
+#email_submit {
+	float: right;
+}
+
 
 /* miscellaneous */
 
 .friend_form {
 	display: inline;
+}
+
+#invite_button {
+	outline: none;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .debug_dump {

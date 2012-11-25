@@ -1,0 +1,5 @@
+<%= form_tag "/micropost/invite", method: "post", remote: true do %>
+	<%= hidden_field_tag :event_id, micropost.id%>
+	<%= hidden_field_tag :invitee_id, friend.id%>
+	<%= submit_tag "Invite", class: "btn"%>
+<% end %>

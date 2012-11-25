@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by_email(params[:session][:email])
     timezone = params[:session][:timezone] || params[:session][:timezone_on_signin]
-    if user && user.authenticate(params[:session][:password])
+    if user && !user.temp && user.authenticate(params[:session][:password])
       sign_in(user, timezone)
       redirect_back_or root_url
     else
