@@ -1,0 +1,9 @@
+<li id = "friend<%= suggestion.id %>">
+	<div>
+		<%= image_tag suggestion.avatar.url(:thumb), class: "profile_image_friend"%>
+		<h3 class="friend_name">
+			<%= link_to suggestion.name, suggestion%>
+		</h3>
+		<%= render "users/friend_form", user: suggestion%>
+	</div>
+</li>

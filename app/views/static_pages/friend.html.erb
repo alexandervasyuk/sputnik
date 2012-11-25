@@ -16,6 +16,11 @@
 		</ul>
 	</div>
 	<div class="span5">
-		<h4>People You May Know</h4>
+		<ul class="users">
+			<h4>People You May Know</h4>
+			<% if @suggestions.any?%>
+				<%= render partial: "suggestion", collection: @suggestions%>
+			<% end %>
+		</ul>
 	</div>
 </div>

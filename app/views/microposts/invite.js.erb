@@ -1,0 +1,4 @@
+var button = $('#invite<%= @invitee.id %> .btn')[0];
+
+$(button).attr("disabled", "disabled");
+$(button).attr("value", "Invited");

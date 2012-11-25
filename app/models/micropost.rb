@@ -1,5 +1,7 @@
 class Micropost < ActiveRecord::Base
   attr_accessible :content, :location, :time
+  serialize :invitees
+  
   belongs_to :user
 
   validates :user_id, presence: true
@@ -24,8 +26,17 @@ class Micropost < ActiveRecord::Base
     where("user_id IN (#{followed_user_ids}) OR user_id = :user_id", 
           user_id: user.id)
   end
-
-
+  
+  def add_to_invited(user)
+  	self.invitees[user.id] = 1
+  	
+  	update_attribute(:invitees, self.invitees)
+  end
+  
+  def invited(user)
+  	return !self.invitees[user.id].nil?
+  end
+  
   private
 
   def happened_in_the_past? 

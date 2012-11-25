@@ -1,9 +1,14 @@
+require 'csv'
+
 class MicropostsController < ApplicationController
   before_filter :signed_in_user
-  before_filter :correct_user,   only: :destroy
+  before_filter :correct_user, only: :destroy
+  
+  respond_to :html, :js
 
   def create
     @micropost = current_user.microposts.build(params[:micropost])
+    @micropost.invitees = {}
     if params[:micropost][:time][0..1] == "at"
       Time.use_zone(user_timezone) do
        @micropost.time = Time.zone.parse(params[:micropost][:time])
@@ -67,12 +72,69 @@ class MicropostsController < ApplicationController
       render 'edit'
     end
   end
+  
+  def invite
+  	@micropost = Micropost.find(params[:event_id])
+  	@invitee = User.find(params[:invitee_id])
+  	
+  	@micropost.add_to_invited(@invitee)
+  	
+  	MicropostMailer.delay.invited(@micropost, @invitee)
+  	
+  	respond_with @invitee
+  end
+  
+  def invite_emails
+  	@micropost = Micropost.find(params[:event_id])
+  	emails = params[:emails].parse_csv
+  	
+  	emails.each do |email|
+  		user = User.find_by_email(email)
+  		
+  		#Creates a temporary user
+  		if user.nil?
+  			user = User.new(email: email, temp:true)
+  			user.password_digest = "temporaryuser"
+  			user.save!
+  		end
+  		
+  		if !user.errors.any? && !@micropost.invited(user) && !user.participates?(@micropost)
+  			if current_user.get_relationship(user).nil?
+  				current_user.friend_request!(user)
+  			end
+  			
+  			@micropost.add_to_invited(user)
+  			
+  			MicropostMailer.delay.email_invited(@micropost, user, request.protocol, request.host, request.port)
+  		end
+  	end
+  	
+  	redirect_to :back, notice: "Invitations sent successfully!"
+  end
+  
+  def invite_redirect
+  	@user = User.find(params[:uid])
+  	@micropost = Micropost.find(params[:eid])
+  	
+  	if !@user.nil? && !@micropost.nil?
+  		if @user.temp
+  			@temp_email = @user.email
+  			flash[:message] = "Please sign up to see your invitation"
+  			render "users/new"
+  		else
+  			redirect_to detail_micropost_path(@micropost.id)
+  		end
+  	else
+  		redirect_to root_url, flash: {error: "Invalid invite"}
+  	end
+  end
 
   def detail
     @micropost = Micropost.find(params[:id])
     
     if current_user.friends?(@micropost.user)
       @post = current_user.posts.build(micropost_id:params[:id])
+      @friends = current_user.friends
       @participants = []
       @micropost.participations.each do |participation|
         @participants << User.find(participation.user_id)
@@ -97,8 +159,12 @@ class MicropostsController < ApplicationController
 
   private
 
-    def correct_user
-      @micropost = current_user.microposts.find_by_id(params[:id])
-      redirect_to root_url if @micropost.nil?
-    end
+  def correct_user
+    @micropost = current_user.microposts.find_by_id(params[:id])
+    redirect_to root_url if @micropost.nil?
+  end
+  
+  def illegal_emails
+  	redirect_to :back, :flash => { :error => "Invites were not sent because emails were not separated by commas" }
+  end 
 end

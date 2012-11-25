@@ -1,0 +1,6 @@
+<%= form_tag "/micropost/invite/emails", method: "post", id: "email_invite_form" do%>
+					  		<%= label_tag :emails, "Or enter emails", id: "email_label"%>
+					  		<%= hidden_field_tag :event_id, micropost.id%>
+					  		<%= text_field_tag :emails, nil, placeholder: "john@example.com, bob@example.com, ..."%>
+							<%= submit_tag "Send Invites", class: "btn btn-primary", id: "email_submit"%>
+					  	<% end %>

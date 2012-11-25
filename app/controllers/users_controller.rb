@@ -15,8 +15,18 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params[:user])
-    if @user.save
+  	@user = User.find_by_email(params[:user][:email])
+  	
+  	temp_created = false
+  	
+  	if @user.nil?
+    	@user = User.new(params[:user])
+    elsif @user.temp	
+    	@user.temp = false
+    	temp_created = @user.update_attributes(params[:user])
+    end
+    	
+    if @user.save || temp_created
       sign_in(@user, params[:timezone])
 
       flash[:success] = "Welcome to Happpening!"

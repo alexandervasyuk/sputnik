@@ -1,0 +1,13 @@
+<div class="invitee">
+	<%= image_tag(friend.avatar.url(:thumb), class: "profile_image") %>
+	<p class="invitee_name"><%= friend.name %></p>
+	<div id="invite<%=friend.id%>" class="invite_form">
+		<% if micropost.invitees[friend.id].nil? && !friend.participates?(micropost)%>
+				<%= render partial: 'microposts/invite_form', locals: {friend: friend, micropost: micropost}%>
+		<% elsif friend.participates?(micropost)%>
+			<input type="button" class="btn" value="Participating" disabled="disabled"></button>
+		<% else %>
+		 	<input type="button" class="btn" value="Invited" disabled="disabled"></button>
+		<% end %>
+	</div>
+</div>

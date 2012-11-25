@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121117065928) do
+ActiveRecord::Schema.define(:version => 20121124031705) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20121117065928) do
     t.datetime "updated_at", :null => false
     t.string   "location"
     t.datetime "time"
+    t.text     "invitees"
   end
 
   add_index "microposts", ["user_id", "created_at"], :name => "index_microposts_on_user_id_and_created_at"
@@ -90,6 +91,7 @@ ActiveRecord::Schema.define(:version => 20121117065928) do
     t.datetime "avatar_updated_at"
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
+    t.boolean  "temp",                   :default => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

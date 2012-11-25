@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  attr_accessible :name, :email, :password, :password_confirmation, :avatar
+  attr_accessible :name, :email, :password, :password_confirmation, :avatar, :temp
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
   
   #Additional Attributes
@@ -33,14 +33,14 @@ class User < ActiveRecord::Base
   before_save :create_remember_token
 
   #Validations
-  validates :name,  presence: true, length: { maximum: 50 }
+  validates :name,  presence: true, length: { maximum: 50 }, unless: :temp?
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
-  validates :password, length: { minimum: 6 }
-  validates :password_confirmation, presence: true
+  validates :password, length: { minimum: 6 }, unless: :temp?
+  validates :password_confirmation, presence: true, unless: :temp?
   
-  validates_attachment_content_type :avatar, content_type: ['image/jpeg', 'image/png', 'image/gif']
+  validates_attachment_content_type :avatar, content_type: ['image/jpeg', 'image/png', 'image/gif'], unless: :temp?
   
   def generate_token(column)
     begin
@@ -151,8 +151,40 @@ class User < ActiveRecord::Base
     return false
   end
   
+  #Gets a list of users that the user may know sorted by 
   def suggested_friends
-  	query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.followed_id != 1 and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.follower_id != 1 and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = 1 and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = 1 and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
+  	people_may_know_query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.followed_id != #{self.id} and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.follower_id != #{self.id} and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
+  	
+  	people_may_know = ActiveRecord::Base.connection.execute(people_may_know_query)
+  	mutual_hash = {}
+  	people_may_know.each do |result|
+  		#Interface of result {"follower_id"=>value, "followed_id"=>value}
+  		follower_id = result["follower_id"].to_i
+  		followed_id = result["followed_id"].to_i
+  		
+  		if self.friends?(User.find(follower_id))
+  			if mutual_hash[followed_id].nil?
+  				mutual_hash[followed_id] = 1
+  			elsif
+  				mutual_hash[followed_id] += 1
+  			end
+  		elsif
+  			if mutual_hash[follower_id].nil?
+  				mutual_hash[follower_id] = 1
+  			elsif
+  				mutual_hash[follower_id] += 1
+  			end
+  		end
+  	end
+  	
+  	mutual_array = mutual_hash.sort.reverse
+  	
+  	mutual_users = []
+  	mutual_array.each do |keyvalue|
+  		mutual_users << User.find(keyvalue[0])
+  	end
+  	
+  	return mutual_users
   end
   
   def friend_request!(other_user)
@@ -270,5 +302,9 @@ class User < ActiveRecord::Base
   
   def reprocess_avatar
     avatar.reprocess!
+  end
+  
+  def temp?
+  	return self.temp
   end
 end

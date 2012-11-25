@@ -1,3 +1,5 @@
+require 'socket'
+
 class MicropostMailer < ActionMailer::Base
   def participated(participant, micropost)
     @participant = participant
@@ -29,5 +31,24 @@ class MicropostMailer < ActionMailer::Base
     end
     
     return mails
+  end
+  
+  def invited(micropost, user)
+  	@micropost = micropost
+  	@user = user
+  	@inviter = @micropost.user
+
+  	return mail(to: @user.email, from: @inviter.name + " via Happening <notification@happpening.com>", subject: @inviter.name + " has invited you to \"" + @micropost.content + "\"")
+  end
+  
+  def email_invited(micropost, user, protocol, host, port)
+  	@micropost = micropost
+  	@creator = @micropost.user
+  	@user = user
+  	@protocol = protocol
+  	@host = host
+  	@port = port
+  	
+  	return mail(to: user.email, from: @creator.name + " via Happening <notification@happpening.com>", subject: @creator.name + " has invited you to participate in \"" + @micropost.content + "\"")
   end
 end

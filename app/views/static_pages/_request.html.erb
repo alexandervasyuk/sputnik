@@ -4,8 +4,7 @@
 		<h3 class="friend_name">
 			<%= link_to request.name, request%>
 		</h3>
-		<%= form_for(Relationship.where(follower_id: request.id, followed_id: current_user.id)[0], 
-					remote: true, class: 'accept_form') do |f|%>
+		<%= form_for(Relationship.where(follower_id: request.id, followed_id: current_user.id)[0], class: 'accept_form') do |f|%>
 			<div>
 				<%= f.hidden_field :followed_id %>
 	  			<%= f.hidden_field :follower_id %>
