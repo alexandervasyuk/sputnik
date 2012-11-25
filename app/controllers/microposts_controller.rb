@@ -111,23 +111,6 @@ class MicropostsController < ApplicationController
   	
   	redirect_to :back, notice: "Invitations sent successfully!"
   end
-  
-  def invite_redirect
-  	@user = User.find(params[:uid])
-  	@micropost = Micropost.find(params[:eid])
-  	
-  	if !@user.nil? && !@micropost.nil?
-  		if @user.temp
-  			@temp_email = @user.email
-  			flash[:message] = "Please sign up to see your invitation"
-  			render "users/new"
-  		else
-  			redirect_to detail_micropost_path(@micropost.id)
-  		end
-  	else
-  		redirect_to root_url, flash: {error: "Invalid invite"}
-  	end
-  end
 
   def detail
     @micropost = Micropost.find(params[:id])

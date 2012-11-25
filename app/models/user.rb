@@ -153,7 +153,7 @@ class User < ActiveRecord::Base
   
   #Gets a list of users that the user may know sorted by 
   def suggested_friends
-  	people_may_know_query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.followed_id != #{self.id} and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.follower_id != #{self.id} and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
+  	people_may_know_query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' and not u1.temp or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.followed_id != #{self.id} and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS' or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.follower_id != #{self.id} and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
   	
   	people_may_know = ActiveRecord::Base.connection.execute(people_may_know_query)
   	mutual_hash = {}
@@ -168,7 +168,7 @@ class User < ActiveRecord::Base
   			elsif
   				mutual_hash[followed_id] += 1
   			end
-  		elsif
+  		else self.friends?(User.find(followed_id))
   			if mutual_hash[follower_id].nil?
   				mutual_hash[follower_id] = 1
   			elsif
@@ -177,7 +177,13 @@ class User < ActiveRecord::Base
   		end
   	end
   	
+  	print "asdfasdfasdf"
+  	print mutual_hash
+  	
   	mutual_array = mutual_hash.sort.reverse
+  	
+  	print "asdfasdfasdf"
+  	print mutual_array
   	
   	mutual_users = []
   	mutual_array.each do |keyvalue|
