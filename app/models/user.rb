@@ -266,6 +266,11 @@ class User < ActiveRecord::Base
     return mutual_participations
   end
 
+  #Notifications methods
+  def num_unread_notifications
+    self.notifications.where("read = false").count
+  end
+
   private
   def create_remember_token
     self.remember_token = SecureRandom.urlsafe_base64

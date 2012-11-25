@@ -117,6 +117,48 @@ p {
   width: 200px;
 }
 
+/*notifications*/
+.notifications {
+  font-size:0.8em;
+  list-style: none;
+  margin: 10px 0 0 0;
+  cursor:pointer;
+
+  a {
+      color:#000;
+      &:hover {
+        text-decoration:none;
+      }
+  }
+  
+  li {
+    padding: 10px;
+    border-top: 1px solid #e8e8e8;
+    position: relative;
+
+    &:hover {
+      background-color: $grayLighter;
+    }
+    transition: 0.3s;
+    -moz-transition: 0.3s; /* Firefox 4 */
+    -webkit-transition: 0.3s; /* Safari and Chrome */
+    -o-transition: 0.3s; /* Opera */
+  }
+}
+
+li.unread {
+  font-weight: bold;
+}
+
+.popover-content {
+  padding-top:0;
+}
+
+.notifications a:first-child li {
+  border-top:none;
+  padding-top:0;
+}
+
 /* footer */
 
 /*footer {

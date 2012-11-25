@@ -6,6 +6,6 @@ class CreateNotifications < ActiveRecord::Migration
     	t.string :message
       t.timestamps
     end
-    add_index :posts, :user_id
+    add_index :notifications, :user_id
   end
 end
