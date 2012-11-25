@@ -14,7 +14,7 @@
     <div class="span8">
     	  <script type="text/javascript">    	  
     	  	$(function(){
-    	  		ajaxUpdate('/micropost/refresh', '.feed_item', $('#div_feed'));
+    	  		setTimeout(ajaxUpdate('/micropost/refresh', '.feed_item', $('#div_feed')), 10000);
 			});
     	  </script>
     	
