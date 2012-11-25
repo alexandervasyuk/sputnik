@@ -4,9 +4,11 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <div>
-    	<img src = "<%=@participant.avatar.url%>">
-    	<span><%=@participant.name%></span>
-    </div>
+    <div class="mail-logo">
+  		<img src="logo.png">
+  	</div>
+    <p>Hey <%=@micropost.user.name%>,</p>
+    <p><strong><%=@participant.name%></strong> has participated in your happpening: <%= @micropost.content %></p>
+    <p>The Happpening team</p>
   </body>
 </html>

@@ -44,6 +44,9 @@ Sputnik::Application.routes.draw do
   
   match '/crop/image', to: 'static_pages#crop_image_render'
 
+  #Notification update unread to read
+  match '/notifications/update_read', to: 'notifications#update_read'
+
   #Mobile routes
   match '/mobile/signin', to: 'mobile#signin'
   #match '/microposts/detail/:id', to: 'microposts#detail'

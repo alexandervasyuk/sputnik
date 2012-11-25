@@ -20,7 +20,7 @@ class UsersController < ApplicationController
   	temp_created = false
   	
     @user = User.new(params[:user])
-    if @tempuser.temp
+    if !@tempuser.nil? && @tempuser.temp
     	@user = @tempuser
     	@user.update_attributes(params[:user])	
     	@user.temp = false
@@ -34,7 +34,6 @@ class UsersController < ApplicationController
       UserMailer.delay.signed_up(@user)
 	
       if temp_created
-      	print "qqqqqq"
       	redirect_to "/friend"	
   	  else
   		redirect_to root_path

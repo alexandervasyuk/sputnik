@@ -22,6 +22,29 @@
 //= require confirm_delete
 //= require bootstrap_custom
 
+clicked = false;
 
+$(function () { 
+
+	$("#notification").popover({html:true, placement: 'bottom'}).click(function(){
+		notifications_ids = []
+		$.each($('.notification_item'), function(key,value) { notifications_ids.push(value.id) })
+		$.ajax({
+		    url: '/notifications/update_read',
+		    data: { ids: notifications_ids },
+		    success: function(data) {
+		    }
+	    });
+		    
+		$('#notification').attr('data-content', $('#notification').attr('data-content').replace('unread', ''));
+		$('.notification-badge').replaceWith('<span class="notification-badge badge badge-inverse">0</span>');
+	});
+
+	$('#settings').tooltip();
+	$('#signout').tooltip();
+	$('#my-profile').tooltip();
+	$('#feed').tooltip();
+
+}); 
 
 

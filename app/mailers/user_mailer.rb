@@ -1,7 +1,7 @@
 class UserMailer < ActionMailer::Base
   def signed_up(user)
     @user = user
-    mail(to: user.email, from: "\"Happening\" <notification@happpening.com>", subject: "Welcome to Happening")
+    mail(to: user.email, from: "\"Happpening\" <notification@happpening.com>", subject: "Welcome to Happpening")
   end
   
   def friend_requested(requester, requestee)

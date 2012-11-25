@@ -1,6 +1,6 @@
 <script type="text/javascript">
 	$(function(){
-		postsUpdate(<%=micropost.id%>, "/post/refresh", '.post_item', $('#post_feed'));
+		setTimeout(postsUpdate(<%=micropost.id%>, "/post/refresh", '.post_item', $('#post_feed')), 5000);
 	});
 </script>
 

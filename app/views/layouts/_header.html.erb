@@ -10,25 +10,24 @@
 			       		<%= form_tag("/search", {class: 'navbar-search pull-left', id: 'header_search'}) do%>
 					   		<%= text_field_tag('query', nil, {placeholder: "Search for friends", :class => "input-xlarge search-query", id: "header_search_bar"})%>
 				   		<% end %>
-				        <li><%= link_to "Feed", root_path %></li>
+
 				        <li>
 				     		<% text = "Friends<span id=\"friend_requests\" class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
 			          		<%= link_to text.html_safe, friend_path%>
 				        </li>
-				        <li id="fat-menu" class="dropdown">
-			          		<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-					        	Account <b class="caret"></b>
-					        </a>
-					        <ul class="dropdown-menu">
-						        <li><%= link_to "Profile", current_user %></li>
-					            <li><%= link_to "Settings", edit_user_path(current_user) %></li>
-				                <li><%= link_to "Help", help_path %></li>
-				                <li class="divider"></li>
-				                <li>
-			                  		<%= link_to "Sign out", signout_path, method: "delete" %>
-					            </li>
-					        </ul>
+				        <li>
+				       		<% text = "Notifications <span class='notification-badge badge badge-inverse'>" + current_user.num_unread_notifications.to_s + "</span>"%>
+				       		<%= link_to(text.html_safe, '#', id:"notification", rel:'popover', :title => "Notifications", "data-content" => gather_notifications(current_user)) %>
+				    	</li>
+				        <li><%= link_to content_tag(:i, nil, class:"icon-list icon-white"), root_path, id:"feed", rel:"tooltip", "data-placement"=>"bottom", "data-original-title"=>"Feed" %>
 					    </li>
+				        <li><%= link_to content_tag(:i, nil, class:"icon-user icon-white"), current_user, id:"my-profile", rel:"tooltip", "data-placement"=>"bottom", "data-original-title"=>"My Profile" %>
+					    </li>
+					    <li><%= link_to content_tag(:i, nil, class:"icon-wrench icon-white"), edit_user_path(current_user), id:"settings", rel:"tooltip", "data-placement"=>"bottom", "data-original-title"=>"Settings" %>
+					    </li>
+				        <li>
+			       		<%= link_to content_tag(:i, nil, class:"icon-off icon-white"), signout_path, method: "delete", id:"signout", rel:"tooltip", "data-placement"=>"bottom", "data-original-title"=>"Signout" %>
+			            </li>
 					</ul>
 				</div>
 <% else %>
