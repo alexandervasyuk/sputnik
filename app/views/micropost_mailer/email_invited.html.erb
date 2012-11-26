@@ -4,7 +4,6 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <p>You have been invited</p>
-    <a href="<%= @protocol.to_s + @host.to_s + ":" + @port.to_s + "/micropost/email/invite" + "?uid=#{@user.id}&eid=#{@micropost.id}" %>">asdf</a>
+    <p>You have been <a href="<%= @protocol.to_s + @host.to_s + ":" + @port.to_s + "/micropost/email/invite" + "?uid=#{@user.id}&eid=#{@micropost.id}" %>">invited</a></p>
   </body>
 </html>

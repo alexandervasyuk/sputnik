@@ -79,6 +79,7 @@ class MicropostsController < ApplicationController
   	@invitee = User.find(params[:invitee_id])
   	
   	@micropost.add_to_invited(@invitee)
+
     #Creating a notification
     creator_id = @invitee.id
     message = User.find(@micropost.user_id).name + " invited you to '" + @micropost.content + "' happpening."
@@ -104,6 +105,7 @@ class MicropostsController < ApplicationController
   			user.save!
   		end
   		
+  		#Only invite users that are not currently invited and not participating
   		if !user.errors.any? && !@micropost.invited(user) && !user.participates?(@micropost)
   			if current_user.get_relationship(user).nil?
   				current_user.friend_request!(user)

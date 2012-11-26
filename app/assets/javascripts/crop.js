@@ -1,12 +1,36 @@
 var jcrop_api = null;
 
-$(function(){
+$(document).ready(function(){
 	$('#profile_image').click(displayOverlay);
-	
 	$('#overlay').click(closeOverlay);
 	
 	$('.test-tooltip').tooltip();
+	
+	$('.btn-loading').unbind('click');
+	$('.btn-loading').click(setLoadingText);
 });
+
+function setLoadingText(){
+	$(this).attr('value', $(this).attr('data-loading-text'));
+	$(this).attr('disabled', 'disabled');
+	$(this).closest('form').submit();
+}
+
+
+function clearFileInput(){ 
+    var oldInput = document.getElementById("fileinput"); 
+     
+    var newInput = document.createElement("input"); 
+     
+    newInput.type = "file"; 
+    newInput.id = oldInput.id; 
+    newInput.name = oldInput.name; 
+    newInput.className = oldInput.className; 
+    newInput.style.cssText = oldInput.style.cssText; 
+    // copy any other relevant attributes 
+     
+    oldInput.parentNode.replaceChild(newInput, oldInput); 
+}
 
 function displayOverlay(){
 	$('#overlay').show();
@@ -24,6 +48,13 @@ function closeOverlay(){
 	
 	$('#image_area').hide();
 	$('#file_selection').show();
+	
+	$('#image_crop_upload').attr('value', 'Upload');
+	$('#image_crop_upload').removeAttr('disabled');
+	$('#crop_btn').attr('value', 'Crop');
+	$('#crop_btn').removeAttr('disabled');
+	
+	clearFileInput();
 }
 
 function switchToCropDisplay(){
