@@ -19,6 +19,7 @@
 //= require crop
 //= require detail
 //= require ajax_update
+//= require mousewheel
 //= require confirm_delete
 //= require bootstrap_custom
 
@@ -27,6 +28,14 @@ clicked = false;
 $(function () { 
 
 	$("#notification").popover({html:true, placement: 'bottom'}).click(function(){
+		var menu = $('.popover-content');
+
+		menu.on('mousewheel', function(e, d) {
+		    if((this.scrollTop === (menu[0].scrollHeight - menu.height()) && d < 0) || (this.scrollTop === 0 && d > 0)) {
+		        e.preventDefault();
+		    }
+		});
+
 		notifications_ids = []
 		$.each($('.notification_item'), function(key,value) { notifications_ids.push(value.id) })
 		$.ajax({

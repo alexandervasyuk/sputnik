@@ -152,6 +152,8 @@ li.unread {
 
 .popover-content {
   padding-top:0;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .notifications a:first-child li {
