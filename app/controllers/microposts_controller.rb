@@ -78,7 +78,6 @@ class MicropostsController < ApplicationController
   	@invitee = User.find(params[:invitee_id])
   	
   	@micropost.add_to_invited(@invitee)
-  	
   	MicropostMailer.delay.invited(@micropost, @invitee)
   	
   	respond_with @invitee
@@ -98,6 +97,7 @@ class MicropostsController < ApplicationController
   			user.save!
   		end
   		
+  		#Only invite users that are not currently invited and not participating
   		if !user.errors.any? && !@micropost.invited(user) && !user.participates?(@micropost)
   			if current_user.get_relationship(user).nil?
   				current_user.friend_request!(user)

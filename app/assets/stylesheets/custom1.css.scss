@@ -327,6 +327,15 @@ li.unread {
   cursor: pointer;
 }
 
+.profile_image_default {
+	width: 75px;
+	height: 75px;
+}
+
+.profile_image_link {
+	display: inline-block;
+}
+
 .profile_image_friend {
   width: 75px;
   height: 75px;
