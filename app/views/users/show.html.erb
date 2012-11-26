@@ -23,8 +23,8 @@
      </section>
   </aside>
   <div class="span8">
-    <h3> <%=@user.name%>'s  happpenings </h3>
-    <% if @user.participations.any? %>
+    <h3> <%=@user.name%>'s  happenings </h3>
+    <% if @user.participations.any? && (@user == current_user || @user.friends?(current_user))%>
       <ol class="microposts">
         <%= render partial: 'shared/feed_item', collection: @user.followed_posts, as:'feed_item' %>
       </ol>
