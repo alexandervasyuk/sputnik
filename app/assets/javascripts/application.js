@@ -24,8 +24,6 @@
 //= require confirm_delete
 //= require bootstrap_custom
 
-clicked = false;
-
 $(function () { 
 
 	$("#notification").popover({html:true, placement: 'bottom'}).click(function(){
@@ -46,12 +44,12 @@ $(function () {
 		$('.notification-badge').replaceWith('<span class="notification-badge badge badge-inverse">0</span>');
 
 	});
-
+	$('#notification').tooltip();
 	$('#settings').tooltip();
 	$('#signout').tooltip();
 	$('#my-profile').tooltip();
 	$('#feed').tooltip();
-	$("#notification").tooltip();
+	
 
 }); 
 
