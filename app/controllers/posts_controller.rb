@@ -9,7 +9,7 @@ class PostsController < ApplicationController
     if @post.save
       #Creating a notification
       creator_id = Micropost.find(@post.micropost_id).user_id
-      message = current_user.name + " replied to your '" + Micropost.find(@post.micropost_id).content + "' happening."
+      message = current_user.name + " replied to your '" + Micropost.find(@post.micropost_id).content + "' happpening."
       link = detail_micropost_path(@post.micropost_id)
       create_notification(creator_id, message, link)  
       redirect_to :back

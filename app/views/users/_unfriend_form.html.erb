@@ -1,3 +1,1 @@
-<%= form_for(Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {followed_id: current_user.id, follower_id: user.id})[0], html: {method: 'delete'}) do |f| %>
-  <%= f.submit "Unfriend", class: "btn btn-danger btn-large" %>
-<% end %>
+<%= link_to 'Unfriend' , Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {followed_id: current_user.id, follower_id: user.id})[0], method: 'delete', confirm: "Are you sure you want to unfriend this person?", class: "btn btn-danger pull-right"%>

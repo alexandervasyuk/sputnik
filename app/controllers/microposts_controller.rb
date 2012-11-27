@@ -1,6 +1,7 @@
 require 'csv'
 
 class MicropostsController < ApplicationController
+  include NotificationsHelper
   before_filter :signed_in_user
   before_filter :correct_user, only: :destroy
   
@@ -78,6 +79,13 @@ class MicropostsController < ApplicationController
   	@invitee = User.find(params[:invitee_id])
   	
   	@micropost.add_to_invited(@invitee)
+
+    #Creating a notification
+    creator_id = @invitee.id
+    message = User.find(@micropost.user_id).name + " invited you to '" + @micropost.content + "' happpening."
+    link = detail_micropost_path(@micropost.id)
+    create_notification(creator_id, message, link)  
+
   	MicropostMailer.delay.invited(@micropost, @invitee)
   	
   	respond_with @invitee
