@@ -55,7 +55,7 @@ function closeOverlay(){
 	$('#crop_btn').attr('value', 'Crop');
 	$('#crop_btn').removeAttr('disabled');
 	
-	clearFileInput();
+	//clearFileInput();
 }
 
 function switchToCropDisplay(){
