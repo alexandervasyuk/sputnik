@@ -40,6 +40,10 @@ Sputnik::Application.configure do
     :password       => "Jr:)(gluT",
     :authentication => :plain
   }
+  
+  config.after_initialize do 
+    Delayed::Job.scaler = :heroku_cedar
+  end
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
