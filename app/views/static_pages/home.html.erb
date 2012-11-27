@@ -32,21 +32,21 @@
      <h2 id="front_header">What's happpening?</h2>
       <div class="graphic">
         <%= image_tag 'graphic.jpg' %>
-        <div class="row-fluid">
-        <%= link_to "Sign up &raquo".html_safe, 'users/new', class:"btn btn-primary btn-large span4 offset4 sign_up_button", id:"sign_up_button"%>
-        </div>
       </div>
       <div class="row-fluid">
         <div class="span4">
           <h2>What, where, when &rarr; Create</h2>
-          <p>Everything we do, we believe in getting straight to the point. No clutter, just events.</p>
+          <p class="front-text">Everything we do, we believe in getting straight to the point. No clutter, just events.</p>
         </div>
         <div class="span4">
           <h2>Pick a happpening and participate</h2>
-          <p>With Happpening, it's a different day every day. And every day is better, just by virtue of being different. </p>
+          <p class="front-text">With Happpening, it's a different day every day. And every day is better, just by virtue of being different. </p>
        </div>
         <div class="span4">
           <h2>Make it happpen</h2>
+          <p>
+          <%= link_to "Sign up &raquo".html_safe, 'users/new', class:"btn btn-primary btn-large offset4 sign_up_button", id:"sign_up_button"%>
+          </p>
         </div>
       </div>
     </div>

@@ -190,7 +190,7 @@ class User < ActiveRecord::Base
   	
   	mutual_users = []
   	mutual_array.each do |keyvalue|
-  		mutual_users << User.find(keyvalue[0])
+  		mutual_users << User.find(keyvalue[0]) if keyvalue[1] > 1
   	end
   	
   	return mutual_users
