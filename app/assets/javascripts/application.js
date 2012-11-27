@@ -19,12 +19,9 @@
 //= require stop_scroll
 //= require crop
 //= require detail
-//= require ajax_update
 //= require mousewheel
 //= require confirm_delete
 //= require bootstrap_custom
-
-clicked = false;
 
 $(function () { 
 
@@ -44,12 +41,14 @@ $(function () {
 		    
 		$('#notification').attr('data-content', $('#notification').attr('data-content').replace('unread', ''));
 		$('.notification-badge').replaceWith('<span class="notification-badge badge badge-inverse">0</span>');
-	});
 
+	});
+	$('#notification').tooltip();
 	$('#settings').tooltip();
 	$('#signout').tooltip();
 	$('#my-profile').tooltip();
 	$('#feed').tooltip();
+	
 
 }); 
 

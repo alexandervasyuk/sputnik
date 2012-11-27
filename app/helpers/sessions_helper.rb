@@ -34,6 +34,7 @@ module SessionsHelper
     clean_up
     
     current_user = nil
+    cookies.delete(:return_to)
     cookies.delete(:remember_token)
     cookies.delete(:timezone)
   end
