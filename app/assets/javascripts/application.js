@@ -47,12 +47,14 @@ $(function () {
 		    
 		$('#notification').attr('data-content', $('#notification').attr('data-content').replace('unread', ''));
 		$('.notification-badge').replaceWith('<span class="notification-badge badge badge-inverse">0</span>');
+
 	});
 
 	$('#settings').tooltip();
 	$('#signout').tooltip();
 	$('#my-profile').tooltip();
 	$('#feed').tooltip();
+	$("#notification").tooltip();
 
 }); 
 
