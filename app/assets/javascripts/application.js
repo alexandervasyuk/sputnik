@@ -19,7 +19,6 @@
 //= require stop_scroll
 //= require crop
 //= require detail
-//= require ajax_update
 //= require mousewheel
 //= require confirm_delete
 //= require bootstrap_custom
