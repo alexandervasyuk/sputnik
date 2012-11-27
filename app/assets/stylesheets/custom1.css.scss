@@ -340,16 +340,13 @@ li.unread {
 }
 
 /* user profile */
-#profile_image {
-  width: 75px;
-  height: 75px;
-  
-  cursor: pointer;
-}
-
 .profile_image_default {
 	width: 75px;
 	height: 75px;
+}
+
+#change_profile_image {
+	margin-bottom: 15px;
 }
 
 .profile_image_link {

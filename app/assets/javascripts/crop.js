@@ -2,6 +2,7 @@ var jcrop_api = null;
 
 $(document).ready(function(){
 	$('#profile_image').click(displayOverlay);
+	$('#change_profile_image').click(displayOverlay);
 	$('#overlay').click(closeOverlay);
 	
 	$('.test-tooltip').tooltip();

@@ -3,6 +3,8 @@
 
 <div class="row">
   <div class="span6 offset3">
+  	 <button id="change_profile_image" class="btn btn-primary">Change Profile Image</button>
+  	 <%= render partial: "shared/image_crop"%>
  	 <%= form_for(@user) do |f| %>
       <%= render 'shared/error_messages', object: f.object %>
 
