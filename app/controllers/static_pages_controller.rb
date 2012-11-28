@@ -66,4 +66,11 @@ class StaticPagesController < ApplicationController
     end
   end
   
+  def terms_conditions
+  
+  end
+  
+  def privacy
+  	
+  end
 end

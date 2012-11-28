@@ -1,4 +1,4 @@
-/*function ajaxUpdate(postUrl, dataClass, replaceDiv){
+function ajaxUpdate(postUrl, dataClass, replaceDiv){
     setInterval(function(){
     	var numData = $(dataClass).length;
     	
@@ -28,4 +28,4 @@ function postsUpdate(micropostId, postUrl, dataClass, replaceDiv){
 			}
 		});
 	}, 10000);
-}*/
+}
