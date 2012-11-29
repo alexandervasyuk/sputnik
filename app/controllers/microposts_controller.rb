@@ -98,6 +98,8 @@ class MicropostsController < ApplicationController
   	
   	#Loop through the emails the user provides
   	emails.each do |email|
+  		email.strip!
+  		
   		print "asdfasdfasdfasdfasdf"
   		print "email: #{email}"
   		print "asdfasdfasdfasdfasdf"
