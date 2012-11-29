@@ -28,6 +28,8 @@ Sputnik::Application.routes.draw do
   match '/friend', to: 'static_pages#friend'
   match '/about',   to: 'static_pages#about'
   match '/contact', to: 'static_pages#contact'
+  match '/terms', to: 'static_pages#terms_conditions'
+  match '/privacy', to: 'static_pages#privacy'
   
   match '/search', to: 'static_pages#search'
   

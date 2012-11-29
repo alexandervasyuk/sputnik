@@ -165,13 +165,13 @@ class User < ActiveRecord::Base
   		follower_id = result["follower_id"].to_i
   		followed_id = result["followed_id"].to_i
   		
-  		if self.friends?(User.find(follower_id))
+  		if self.friends?(User.find(follower_id)) && self.get_relationship(User.find(followed_id)).nil?
   			if mutual_hash[followed_id].nil?
   				mutual_hash[followed_id] = 1
   			elsif
   				mutual_hash[followed_id] += 1
   			end
-  		else self.friends?(User.find(followed_id))
+  		else self.friends?(User.find(followed_id)) && self.get_relationship(User.find(follower_id)).nil?
   			if mutual_hash[follower_id].nil?
   				mutual_hash[follower_id] = 1
   			elsif
