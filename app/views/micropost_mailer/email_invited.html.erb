@@ -4,6 +4,13 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <p>You have been <a href="<%= @protocol.to_s + @host.to_s + ":" + @port.to_s + "/micropost/email/invite" + "?uid=#{@user.id}&eid=#{@micropost.id}" %>">invited</a></p>
+  	<% if @user.name.nil? %>
+  		<p>Hey!</p>
+  	<% else %>
+  		<p>Hey! <%= @user.name%></p>
+    <% end %>	
+    <p><%=@creator.name%> has invited you to: <a href="<%= @protocol.to_s + @host.to_s + ":" + @port.to_s + "/micropost/email/invite" + "?uid=#{@user.id}&eid=#{@micropost.id}" %>"> '<%=@micropost.content%>' </a> via happpening.com</p>
+    <p>The Happpening team</p>
+
   </body>
 </html>

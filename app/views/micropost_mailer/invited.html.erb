@@ -4,7 +4,8 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <p><%=@inviter.name%> has invited you to '<%=@micropost.content%>' happpening</p>
+  	<p> Hey <%=@user.name%>!</p>
+    <p><%=@inviter.name%> has invited you to: <a href='http://happpening.com/microposts/<%=@micropost.id%>/detail'> '<%=@micropost.content%>'</a> via happpening.com</p>
     <p>The Happpening team</p>
   </body>
 </html>
