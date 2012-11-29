@@ -78,15 +78,16 @@ class MicropostsController < ApplicationController
   	@micropost = Micropost.find(params[:event_id])
   	@invitee = User.find(params[:invitee_id])
   	
-  	@micropost.add_to_invited(@invitee)
-
-    #Creating a notification
-    creator_id = @invitee.id
-    message = User.find(@micropost.user_id).name + " invited you to '" + @micropost.content + "' happpening."
-    link = detail_micropost_path(@micropost.id)
-    create_notification(creator_id, message, link)  
-
-  	MicropostMailer.delay.invited(@micropost, @invitee)
+  	if !@micropost.invited(@invitee) && !@invitee.participates?(@micropost)
+	  	@micropost.add_to_invited(@invitee)
+	
+	    #Creating a notification
+	    creator_id = @invitee.id
+	    message = User.find(@micropost.user_id).name + " invited you to '" + @micropost.content + "' happpening."
+	    link = detail_micropost_path(@micropost.id)
+	    create_notification(creator_id, message, link)
+	  	MicropostMailer.delay.invited(@micropost, @invitee)
+  	end
   	
   	respond_with @invitee
   end
@@ -95,7 +96,9 @@ class MicropostsController < ApplicationController
   	@micropost = Micropost.find(params[:event_id])
   	emails = params[:emails].parse_csv
   	
+  	#Loop through the emails the user provides
   	emails.each do |email|
+  		#Attempt to find the user in our system with the given email
   		user = User.find_by_email(email)
   		
   		#Creates a temporary user
@@ -105,7 +108,7 @@ class MicropostsController < ApplicationController
   			user.save!
   		end
   		
-  		#Only invite users that are not currently invited and not participating
+  		#Only invite users that are valid emails and not currently invited and not participating
   		if !user.errors.any? && !@micropost.invited(user) && !user.participates?(@micropost)
   			if current_user.get_relationship(user).nil?
   				current_user.friend_request!(user)
