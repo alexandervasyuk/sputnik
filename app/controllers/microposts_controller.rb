@@ -94,7 +94,7 @@ class MicropostsController < ApplicationController
   
   def invite_emails
   	@micropost = Micropost.find(params[:event_id])
-  	emails = params[:emails].parse_csv
+  	emails = params[:emails].split(",")
   	
   	#Loop through the emails the user provides
   	emails.each do |email|
