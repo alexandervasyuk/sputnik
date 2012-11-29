@@ -179,14 +179,7 @@ class User < ActiveRecord::Base
   			end
   		end
   	end
-  	
-  	print "asdfasdfasdf"
-  	print mutual_hash
-  	
   	mutual_array = mutual_hash.sort.reverse
-  	
-  	print "asdfasdfasdf"
-  	print mutual_array
   	
   	mutual_users = []
   	mutual_array.each do |keyvalue|
