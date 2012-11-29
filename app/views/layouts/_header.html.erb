@@ -27,8 +27,7 @@
 				   		<% end %>
 
 				        <li>
-				     		<% text = "Friends <span id=\"friend_requests\" class=\"badge badge-inverse\">" + current_user.num_received_friend_requests.to_s + "</span>"%>
-			          		<%= link_to text.html_safe, friend_path%>
+			          		<%= link_to "Friends", friend_path%>
 				        </li>
 					</ul>
 				</div>

@@ -8,7 +8,7 @@
   		<img src="logo.png">
   	</div>
     <p>Hey <%=@micropost.user.name%>,</p>
-    <p><strong><%=@participant.name%></strong> has participated in your happpening: <%= @micropost.content %></p>
+    <p><strong><%=@participant.name%></strong> has participated in your happpening: <a href='http://happpening.com/microposts/<%=@micropost.id%>/detail'> '<%=@micropost.content%>'</a> via happpening.com</p>
     <p>The Happpening team</p>
   </body>
 </html>
