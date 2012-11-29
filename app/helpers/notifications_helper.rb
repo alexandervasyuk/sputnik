@@ -1,7 +1,7 @@
 module NotificationsHelper
 	def gather_notifications(current_user) 
 	  	html_output = "<ul class='notifications'>"
-	  	current_user.notifications.each do |n|
+	  	current_user.notifications.order('created_at DESC').each do |n|
 	  		if n.read == false
 	  			html_output += "<a href='"+ n.link + "'>" + "<li id='" + n.id.to_s + "' class='unread notification_item'>" + n.message + "</li>" + "</a>"
 	  		else
