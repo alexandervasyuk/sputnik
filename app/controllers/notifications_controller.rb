@@ -5,4 +5,8 @@ class NotificationsController < ApplicationController
 		end
 		render text: params[:ids]
 	end
+	
+	def ajax_update
+		
+	end
 end

@@ -100,10 +100,6 @@ class MicropostsController < ApplicationController
   	emails.each do |email|
   		email.strip!
   		
-  		print "asdfasdfasdfasdfasdf"
-  		print "email: #{email}"
-  		print "asdfasdfasdfasdfasdf"
-  		
   		#Attempt to find the user in our system with the given email
   		user = User.find_by_email(email)
   		
@@ -111,10 +107,6 @@ class MicropostsController < ApplicationController
   		if user.nil?
   			user = User.new(email: email, temp:true)
   			user.password_digest = "temporaryuser"
-  			
-  			print "asdfasdfasdfadsf"
-  			print "user #{user}"
-  			print "asdfasdfasdfasdf"
   			
   			user.save
   		end
@@ -127,7 +119,7 @@ class MicropostsController < ApplicationController
   			
   			@micropost.add_to_invited(user)
   			
-  			#MicropostMailer.delay.email_invited(@micropost, user, request.protocol, request.host, request.port)
+  			MicropostMailer.delay.email_invited(@micropost, user, request.protocol, request.host, request.port)
   		end
   	end
   	
