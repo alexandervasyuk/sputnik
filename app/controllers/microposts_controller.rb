@@ -21,9 +21,9 @@ class MicropostsController < ApplicationController
   	
     if @micropost.save
       current_user.participate!(@micropost)
-    else
-      @feed_items = current_user.feed
-    end
+	end
+      
+    @feed_items = current_user.feed
     
     render 'static_pages/home'
   end
