@@ -14,7 +14,7 @@
     <div class="span8">
       <script type="text/javascript">
           $(function(){
-            setTimeout(ajaxUpdate('/micropost/refresh', '.feed_item', $('#div_feed')), 5000);
+            ajaxUpdate('/micropost/refresh', '.feed_item', $('#div_feed'));
       	  });
       </script>
         <% if current_user.friends.any? or current_user.feed.any? %>

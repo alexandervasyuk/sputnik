@@ -50,7 +50,7 @@ Sputnik::Application.routes.draw do
   match '/notifications/update_read', to: 'notifications#update_read'
   
   #Notification AJAX Update
-  match '/nofications/refresh', to: 'notifications#ajax_update'
+  match '/notifications/refresh', to: 'notifications#ajax_update'
 
   #Mobile routes
   match '/mobile/signin', to: 'mobile#signin'

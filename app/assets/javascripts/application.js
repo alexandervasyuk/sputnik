@@ -16,6 +16,7 @@
 //= require jquery.remotipart
 //= require detect_timezone
 //= require jquery.detect_timezone
+//= require ajax_update
 //= require stop_scroll
 //= require crop
 //= require detail

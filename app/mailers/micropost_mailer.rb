@@ -15,22 +15,11 @@ class MicropostMailer < ActionMailer::Base
     return mail(to: @creator.email, from: @poster.name + " via Happpening <notification@happpening.com>", subject: @poster.name + " has replied to \"" + post.micropost.content + "\"")
   end
   
-  def changed(micropost)
+  def changed(micropost, participant)
     @micropost = micropost
     @creator = @micropost.user
-    @participations = @micropost.participations
-    
-    mails = []
-    
-    @participations.each do |participation|
-      participant = participation.user
-      
-      if participant.email != @creator.email
-        mails << mail(to: participant.email, from: @creator.name + " via Happpening <notification@happpening.com>", subject: @creator.name + " has changed the details of \"" + @micropost.content + "\"")
-      end
-    end
-    
-    return mails
+
+	return mail(to: participant.user.email, from: @creator.name + " via Happpening <notification@happpening.com>", subject: @creator.name + " has changed the details of \"" + @micropost.content + "\"")
   end
   
   def invited(micropost, user)

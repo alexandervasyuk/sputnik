@@ -10,7 +10,7 @@ class Micropost < ActiveRecord::Base
   validates :location, presence: true, length: { maximum: 60 }
 
   #Setting time in the past is prohibitted
-  validate :happened_in_the_past?
+  validate :time_input_valid?
 
   #Participations
   has_many :participations, dependent: :destroy
@@ -37,13 +37,18 @@ class Micropost < ActiveRecord::Base
   	return !self.invitees[user.id].nil?
   end
   
+  #These are the actual participants in an event
+  def non_creator_participants
+  	participations.where("user_id != ?", self.user.id)
+  end
+  
   private
 
-  def happened_in_the_past? 
-    if !time.nil?
-      (return false) if ((Time.current() - time) < 180.0)
-      errors.add(:time, 'can not be set in the past') if (time.past?)
-    end
+  def time_input_valid?
+    if !time.nil? && (Time.current - time) > 180.0
+		errors.add(:time, 'can not be set in the past') if (time.past?)
+		return false
+	end
   end
   
   def self.from_users(users)

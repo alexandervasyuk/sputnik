@@ -7,6 +7,12 @@ class NotificationsController < ApplicationController
 	end
 	
 	def ajax_update
+		new_notifications = current_user.later_unread_notifications(params[:latest])
 		
+		if new_notifications.blank?
+			render text: "cancel"
+		else
+			render json: [update_html(new_notifications), new_notifications[0].id]
+		end
 	end
 end

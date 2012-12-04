@@ -301,6 +301,14 @@ class User < ActiveRecord::Base
   def num_unread_notifications
     self.notifications.where("read = false").count
   end
+  
+  def latest_unread_notification
+  	return "#{self.notifications.order("created_at DESC").first.id}"
+  end
+  
+  def later_unread_notifications(latest_time)
+  	self.notifications.where("id > ?", latest_time).order("created_at DESC")
+  end
 
   private
   def create_remember_token

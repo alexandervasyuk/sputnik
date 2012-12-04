@@ -46,8 +46,12 @@ Sputnik::Application.configure do
     :authentication => :plain
   }
   
-  config.action_mailer.perform_deliveries = true
-  config.action_mailer.raise_delivery_errors = true
+  config.after_initialize do 
+	Delayed::Job.scaler = :local
+  end
+  
+  config.action_mailer.perform_deliveries = false
+  config.action_mailer.raise_delivery_errors = false
   
   config.action_mailer.default_url_options = { :host => "localhost:3000" }
 end

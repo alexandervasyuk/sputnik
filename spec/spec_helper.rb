@@ -39,12 +39,16 @@ RSpec.configure do |config|
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
+  
+  config.before(:type => :controller) do
+    request.env["HTTP_REFERER"] = "/"
+  end
 end
 end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
-
+  FactoryGirl.reload
 end
 
 
