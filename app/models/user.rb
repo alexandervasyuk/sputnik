@@ -59,7 +59,6 @@ class User < ActiveRecord::Base
   end
 
   def feed
-
     relationships = Relationship.where("follower_id = :user_id and friend_status = 'FRIENDS' or followed_id = :user_id and friend_status = 'FRIENDS'", {user_id: self.id})
     
     friends = []

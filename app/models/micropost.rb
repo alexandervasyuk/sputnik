@@ -37,6 +37,10 @@ class Micropost < ActiveRecord::Base
   	return !self.invitees[user.id].nil?
   end
   
+  def to_mobile
+  	return {id: self.id, creator_picture: self.user.avatar.url, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time}
+  end
+  
   #These are the actual participants in an event
   def non_creator_participants
   	participations.where("user_id != ?", self.user.id)

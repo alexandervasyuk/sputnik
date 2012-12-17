@@ -53,7 +53,7 @@ Sputnik::Application.routes.draw do
   match '/notifications/refresh', to: 'notifications#ajax_update'
 
   #Mobile routes
-  match '/mobile/signin', to: 'mobile#signin'
+  match '/mobile/signin', to: 'sessions#create_mobile'
   #match '/microposts/detail/:id', to: 'microposts#detail'
 
   # The priority is based upon order of creation:

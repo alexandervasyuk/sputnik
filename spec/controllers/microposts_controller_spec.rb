@@ -62,10 +62,6 @@ describe MicropostsController do
 		end
 	end
 	
-	describe "editing a micropost" do
-		
-	end
-	
 	describe "updating a micropost" do
 		describe "the user owns the micropost" do
 		    let(:micropost) { FactoryGirl.create(:micropost, user: user) }
@@ -92,15 +88,19 @@ describe MicropostsController do
 				it "should send an email to one participant on update" do
 					ActionMailer::Base.deliveries = []
 					
-					generate_participants(micropost, 1)
-					
 					edit = {id: micropost.id, micropost: {content: "new content", location: "new location", time: micropost.time}}
 					post "update", edit
 					
 					mail = ActionMailer::Base.deliveries.last
 					
+					participants = micropost.participations
+					
 					mail['from'].to_s.should == "John via Happpening <notification@happpening.com>"
-					mail['to'].to_s.should == participant.email
+					mail['to'].to_s.should == participants[0].user.email
+					
+					updated_micropost = Micropost.find(micropost.id)
+					updated_micropost.content.should == "new content"
+					updated_micropost.location.should == "new location"
 		    	end
 	    	end
 	    	
@@ -110,15 +110,15 @@ describe MicropostsController do
 		    	it "should send emails to all participants on update" do
 		    		ActionMailer::Base.deliveries = []
 		    		
-		    		generate_participants(micropost, num_participants)
-		    		
 		    		micropost.participations.count.should == num_participants
 		    		
 		    		edit = {id: micropost.id, micropost: {content: "new content", location: "new location", time: micropost.time}}
 					post "update", edit
 					
+					participants = micropost.participations
+					
 					#ActionMailer::Base.deliveries.last['from'].to_s.should be_nil
-					emails = [participants[0].email, participants[1].email, participants[2].email]
+					emails = [participants[0].user.email, participants[1].user.email, participants[2].user.email]
 					
 					ActionMailer::Base.deliveries.last(3).each do |mail|
 						emails.should include(mail['to'].to_s)
