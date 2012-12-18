@@ -9,6 +9,10 @@ describe SessionsController do
 			let(:password) { "foobar" }
 			let(:session) { {session: {email: user.email, timezone: timezone, password: password}} }
 			
+			describe "with a temp account" do
+				#MISSING TEST
+			end
+			
 			describe "from a desktop" do
 				it "should sign in correctly" do
 					post "create", session

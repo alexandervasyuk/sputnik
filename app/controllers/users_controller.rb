@@ -28,11 +28,11 @@ class UsersController < ApplicationController
     end
 
     if @user.save
-      sign_in(@user, params[:timezone])      
+      sign_in(@user, params[:timezone])   
       flash[:success] = "Welcome to Happpening!"
 	
       UserMailer.delay.signed_up(@user)
-	
+		
       if temp_created
       	redirect_to "/friend"	
   	  else

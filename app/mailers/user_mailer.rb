@@ -1,7 +1,7 @@
 class UserMailer < ActionMailer::Base
   def signed_up(user)
     @user = user
-    mail(to: user.email, from: "\"Happppening\" <notification@happpening.com>", subject: "Welcome to Happpening")
+    mail(to: user.email, from: "Happpening Team <notification@happpening.com>", subject: "Welcome to Happpening")
   end
   
   def friend_requested(requester, requestee)
@@ -20,6 +20,6 @@ class UserMailer < ActionMailer::Base
   
   def password_reset(user)
     @user = user
-    mail(to: @user.email, from: "Happpening <notification@happpening.com>", subject: "Password Reset")
+    mail(to: @user.email, from: "Happpening Team <notification@happpening.com>", subject: "Password Reset")
   end
 end

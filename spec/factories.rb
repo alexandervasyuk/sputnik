@@ -11,6 +11,7 @@ FactoryGirl.define do
     end
     
     factory :temp_user do
+    	email "temp@temp.com"
 		temp true    	
     end
     
