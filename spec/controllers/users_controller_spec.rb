@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'capybara/rails'
 
 describe UsersController do
 	describe "creating a new user" do
