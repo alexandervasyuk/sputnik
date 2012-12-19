@@ -18,6 +18,8 @@ describe SessionsController do
 					post "create", session
 					
 					response.should redirect_to(root_url)
+					
+					current_user.should == user
 				end
 			end
 			

@@ -31,7 +31,7 @@ class UsersController < ApplicationController
       sign_in(@user, params[:timezone])   
       flash[:success] = "Welcome to Happpening!"
 	
-      #UserMailer.delay.signed_up(@user)
+      UserMailer.delay.signed_up(@user)
 		
       if temp_created
       	redirect_to "/friend"	

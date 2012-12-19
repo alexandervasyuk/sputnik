@@ -302,7 +302,13 @@ class User < ActiveRecord::Base
   end
   
   def latest_unread_notification
-  	return "#{self.notifications.order("created_at DESC").first.id}"
+  	notification = self.notifications.order("created_at DESC").first
+  	
+  	if !notification.nil?
+  		return "#{notification.id}"
+  	else
+  		return ""
+  	end
   end
   
   def later_unread_notifications(latest_time)
