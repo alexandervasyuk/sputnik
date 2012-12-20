@@ -37,11 +37,19 @@ describe UsersController do
 			let(:existing) { FactoryGirl.create(:user) }
 			
 			it "should not create when fields are empty" do
+				user = {user: {name: "", email: "test@testing.com", password: nil, password_confirmation: nil}}
 				
+				post "create", user
+				
+				response.should render_template("users/new")
 			end
 			
 			it "should not create when a user with that email already exists" do
+				user = {user: {name: "bob", email: existing.email, password: "foobar", password_confirmation: "foobar"}}
 				
+				post "create", user
+				
+				response.should render_template("users/new");
 			end	
 		end
 	end

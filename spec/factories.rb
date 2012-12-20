@@ -30,4 +30,10 @@ FactoryGirl.define do
     	id 1
     end
   end
+  
+  factory :post do
+	content "Lorem ipsum"
+	user
+	micropost
+  end
 end

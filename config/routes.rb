@@ -40,6 +40,7 @@ Sputnik::Application.routes.draw do
   match '/micropost/invite', to: 'microposts#invite'
   match '/micropost/invite/emails', to: 'microposts#invite_emails'
   
+  
   match '/micropost/email/invite', to: 'invites#invite_redirect'
   
   match '/post/refresh', to: 'posts#refresh'
@@ -54,6 +55,7 @@ Sputnik::Application.routes.draw do
 
   #Mobile routes
   match '/mobile/signin', to: 'sessions#create_mobile'
+  match '/mobile/event_details', to: 'microposts#mobile_detail'
   #match '/microposts/detail/:id', to: 'microposts#detail'
 
   # The priority is based upon order of creation:

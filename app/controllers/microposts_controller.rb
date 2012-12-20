@@ -9,6 +9,8 @@ class MicropostsController < ApplicationController
   before_filter :correct_user, only: [:destroy, :update, :edit]
   before_filter :time_input_parser, only: [:create, :update]
   
+  before_filter :detail_prepare, only: [:detail, :mobile_detail]
+  
   after_filter :time_parser_error, only: :create
   
   respond_to :html, :js
@@ -107,19 +109,27 @@ class MicropostsController < ApplicationController
   end
 
   def detail
-    @micropost = Micropost.find(params[:id])
-    
-    if current_user.friends?(@micropost.user)
-      @post = current_user.posts.build(micropost_id:params[:id])
-      @friends = current_user.friends
-      @participants = []
-      @micropost.participations.each do |participation|
-        @participants << User.find(participation.user_id)
-      end
-      @post_items = @micropost.posts.reverse!
-    else  
+    if !@friends
       redirect_to :back, :flash => { :error => "You must become friends with the user who created that event to view its details" } 
     end
+  end
+  
+  def mobile_detail
+	if @friends
+		replies_data = []
+		
+		@micropost.posts.each do |post|
+			replies_data << mobile_detail_convert(post)
+		end
+	
+		json_response = {status:"success", replies_data: replies_data}
+	
+		render json: json_response
+	else
+		json_response = {status: "failure", replies_data: []}
+	
+		render json: json_response
+	end
   end
   
   #Action responsible for rendering an updated user feed
@@ -162,6 +172,23 @@ class MicropostsController < ApplicationController
        	  params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
         end
     end
+  end
+  
+  #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
+  def detail_prepare
+	@micropost = Micropost.find(params[:id])
+    
+	@friends = current_user.friends?(@micropost.user)
+	
+    if @friends
+      @post = current_user.posts.build(micropost_id:params[:id])
+      @friends = current_user.friends
+      @participants = []
+      @micropost.participations.each do |participation|
+        @participants << User.find(participation.user_id)
+      end
+      @post_items = @micropost.posts.reverse!
+	end
   end
   
   #AFTER FILTER - Helper method that responds to incorrect format errors and sets the correct error messages for them

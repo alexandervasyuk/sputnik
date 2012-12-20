@@ -35,3 +35,16 @@ def generate_microposts_for(user, num_microposts)
 		num_microposts-=1
 	end
 end
+
+def generate_posts_for(micropost, num_posts)
+	creator = micropost.user
+
+	while num_posts > 0 do
+		user1 = FactoryGirl.create(:user)
+		make_friends(user1, creator)
+		
+		post = FactoryGirl.create(:post, user: user1, micropost: micropost)
+		
+		num_posts-=1
+	end
+end

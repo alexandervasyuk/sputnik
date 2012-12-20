@@ -147,4 +147,61 @@ describe MicropostsController do
 			response.should redirect_to(root_url)
 		end
 	end
+
+	describe "displaying information about a micropost" do
+		let(:micropost) { FactoryGirl.create(:micropost, user: user) }
+		let(:friend) { FactoryGirl.create(:user) }
+		let(:not_friend) { FactoryGirl.create(:user) }
+		let(:data) { {id: micropost.id} }
+	
+		describe "on the web app" do
+			it "should correctly return the detail page when the users are friends" do
+				make_friends(user, friend)
+				sign_in(friend)
+				
+				post "detail", data
+				
+				response.should render_template("microposts/detail")
+			end
+			
+			it "should redirect to the root url if the users are not friends" do
+				sign_in(not_friend)
+				
+				post "detail", data
+				
+				response.should redirect_to(root_url)
+			end
+		end
+		
+		describe "on the mobile app" do
+			before { generate_posts_for(micropost, 3) }
+		
+			it "should correctly return the information as json when the users are friends" do
+				make_friends(user, friend)
+				sign_in(friend)
+			
+				replies_data = []
+				
+				micropost.posts.each do |post|
+					replies_data << {replier_picture: post.user.avatar.url, reply_text: post.content, replier_name: post.user.name, posted_time: post.created_at }
+				end
+				
+				post "mobile_detail", data
+				
+				response_json = {status: "success", replies_data: replies_data}.to_json
+				
+				response.body.should == response_json
+			end
+			
+			it "should return an error code as json to the mobile app" do
+				response_json = {status:"failure", replies_data:[]}.to_json
+				
+				sign_in(not_friend)
+				
+				post "mobile_detail", data
+				
+				response.body.should == response_json
+			end
+		end
+	end
 end
