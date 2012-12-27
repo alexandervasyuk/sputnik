@@ -24,7 +24,6 @@
           <%= link_to @micropost.user.name, @micropost.user %>
         </h4>
       
-
       <span class="participate">
         <%= render 'users/participate_form', feed_item: @micropost%>
       </span>
@@ -34,6 +33,9 @@
         <%= link_to "edit", {action:'edit', id:@micropost.id}, class:"micropost_edit_button"%>
       </span>
       <% end %>
+	  
+	  <%= render partial:'proposal', locals: {proposal:@proposal} %>
+	  
       </div>
       <%= render partial:'detailed_post_info', locals: {micropost:@micropost, friends:@friends, participants:@participants, post_items:@post_items} %>        
 

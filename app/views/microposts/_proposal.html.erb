@@ -1,0 +1,59 @@
+<h4>Top Proposals</h4>
+<div>
+	<div class="proposal_entry">
+		<span class="icon-globe"></span>
+		</span><span>Chillin like villains</span>
+		<span class="icon-thumbs-up"></span>
+		<span class="badge badge-info">3</span>
+	</div>
+</div>
+<div>
+	<div class="proposal_entry">
+		<span class="icon-map-marker"></span>
+		<span>Da Asian Ghetto</span>
+		<span class="icon-thumbs-up"></span>
+		<span class="badge badge-info">5</span>
+	</div>
+	<div class="proposal_entry">
+		<span class="icon-map-marker"></span>
+		<span>Chipotle</span>
+		<span class="icon-thumbs-up"></span>
+		<span class="badge badge-info">3</span>
+	</div>
+</div>
+<div>
+	<div class="proposal_entry">
+		<span class="icon-time"></span>
+		<span>11:37PM</span>
+		<span class="icon-thumbs-up"></span>
+		<span class="badge badge-info">4</span>
+	</div>
+</div>
+
+<!-- Button to trigger modal -->
+<a href="#myModal" role="button" class="btn" data-toggle="modal">Make a proposal</a>
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+  <%= form_for(proposal) do |f| %>
+		
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">New Proposal</h3>
+	  </div>
+	  <div class="modal-body">
+		<%= f.text_field :content, placeholder: "suggest a new thing to do" %>
+		<%= f.text_field :location, placeholder: "suggest a new place" %>
+		<%= f.text_field :time, placeholder: "suggest a new time" %>
+		
+		<%= f.hidden_field :user_id %>
+		<%= f.hidden_field :micropost_id %>
+	  </div>
+	  <div class="modal-footer">
+		<%= f.submit "Make proposal", class: "btn btn-primary" %>
+	  </div>
+  
+  <% end %>
+  
+</div>
