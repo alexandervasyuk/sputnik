@@ -41,7 +41,6 @@ Sputnik::Application.routes.draw do
   match '/micropost/invite', to: 'microposts#invite'
   match '/micropost/invite/emails', to: 'microposts#invite_emails'
   
-  
   match '/micropost/email/invite', to: 'invites#invite_redirect'
   
   match '/post/refresh', to: 'posts#refresh'

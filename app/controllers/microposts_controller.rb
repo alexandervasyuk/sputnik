@@ -15,6 +15,8 @@ class MicropostsController < ApplicationController
   after_filter :time_parser_error, only: :create
   
   respond_to :html, :js
+  
+  protect_from_forgery except: :mobile_detail
 
   #Action responsible for creating a new micropost from form inputs
   #Input interface - content, location, time
