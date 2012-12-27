@@ -1,6 +1,8 @@
 class SessionsController < ApplicationController
   before_filter :log_in, only: [:create, :create_mobile]
 	
+  protect_from_forgery except: :create_mobile	
+	
   def new
   end
 
