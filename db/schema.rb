@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121124083028) do
+ActiveRecord::Schema.define(:version => 20121224051056) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -32,11 +32,14 @@ ActiveRecord::Schema.define(:version => 20121124083028) do
   create_table "microposts", :force => true do |t|
     t.string   "content"
     t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
     t.string   "location"
     t.datetime "time"
     t.text     "invitees"
+    t.boolean  "content_proposal",  :default => true
+    t.boolean  "time_proposal",     :default => true
+    t.boolean  "location_proposal", :default => true
   end
 
   add_index "microposts", ["user_id", "created_at"], :name => "index_microposts_on_user_id_and_created_at"
@@ -73,6 +76,20 @@ ActiveRecord::Schema.define(:version => 20121124083028) do
 
   add_index "posts", ["micropost_id"], :name => "index_posts_on_micropost_id"
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
+
+  create_table "proposals", :force => true do |t|
+    t.string   "content"
+    t.datetime "time"
+    t.string   "location"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.integer  "user_id"
+    t.integer  "micropost_id"
+  end
+
+  add_index "proposals", ["micropost_id"], :name => "index_proposals_on_micropost_id"
+  add_index "proposals", ["user_id", "micropost_id"], :name => "index_proposals_on_user_id_and_micropost_id", :unique => true
+  add_index "proposals", ["user_id"], :name => "index_proposals_on_user_id"
 
   create_table "relationships", :force => true do |t|
     t.integer  "follower_id"

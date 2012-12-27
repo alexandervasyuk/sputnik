@@ -4,6 +4,7 @@ class MicropostsController < ApplicationController
   #Helper classes
   include NotificationsHelper
   include MicropostsHelper
+  include TimeHelper
   
   before_filter :signed_in_user
   before_filter :correct_user, only: [:destroy, :update, :edit]
@@ -145,6 +146,7 @@ class MicropostsController < ApplicationController
 
   private
 
+  #BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
   def correct_user
     @micropost = current_user.microposts.find_by_id(params[:id])
     if @micropost.nil?
@@ -158,20 +160,8 @@ class MicropostsController < ApplicationController
   
   #BEFORE FILTER - Helper method that selects and parses the time input according to its syntax
   def time_input_parser
-  	params[:time] = params[:micropost][:time]
-  	
-  	if params[:micropost][:time][0..1] == "at"
-  	   #Time parser used
-       Time.use_zone(user_timezone) do
-      	 params[:micropost][:time] = Time.zone.parse(params[:micropost][:time])
-       end
-    else
-    	#Chronic parser used
-        Time.use_zone(user_timezone) do
-          Chronic.time_class = Time.zone
-       	  params[:micropost][:time] = Chronic.parse(params[:micropost][:time])
-        end
-    end
+	params[:time] = params[:micropost][:time]
+	params[:micropost][:time] = parse_time(params[:micropost][:time])
   end
   
   #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
@@ -182,11 +172,20 @@ class MicropostsController < ApplicationController
 	
     if @friends
       @post = current_user.posts.build(micropost_id:params[:id])
+	  @proposal = current_user.proposals.find_by_micropost_id(params[:id]) || current_user.proposals.build(micropost_id:params[:id])
       @friends = current_user.friends
+	  
+	  #Gather Participants
       @participants = []
       @micropost.participations.each do |participation|
         @participants << User.find(participation.user_id)
       end
+	  
+	  #Gather the correct proposals for each category
+	  @activity_proposals = Proposal.select("content, count(*) as content_count").group("content")
+	  @location_proposals = Proposal.select("location, count(*) as location_count").group("location")
+	  @time_proposals = Proposal.select("time, count(*) as time_count").group("time")
+	  
       @post_items = @micropost.posts.reverse!
 	end
   end

@@ -32,6 +32,9 @@ class User < ActiveRecord::Base
   #Notifications
   has_many :notifications, dependent: :destroy
 
+  #Proposals
+  has_many :proposals, dependent: :destroy
+  
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token
 

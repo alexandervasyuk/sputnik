@@ -17,6 +17,7 @@ Sputnik::Application.routes.draw do
   resources :microposts, only: [:create, :destroy]
   resources :relationships, only: [:create, :update, :destroy]
   resources :password_resets
+  resources :proposals, only: [:create, :update, :destroy]
   
   root to: 'static_pages#home'
 
@@ -55,6 +56,8 @@ Sputnik::Application.routes.draw do
 
   #Mobile routes
   match '/mobile/signin', to: 'sessions#create_mobile'
+  match '/mobile/signout', to: 'sessions#destroy_mobile'
+  match '/mobile/signup', to: 'users#create_mobile'
   match '/mobile/event_details', to: 'microposts#mobile_detail'
   #match '/microposts/detail/:id', to: 'microposts#detail'
 
