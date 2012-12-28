@@ -1,7 +1,7 @@
 class ProposalsController < ApplicationController
 	include TimeHelper
 
-	before_filter :time_input_parser, only: :create
+	before_filter :time_input_parser, only: [:create, :update]
 	
 	def create
 		@proposal = current_user.proposals.build(params[:proposal])
@@ -11,7 +11,23 @@ class ProposalsController < ApplicationController
 	end
 	
 	def update
-	
+		@proposal = Proposal.find(params[:id])
+		
+		if !params[:proposal][:content].blank?
+			@proposal.content = params[:proposal][:content]
+		end
+		
+		if !params[:proposal][:location].blank?
+			@proposal.location = params[:proposal][:location]
+		end
+		
+		if !params[:proposal][:time].blank?
+			@proposal.time = params[:proposal][:time]
+		end
+		
+		@proposal.save
+		
+		redirect_to detail_micropost_path(params[:proposal][:micropost_id])
 	end
 	
 	def destroy

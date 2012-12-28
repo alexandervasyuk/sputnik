@@ -1,33 +1,33 @@
 <h4>Top Proposals</h4>
 <div>
-	<div class="proposal_entry">
-		<span class="icon-globe"></span>
-		</span><span>Chillin like villains</span>
-		<span class="icon-thumbs-up"></span>
-		<span class="badge badge-info">3</span>
-	</div>
+	<% activity_proposals.each do |activity_proposal| %>
+		<div class="proposal_entry">
+			<span class="icon-globe"></span>
+			<span><%= activity_proposal.content %></span>
+			<span class="icon-thumbs-up"></span>
+			<span class="badge badge-info"><%= activity_proposal.content_count %></span>
+		</div>
+	<% end %>
 </div>
 <div>
-	<div class="proposal_entry">
-		<span class="icon-map-marker"></span>
-		<span>Da Asian Ghetto</span>
-		<span class="icon-thumbs-up"></span>
-		<span class="badge badge-info">5</span>
-	</div>
-	<div class="proposal_entry">
-		<span class="icon-map-marker"></span>
-		<span>Chipotle</span>
-		<span class="icon-thumbs-up"></span>
-		<span class="badge badge-info">3</span>
-	</div>
+	<% location_proposals.each do |location_proposal| %>
+		<div class="proposal_entry">
+			<span class="icon-map-marker"></span>
+			<span><%= location_proposal.location %></span>
+			<span class="icon-thumbs-up"></span>
+			<span class="badge badge-info"><%= location_proposal.location_count %></span>
+		</div>
+	<% end %>
 </div>
 <div>
-	<div class="proposal_entry">
-		<span class="icon-time"></span>
-		<span>11:37PM</span>
-		<span class="icon-thumbs-up"></span>
-		<span class="badge badge-info">4</span>
-	</div>
+	<% time_proposals.each do |time_proposal| %>
+		<div class="proposal_entry">
+			<span class="icon-time"></span>
+			<span><%= time_proposal.time %></span>
+			<span class="icon-thumbs-up"></span>
+			<span class="badge badge-info"><%= time_proposal.time_count %></span>
+		</div>
+	<% end %>
 </div>
 
 <!-- Button to trigger modal -->

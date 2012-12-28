@@ -34,7 +34,7 @@
       </span>
       <% end %>
 	  
-	  <%= render partial:'proposal', locals: {proposal:@proposal} %>
+	  <%= render partial:'proposal', locals: {proposal:@proposal, activity_proposals: @activity_proposals, location_proposals: @location_proposals, time_proposals: @time_proposals} %>
 	  
       </div>
       <%= render partial:'detailed_post_info', locals: {micropost:@micropost, friends:@friends, participants:@participants, post_items:@post_items} %>        

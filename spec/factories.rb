@@ -40,17 +40,8 @@ FactoryGirl.define do
   factory :proposal do
 	user
 	micropost
-	
-	factory :content_proposal do
-		content "Lorem ipsum"
-	end
-	
-	factory :location_proposal do
-		location "California"
-	end
-	
-	factory :time_proposal do
-		time Time.now
-	end
+	content "Lorem ipsum"
+	location "Lorem ipsum"
+	time Time.now
   end
 end
