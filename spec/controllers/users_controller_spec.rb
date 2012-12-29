@@ -4,12 +4,30 @@ require 'capybara/rails'
 describe UsersController do
 	describe "creating a new user" do
 		describe "user is not temp" do
-			it "should correctly create the user and redirect to the feed page" do
+			it "should correctly create the user and redirect to the feed page on a web app" do
 				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}}
 				
 				post "create", user
 				
 				response.should redirect_to(root_path)
+				
+				created = User.find_by_email(user[:user][:email])
+				created.should_not be_nil
+				
+				mail = ActionMailer::Base.deliveries.last
+				
+				mail['from'].to_s.should == "Happpening Team <notification@happpening.com>"
+				mail['to'].to_s.should == created.email
+			end
+			
+			it "should correctly create the user and return the correct response on mobile app" do
+				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}}
+				
+				post "create_mobile", user
+				
+				json_response = {status: "success", failure_reason: ""}.to_json
+				
+				response.body.should == json_response
 				
 				created = User.find_by_email(user[:user][:email])
 				created.should_not be_nil

@@ -19,6 +19,10 @@ class PostsController < ApplicationController
       redirect_to detail_micropost_path(@post.micropost_id)
     end
   end
+  
+  def create_mobile
+  
+  end
 
   def destroy
     @post.destroy

@@ -184,9 +184,9 @@ class MicropostsController < ApplicationController
       end
 	  
 	  #Gather the correct proposals for each category
-	  @activity_proposals = @micropost.proposals.select("content, count(*) as content_count").where("content != ?", "").group("content")
-	  @location_proposals = @micropost.proposals.select("location, count(*) as location_count").where("location != ?", "").group("location")
-	  @time_proposals = @micropost.proposals.select("time, count(*) as time_count").where("time != NULL").group("time")
+	  @activity_proposals = @micropost.proposals.select("content, count(*) as content_count").where("content != ?", "").group("content").order("content_count DESC")
+	  @location_proposals = @micropost.proposals.select("location, count(*) as location_count").where("location != ?", "").group("location").order("location_count DESC")
+	  @time_proposals = @micropost.proposals.select("time, count(*) as time_count").where("time is not null").group("time").order("time_count DESC")
 	  
       @post_items = @micropost.posts.reverse!
 	end

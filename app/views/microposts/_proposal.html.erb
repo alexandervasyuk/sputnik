@@ -4,7 +4,14 @@
 		<div class="proposal_entry">
 			<span class="icon-globe"></span>
 			<span><%= activity_proposal.content %></span>
-			<span class="icon-thumbs-up"></span>
+			<%= form_for(proposal, :html => { :class => "inline"}) do |f| %>
+				<%= f.hidden_field :content, value: activity_proposal.content %>
+				<%= f.hidden_field :location, value: "" %>
+				<%= f.hidden_field :time, value: "" %>
+				<%= f.hidden_field :user_id %>
+				<%= f.hidden_field :micropost_id %>
+				<%= f.submit "Vote", class: "btn"%>
+			<% end %>
 			<span class="badge badge-info"><%= activity_proposal.content_count %></span>
 		</div>
 	<% end %>
@@ -14,7 +21,14 @@
 		<div class="proposal_entry">
 			<span class="icon-map-marker"></span>
 			<span><%= location_proposal.location %></span>
-			<span class="icon-thumbs-up"></span>
+			<%= form_for(proposal, :html => { :class => "inline"}) do |f| %>
+				<%= f.hidden_field :content, value: "" %>
+				<%= f.hidden_field :location, value: location_proposal.location %>
+				<%= f.hidden_field :time, value: "" %>
+				<%= f.hidden_field :user_id %>
+				<%= f.hidden_field :micropost_id %>
+				<%= f.submit "Vote", class: "btn"%>
+			<% end %>
 			<span class="badge badge-info"><%= location_proposal.location_count %></span>
 		</div>
 	<% end %>
@@ -24,7 +38,14 @@
 		<div class="proposal_entry">
 			<span class="icon-time"></span>
 			<span><%= time_proposal.time %></span>
-			<span class="icon-thumbs-up"></span>
+			<%= form_for(proposal, :html => { :class => "inline"}) do |f| %>
+				<%= f.hidden_field :content, value: "" %>
+				<%= f.hidden_field :location, value: "" %>
+				<%= f.hidden_field :time, value: time_proposal.time %>
+				<%= f.hidden_field :user_id %>
+				<%= f.hidden_field :micropost_id %>
+				<%= f.submit "Vote", class: "btn"%>
+			<% end %>
 			<span class="badge badge-info"><%= time_proposal.time_count %></span>
 		</div>
 	<% end %>

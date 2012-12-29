@@ -5,7 +5,10 @@ class UsersController < ApplicationController
   before_filter :admin_user,     only: :destroy
   before_filter :not_temp, only: :show
   
-  before_filter :temp_create, only: :create
+  before_filter :temp_create, only: [:create, :create_mobile]
+  after_filter :create_mail, only: [:create, :create_mobile]
+  
+  protect_from_forgery except: :create_mobile
 
   def show
     @user = User.find(params[:id])
@@ -17,20 +20,34 @@ class UsersController < ApplicationController
   end
 
   def create
-    if @temp_created || @user.save
-      sign_in(@user, params[:timezone])   
-      flash[:success] = "Welcome to Happpening!"
+	@created = @temp_created || @user.save
+  
+    if @created
+		sign_in(@user, params[:timezone])   
+		flash[:success] = "Welcome to Happpening!"
 		
-      UserMailer.delay.signed_up(@user)
-		
-      if @temp_created
-      	redirect_to "/friend"
-  	  else
-  		redirect_to root_path
-  	  end
+		if @temp_created
+			redirect_to "/friend"
+		else
+			redirect_to root_path
+		end
     else
-      render 'users/new'
+		render 'users/new'
     end
+  end
+  
+  def create_mobile
+	if @temp_created || @user.save
+		sign_in(@user, params[:timezone])
+		
+		json_response = {status: "success", failure_reason: ""}
+		
+		render json: json_response
+	else
+		json_response = {status: "failure", failure_reason: ""}
+	
+		render json: json_response
+	end
   end
 
   def edit
@@ -68,6 +85,7 @@ class UsersController < ApplicationController
 
   private
 
+  #BEFORE FILTER - filters to make sure the owner of account can edit the details
   def correct_user
     @user = User.find(params[:id])
     redirect_to(root_url) unless current_user?(@user)
@@ -97,5 +115,12 @@ class UsersController < ApplicationController
 			@temp_created = true
 		end
     end
+  end
+  
+  #AFTER FILTER - filters the creation methods to send out the emails on success
+  def create_mail
+	if @created
+		UserMailer.delay.signed_up(@user)
+	end
   end
 end
