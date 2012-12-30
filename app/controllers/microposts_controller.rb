@@ -145,6 +145,26 @@ class MicropostsController < ApplicationController
       render partial:'shared/feed'
     end
   end
+  
+  def mobile_refresh
+	@new_feed_items = current_user.feed_after(params[:latest])
+	
+	if !@new_feed_items.blank?
+		updates = []
+		
+		@new_feed_items.each do |update|
+			updates << update.to_mobile
+		end
+		
+		json_response = {status: "success", feed_items: updates}
+		
+		render json: json_response
+	else
+		json_response = {status: "failure", feed_items: []}
+		
+		render json: json_response
+	end
+  end
 
   private
 
@@ -188,6 +208,7 @@ class MicropostsController < ApplicationController
 	  @location_proposals = @micropost.proposals.select("location, count(*) as location_count").where("location != ?", "").group("location").order("location_count DESC")
 	  @time_proposals = @micropost.proposals.select("time, count(*) as time_count").where("time is not null").group("time").order("time_count DESC")
 	  
+	  #Reply data
       @post_items = @micropost.posts.reverse!
 	end
   end

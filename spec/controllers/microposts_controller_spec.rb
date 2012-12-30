@@ -10,8 +10,15 @@ describe MicropostsController do
 				["now"].each do |time|
 					micropost = {micropost: {content: "Lorem ipsum", location: "Lorem ipsum", time: time}}
 					
+					microposts_before = Micropost.all.count
+					
 					post "create", micropost
+					
+					microposts_after = Micropost.all.count
+					
 					response.should render_template('static_pages/home')
+					
+					microposts_after.should == microposts_before + 1
 				end
 			end
 		end
@@ -201,6 +208,46 @@ describe MicropostsController do
 				post "mobile_detail", data
 				
 				response.body.should == response_json
+			end
+		end
+	end
+
+	describe "ajax pulling infomation" do
+		let(:friend) { FactoryGirl.create(:user) }
+		before { make_friends(friend, user) }
+	
+		describe "there is new data" do
+			it "should give the correct update on the web app" do
+				
+			end
+			
+			it "should give the correct update on the mobile app" do
+				first_event = FactoryGirl.create(:micropost, user: friend)
+				second_event = FactoryGirl.create(:micropost, user: friend)
+				third_event = FactoryGirl.create(:micropost, user: friend)
+				fourth_event = FactoryGirl.create(:micropost, user: friend)
+				
+				second_event.id.should > first_event.id
+				third_event.id.should > second_event.id
+				fourth_event.id.should > third_event.id
+				
+				update = {latest: first_event.id}
+				
+				post "mobile_refresh", update
+
+				updates = []
+				
+				user.feed.count.should == 4
+				
+				user.feed.where("id > :id", {id: first_event.id}).count.should == 3
+				
+				user.feed.where("id > :id", {id: first_event.id}).each do |update_micropost|
+					updates << update_micropost.to_mobile
+				end
+				
+				json_response = {status: "success", feed_items: updates}.to_json
+				
+				response.body.should == json_response
 			end
 		end
 	end

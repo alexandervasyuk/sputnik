@@ -5,7 +5,7 @@ describe UsersController do
 	describe "creating a new user" do
 		describe "user is not temp" do
 			it "should correctly create the user and redirect to the feed page on a web app" do
-				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}}
+				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
 				
 				post "create", user
 				
@@ -21,7 +21,7 @@ describe UsersController do
 			end
 			
 			it "should correctly create the user and return the correct response on mobile app" do
-				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}}
+				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
 				
 				post "create_mobile", user
 				

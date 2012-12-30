@@ -38,6 +38,7 @@ Sputnik::Application.routes.draw do
   match '/crop/finish', to: 'static_pages#crop_finish'
   
   match '/micropost/refresh', to: 'microposts#refresh'
+  
   match '/micropost/invite', to: 'microposts#invite'
   match '/micropost/invite/emails', to: 'microposts#invite_emails'
   
@@ -58,6 +59,8 @@ Sputnik::Application.routes.draw do
   match '/mobile/signout', to: 'sessions#destroy_mobile'
   match '/mobile/signup', to: 'users#create_mobile'
   match '/mobile/event_details', to: 'microposts#mobile_detail'
+  match '/mobile/event_reply', to: 'posts#create_mobile'
+  match '/mobile/event_refresh', to: 'microposts#mobile_refresh'
   #match '/microposts/detail/:id', to: 'microposts#detail'
 
   # The priority is based upon order of creation:

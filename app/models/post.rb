@@ -1,5 +1,5 @@
 class Post < ActiveRecord::Base
-  attr_accessible :content, :micropost_id, :user_id
+  attr_accessible :content, :micropost_id
 
   belongs_to :user
   belongs_to :micropost

@@ -79,6 +79,10 @@ class User < ActiveRecord::Base
     Micropost.from_users(friends)
   end
   
+  def feed_after(micropost_id)
+	return self.feed.where("id > :micropost_id", {micropost_id: micropost_id})
+  end
+  
   # def future_feed
   #   feed = []
     

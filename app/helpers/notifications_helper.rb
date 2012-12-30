@@ -38,4 +38,16 @@ module NotificationsHelper
   			Notification.create!(user_id:user_id, message:message, link:link)
   		end
   	end
+	
+	def event_post(micropost)
+		micropost.participations.each do |participant|
+			if participant != current_user
+				participant_id = participant.user_id
+				message = current_user.name + " replied to '" + Micropost.find(@post.micropost_id).content + "'"
+				link = detail_micropost_path(micropost.id)
+				
+				create_notification(participant_id, message, link)
+			end
+		end
+	end
 end
