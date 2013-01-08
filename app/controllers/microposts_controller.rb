@@ -16,7 +16,7 @@ class MicropostsController < ApplicationController
   
   respond_to :html, :js
   
-  protect_from_forgery except: :mobile_detail
+  protect_from_forgery except: [:mobile_detail, :mobile_refresh]
 
   #Action responsible for creating a new micropost from form inputs
   #Input interface - content, location, time
