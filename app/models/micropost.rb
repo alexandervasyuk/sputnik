@@ -25,7 +25,7 @@ class Micropost < ActiveRecord::Base
   
   #Before Destroy
   after_destroy do
-	participations.destroy
+	participations.delete
   end
 
   def self.from_users_followed_by(user)
