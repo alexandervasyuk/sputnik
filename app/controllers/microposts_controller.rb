@@ -147,7 +147,7 @@ class MicropostsController < ApplicationController
   end
   
   def mobile_refresh
-	session[:feed_latest].inspect
+	puts session[:feed_latest]
 	@new_feed_items = current_user.feed_after(session[:feed_latest])
 	
 	to_delete = []
