@@ -35,7 +35,12 @@ class MicropostsController < ApplicationController
 
   #Action responsible for destroying a micropost from the database
   def destroy
+	if !@micropost.participations.empty?
+		@micropost.participations.destroy
+	end
+  
     @micropost.destroy
+	
     redirect_to root_url
   end
 
