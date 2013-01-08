@@ -225,19 +225,18 @@ describe MicropostsController do
 				
 			end
 			
-			it "should give the correct update on the mobile app" do
+			it "should give the correct update on the mobile app when there is nothing to delete" do
 				first_event = FactoryGirl.create(:micropost, user: friend)
-				#second_event = FactoryGirl.create(:micropost, user: friend)
-				#third_event = FactoryGirl.create(:micropost, user: friend)
+				second_event = FactoryGirl.create(:micropost, user: friend)
+				third_event = FactoryGirl.create(:micropost, user: friend)
 				fourth_event = FactoryGirl.create(:micropost, user: friend)
-				
 				
 				session[:feed_latest] = first_event.updated_at
 				
-				post "mobile_refresh", {ids: [1, 2, 3]}
+				post "mobile_refresh", {ids: [first_event.id]}
 
 				updates = []
-				to_delete = ["3"]
+				to_delete = []
 				
 				user.feed.where("updated_at > :latest_update", {latest_update: first_event.updated_at}).each do |update_micropost|
 					updates << update_micropost.to_mobile
@@ -246,6 +245,7 @@ describe MicropostsController do
 				json_response = {status: "success", feed_items: updates, to_delete: to_delete}.to_json
 				
 				response.body.should == json_response
+				updates.count.should == 3
 			end
 		end
 	end

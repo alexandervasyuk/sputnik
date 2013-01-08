@@ -6,12 +6,13 @@ class ParticipationsController < ApplicationController
 	def create
 		@micropost = Micropost.find(params[:participation][:micropost_id])
 		current_user.participate!(@micropost)
+		
 		#Creating a notification
 		creator_id = @micropost.user_id
 		message = current_user.name + " has participated in your '" + @micropost.content + "' happpening"
 		link = detail_micropost_path(@micropost.id)
 		create_notification(creator_id, message, link) 
-		#MicropostMailer.delay.participated(current_user, @micropost)
+
 		redirect_to :back
 	end
 
