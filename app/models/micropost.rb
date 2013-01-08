@@ -1,5 +1,5 @@
 class Micropost < ActiveRecord::Base
-  attr_accessible :content, :location, :time
+  attr_accessible :content, :location, :time, :latitude, :longitude
   serialize :invitees
   
   belongs_to :user
@@ -22,6 +22,11 @@ class Micropost < ActiveRecord::Base
   has_many :proposals, dependent: :destroy
   
   default_scope order: 'microposts.created_at DESC'
+  
+  #Before Destroy
+  after_destroy do
+	participations.destroy
+  end
 
   def self.from_users_followed_by(user)
     followed_user_ids = "SELECT followed_id FROM relationships
@@ -36,12 +41,16 @@ class Micropost < ActiveRecord::Base
   	update_attribute(:invitees, self.invitees)
   end
   
+  def after_post(post_id)
+	self.posts.where("id > :id", {id: post_id})
+  end
+  
   def invited(user)
   	return !self.invitees[user.id].nil?
   end
   
   def to_mobile
-  	return {id: self.id, creator_picture: self.user.avatar.url, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time}
+  	return {id: self.id, creator_picture: self.user.avatar.url, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time, latitude: self.latitude, longitude: self.longitude}
   end
   
   #These are the actual participants in an event
@@ -59,6 +68,6 @@ class Micropost < ActiveRecord::Base
   end
   
   def self.from_users(users)
-    where("user_id IN (?)", users)
+    where("user_id IN (?)", users).order("time DESC")
   end
 end

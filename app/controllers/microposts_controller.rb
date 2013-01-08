@@ -36,7 +36,7 @@ class MicropostsController < ApplicationController
   #Action responsible for destroying a micropost from the database
   def destroy
     @micropost.destroy
-    redirect_to :back
+    redirect_to root_url
   end
 
   #Action responsible for returning the micropost data and populating a form for the user to edit
@@ -147,20 +147,31 @@ class MicropostsController < ApplicationController
   end
   
   def mobile_refresh
-	@new_feed_items = current_user.feed_after(params[:latest])
+	@new_feed_items = current_user.feed_after(session[:feed_latest])
 	
-	if !@new_feed_items.blank?
+	params[:ids].inspect
+	
+	to_delete = []
+	params[:ids].each do |id|
+		if !Micropost.exists?(id)
+			to_delete << id
+		end
+	end
+	
+	if !@new_feed_items.empty?
+		session[:feed_latest] = @new_feed_items.maximum("updated_at")
+	
 		updates = []
 		
 		@new_feed_items.each do |update|
 			updates << update.to_mobile
 		end
 		
-		json_response = {status: "success", feed_items: updates}
+		json_response = {status: "success", feed_items: updates, to_delete: to_delete}
 		
 		render json: json_response
 	else
-		json_response = {status: "failure", feed_items: []}
+		json_response = {status: "failure", feed_items: [], to_delete: to_delete}
 		
 		render json: json_response
 	end

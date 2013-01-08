@@ -43,4 +43,25 @@ describe PostsController do
 			#Missing test
 		end
 	end
+
+	describe "making a mobile update request" do	
+		it "should respond with the correct data when there are new posts" do
+			first_post = FactoryGirl.create(:post, micropost: micropost, user: user)
+			generate_posts_for(micropost, 3)
+		
+			post_update = {micropost_id: micropost.id}
+			
+			updates = []
+			
+			micropost.posts.each do |post|
+				updates << post.to_mobile
+			end
+			
+			response_json = {status: "success", replies_data: updates}.to_json
+			
+			post "mobile_refresh", post_update
+			
+			response.body.should == response_json
+		end
+	end
 end

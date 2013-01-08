@@ -35,6 +35,10 @@ class User < ActiveRecord::Base
   #Proposals
   has_many :proposals, dependent: :destroy
   
+  #Gcaches
+  has_many :user_gcaches
+  has_many :gcaches, through: :user_gcaches
+  
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token
 
@@ -79,8 +83,8 @@ class User < ActiveRecord::Base
     Micropost.from_users(friends)
   end
   
-  def feed_after(micropost_id)
-	return self.feed.where("id > :micropost_id", {micropost_id: micropost_id})
+  def feed_after(latest_update)
+	return self.feed.where("updated_at > :latest_update", {latest_update: latest_update})
   end
   
   # def future_feed
@@ -320,6 +324,23 @@ class User < ActiveRecord::Base
   
   def later_unread_notifications(latest_time)
   	self.notifications.where("id > ?", latest_time).order("created_at DESC")
+  end
+  
+  #Gcaches methods
+  def gather_gcaches(current_location)
+	result = []
+	
+	latitude_upper = 37.867868  + 0.45
+	latitude_lower = 37.867868  - 0.45
+	longitude_upper = -122.260797 + 0.45
+	longitude_lower = -122.260797 - 0.45
+	
+	
+	self.gcaches.where("latitude < :latitude_upper and latitude > :latitude_lower and longitude < :longitude_upper and longitude > :longitude_lower", {latitude_upper: latitude_upper, latitude_lower: latitude_lower, longitude_upper: longitude_upper, longitude_lower: longitude_lower}).each do |gcach|
+		result << gcach.name
+	end
+	
+	return result
   end
 
   private

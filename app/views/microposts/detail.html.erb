@@ -34,6 +34,8 @@
       </span>
       <% end %>
 	  
+	  <%= render partial:'map', locals: {micropost: @micropost} %>
+	  
 	  <%= render partial:'proposal', locals: {proposal:@proposal, activity_proposals: @activity_proposals, location_proposals: @location_proposals, time_proposals: @time_proposals} %>
 	  
       </div>

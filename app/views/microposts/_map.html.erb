@@ -1,0 +1,19 @@
+<script type="text/javascript">
+	$(function() {
+		var mapOptions = {
+		  center: new google.maps.LatLng(<%= raw micropost.latitude %>, <%= raw micropost.longitude %>),
+		  zoom: 8,
+		  mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		
+		var map = new google.maps.Map(document.getElementById("micropost-map"), mapOptions);
+		
+		var marker = new google.maps.Marker({
+			position: new google.maps.LatLng(<%= raw micropost.latitude %>, <%= raw micropost.longitude %>, true),
+			map: map
+		});
+	});
+</script>
+
+<div id="micropost-map" style="width: 100%; height: 200px;">
+</div>

@@ -10,7 +10,7 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require jquery
+//= require jquery-sub
 //= require bootstrap
 //= require jquery_ujs
 //= require jquery.remotipart
@@ -23,6 +23,7 @@
 //= require mousewheel
 //= require confirm_delete
 //= require bootstrap_custom
+//= require jquery-ui.min
 
 $(function () { 
 
@@ -50,7 +51,32 @@ $(function () {
 	$('#my-profile').tooltip();
 	$('#feed').tooltip();
 	
+	$('#location_input').on( "autocompleteresponse", function( event, ui ) {
+		if ($('#location_input').val().length > 3 && ui.content.length == 0){
+			$('#location-error').html("<p>searching</p>");
+			$.ajax({
+				url: '/google/places/autocomplete',
+				type: 'POST',
+				data: {name: $('#location_input').val()},
+				success: function(response) {
+					if (response.status == "OK"){
+						var autocompletes = [];
 
+						for (var i = 0; i < response.results.length; i++) {
+							autocompletes.push(response.results[i].name);
+						}
+						
+						$('#location_input').autocomplete("option", "source", autocompletes);
+					
+						$('#location_input').autocomplete("search", $('#location_input').val());
+					}
+					else{
+						$('#location-error').html("<p>No results found</p><a href=\"#map-modal\" role=\"button\" class=\"btn\" data-toggle=\"modal\">I'll find it myself</a>")
+					}
+				}
+			});
+		}
+	});
 }); 
 
 

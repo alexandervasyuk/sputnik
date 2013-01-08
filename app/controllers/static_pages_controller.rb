@@ -3,6 +3,9 @@ class StaticPagesController < ApplicationController
     if signed_in?
       @micropost  = current_user.microposts.build
       @feed_items = current_user.feed
+	  @gcaches = current_user.gather_gcaches(current_location)
+	  
+	  session[:feed_latest] = @feed_items.maximum("updated_at")
     else
       @user = User.new
     end

@@ -47,6 +47,28 @@ class PostsController < ApplicationController
   		end
   	end
   end
+  
+  def mobile_refresh
+	@micropost = current_user.feed.find(params[:micropost_id])
+	
+	if @micropost
+		@post_updates = @micropost.posts
+		
+		updates = []
+		
+		@post_updates.each do |update|
+			updates << update.to_mobile
+		end
+		
+		json_response = {status: "success", replies_data: updates}
+		
+		render json: json_response
+	else	
+		json_response = {status: "failure", replies_data: []}
+		
+		render json: json_response
+	end
+  end
 
   private
 

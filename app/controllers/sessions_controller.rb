@@ -19,6 +19,8 @@ class SessionsController < ApplicationController
   def create_mobile
   	if @sign_in_success
   		feed = @user.feed
+		
+		session[:feed_latest] = feed.maximum("updated_at")
   		
   		mobile_feed = []
   		feed.each do |feed_item|
@@ -49,6 +51,7 @@ class SessionsController < ApplicationController
     
     if @sign_in_success
       sign_in(@user, timezone)
+	  set_location(request)
 	end
   end
 end

@@ -277,7 +277,6 @@ li.unread {
 	float: right;
 }
 
-
 /* miscellaneous */
 
 .friend_form {
@@ -571,7 +570,7 @@ span.add-on {
 
 .micropost_create_field {
   margin: 9px 0;
-  input#prependedInput {
+  input.prepended_input {
     width:87% !important;
   }
   

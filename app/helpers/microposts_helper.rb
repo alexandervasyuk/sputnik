@@ -17,6 +17,6 @@ module MicropostsHelper
 	def mobile_detail_convert(post)
 		replier = post.user
 		
-		return {replier_picture: replier.avatar.url, reply_text: post.content, replier_name: replier.name, posted_time: post.created_at}
+		return {replier_id: replier.id, replier_picture: replier.avatar.url, reply_text: post.content, replier_name: replier.name, posted_time: post.created_at}
 	end
 end

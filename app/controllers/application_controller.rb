@@ -5,4 +5,5 @@ class ApplicationController < ActionController::Base
   include RelationshipsHelper
   include CropHelper
   include NotificationsHelper
+  include GoogleHelper
 end

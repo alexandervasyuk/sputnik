@@ -39,6 +39,7 @@ FactoryGirl.define do
   end
   
   factory :proposal do
+	sequence(:id) { |n| }
 	user
 	micropost
 	content "Lorem ipsum"

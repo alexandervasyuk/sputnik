@@ -1,10 +1,18 @@
 module SessionsHelper
-
   def sign_in(user, timezone)
     cookies.permanent[:remember_token] = user.remember_token
     cookies.permanent[:timezone] = timezone
     self.current_user = user
     self.user_timezone = timezone
+  end
+  
+  def set_location(request)
+	geolocation_result = GeoIp.geolocation(request.remote_ip)
+	session[:current_location] = {latitude: geolocation_result[:latitude].to_f, longitude: geolocation_result[:longitude].to_f}
+  end
+  
+  def current_location
+	session[:current_location]
   end
 
   def signed_in?

@@ -61,7 +61,11 @@ Sputnik::Application.routes.draw do
   match '/mobile/event_details', to: 'microposts#mobile_detail'
   match '/mobile/event_reply', to: 'posts#create_mobile'
   match '/mobile/event_refresh', to: 'microposts#mobile_refresh'
+  match '/mobile/post_refresh', to: 'posts#mobile_refresh'
   #match '/microposts/detail/:id', to: 'microposts#detail'
+  
+  #Google routes
+  match '/google/places/autocomplete', to: 'google#places_autocomplete'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

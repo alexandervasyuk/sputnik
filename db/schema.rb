@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121224051056) do
+ActiveRecord::Schema.define(:version => 20130108013903) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -29,6 +29,15 @@ ActiveRecord::Schema.define(:version => 20121224051056) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "gcaches", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "name"
+    t.string   "address"
+    t.decimal  "longitude"
+    t.decimal  "latitude"
+  end
+
   create_table "microposts", :force => true do |t|
     t.string   "content"
     t.integer  "user_id"
@@ -40,6 +49,8 @@ ActiveRecord::Schema.define(:version => 20121224051056) do
     t.boolean  "content_proposal",  :default => true
     t.boolean  "time_proposal",     :default => true
     t.boolean  "location_proposal", :default => true
+    t.decimal  "latitude"
+    t.decimal  "longitude"
   end
 
   add_index "microposts", ["user_id", "created_at"], :name => "index_microposts_on_user_id_and_created_at"
@@ -79,12 +90,13 @@ ActiveRecord::Schema.define(:version => 20121224051056) do
 
   create_table "proposals", :force => true do |t|
     t.string   "content"
-    t.datetime "time"
     t.string   "location"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "time"
     t.integer  "user_id"
     t.integer  "micropost_id"
+    t.integer  "votes"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   add_index "proposals", ["micropost_id"], :name => "index_proposals_on_micropost_id"
@@ -104,6 +116,17 @@ ActiveRecord::Schema.define(:version => 20121224051056) do
   add_index "relationships", ["followed_id"], :name => "index_relationships_on_followed_id"
   add_index "relationships", ["follower_id", "followed_id"], :name => "index_relationships_on_follower_id_and_followed_id", :unique => true
   add_index "relationships", ["follower_id"], :name => "index_relationships_on_follower_id"
+
+  create_table "user_gcaches", :force => true do |t|
+    t.integer  "gcach_id"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "user_gcaches", ["gcach_id"], :name => "index_user_gcaches_on_gcach_id"
+  add_index "user_gcaches", ["user_id", "gcach_id"], :name => "index_user_gcaches_on_user_id_and_gcach_id", :unique => true
+  add_index "user_gcaches", ["user_id"], :name => "index_user_gcaches_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "name"

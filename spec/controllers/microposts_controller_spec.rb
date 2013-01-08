@@ -43,14 +43,18 @@ describe MicropostsController do
 	describe "destroying a micropost" do
 		it "should destroy a micropost if the user owns the micropost" do
 			micropost = FactoryGirl.create(:micropost, user: user)
+			user.participate!(micropost)
 			
 			delete = {id: micropost.id}
 			
+			participations_before = user.participations.all.count
 			microposts_before = Micropost.all.count
 			post "destroy", delete
 			microposts_after = Micropost.all.count
+			participations_after = user.participations.all.count
 			
 			microposts_after.should == microposts_before - 1	
+			participations_after.should == participations_before - 1
 		end
 		
 		it "should not destroy a micropost if the user does not own the micropost" do
@@ -189,8 +193,8 @@ describe MicropostsController do
 			
 				replies_data = []
 				
-				micropost.posts.each do |post|
-					replies_data << {replier_picture: post.user.avatar.url, reply_text: post.content, replier_name: post.user.name, posted_time: post.created_at }
+				micropost.posts.reverse.each do |post|
+					replies_data << {replier_id: post.user.id, replier_picture: post.user.avatar.url, reply_text: post.content, replier_name: post.user.name, posted_time: post.created_at}
 				end
 				
 				post "mobile_detail", data
@@ -223,29 +227,23 @@ describe MicropostsController do
 			
 			it "should give the correct update on the mobile app" do
 				first_event = FactoryGirl.create(:micropost, user: friend)
-				second_event = FactoryGirl.create(:micropost, user: friend)
-				third_event = FactoryGirl.create(:micropost, user: friend)
+				#second_event = FactoryGirl.create(:micropost, user: friend)
+				#third_event = FactoryGirl.create(:micropost, user: friend)
 				fourth_event = FactoryGirl.create(:micropost, user: friend)
 				
-				second_event.id.should > first_event.id
-				third_event.id.should > second_event.id
-				fourth_event.id.should > third_event.id
 				
-				update = {latest: first_event.id}
+				session[:feed_latest] = first_event.updated_at
 				
-				post "mobile_refresh", update
+				post "mobile_refresh", {ids: [1, 2, 3]}
 
 				updates = []
+				to_delete = ["3"]
 				
-				user.feed.count.should == 4
-				
-				user.feed.where("id > :id", {id: first_event.id}).count.should == 3
-				
-				user.feed.where("id > :id", {id: first_event.id}).each do |update_micropost|
+				user.feed.where("updated_at > :latest_update", {latest_update: first_event.updated_at}).each do |update_micropost|
 					updates << update_micropost.to_mobile
 				end
 				
-				json_response = {status: "success", feed_items: updates}.to_json
+				json_response = {status: "success", feed_items: updates, to_delete: to_delete}.to_json
 				
 				response.body.should == json_response
 			end
