@@ -147,9 +147,8 @@ class MicropostsController < ApplicationController
   end
   
   def mobile_refresh
+	session[:feed_latest].inspect
 	@new_feed_items = current_user.feed_after(session[:feed_latest])
-	
-	params[:ids].inspect
 	
 	to_delete = []
 	params[:ids].each do |id|
@@ -168,6 +167,10 @@ class MicropostsController < ApplicationController
 		end
 		
 		json_response = {status: "success", feed_items: updates, to_delete: to_delete}
+		
+		render json: json_response
+	elsif !to_delete.empty?
+		json_response = {status: "success", feed_items: [], to_delete: to_delete}
 		
 		render json: json_response
 	else
