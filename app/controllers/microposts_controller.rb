@@ -36,7 +36,9 @@ class MicropostsController < ApplicationController
   #Action responsible for destroying a micropost from the database
   def destroy
 	if !@micropost.participations.empty?
-		@micropost.participations.destroy
+		@micropost.participations.each do |participation|
+			participation.delete
+		end
 	end
   
     @micropost.destroy
