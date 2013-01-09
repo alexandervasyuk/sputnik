@@ -50,7 +50,15 @@ class Micropost < ActiveRecord::Base
   end
   
   def to_mobile
-  	return {id: self.id, creator_picture: self.user.avatar.url, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time, latitude: self.latitude, longitude: self.longitude}
+	participants = []
+  
+	self.participations.each do |participation|
+		participant = participation.user
+		
+		participants << {participant_id: participant.id, participant_name: participant.name, participant_picture: participant.avatar.url}
+	end
+  
+  	{id: self.id, creator_picture: self.user.avatar.url, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time, latitude: self.latitude, longitude: self.longitude, participations: participants}
   end
   
   #These are the actual participants in an event

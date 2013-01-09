@@ -71,4 +71,88 @@ describe UsersController do
 			end	
 		end
 	end
+
+	describe "displaying a user" do
+		describe "on the web app" do
+			
+		end
+	
+		describe "on the mobile app" do
+			let(:logged_in){ FactoryGirl.create(:user) }
+			let(:requested){ FactoryGirl.create(:user) }
+			let(:logged_in_num_events) { 3 }
+			let(:requested_num_events) { 4 }
+			
+			before { 
+				sign_in(logged_in) 
+				generate_microposts_for_user(logged_in, logged_in_num_events)
+				generate_microposts_for_user(requested, requested_num_events)
+			}
+		
+			it "should give the correct result when it is the same user" do
+				input = {id: logged_in.id}
+					
+				post "show_mobile", input
+				
+				events = logged_in.feed
+				
+				json_response = {status: "success", is_user: true, is_friends: false, is_pending: false, is_waiting: false, is_following: false, events: events}.to_json
+				
+				response.body.should == json_response
+				events.count.should == 3
+			end
+			
+			it "should give the correct result when the two users are friends" do
+				make_friends(logged_in, requested)
+				logged_in.follow!(requested)
+				
+				input = {id: requested.id}
+				
+				post "show_mobile", input
+				
+				events = requested.feed
+				
+				json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, is_following: true, events: events}.to_json
+				
+				response.body.should == json_response
+				events.count.should == logged_in_num_events + requested_num_events
+			end
+			
+			it "should give the correct result when there is a pending request from the logged in user" do
+				logged_in.friend_request!(requested)
+				
+				input = {id: requested.id}
+				
+				post "show_mobile", input
+				
+				events = []
+				
+				json_response = {status: "success", is_user: false, is_friends: false, is_pending: true, is_waiting: false, is_following: false, events: events}.to_json
+				
+				response.body.should == json_response
+			end
+			
+			it "should give the correct result when the given user has made a request to the logged in user" do
+				requested.friend_request!(logged_in)
+				
+				input = {id: requested.id}
+				
+				post "show_mobile", input
+				
+				json_response = {status: "success", is_user: false, is_friends: false, is_pending: false, is_waiting: true, is_following: false, events: []}.to_json
+				
+				response.body.should == json_response
+			end
+			
+			it "should give the correct result when the two users are not friends" do
+				input = {id: requested.id}
+				
+				post "show_mobile", input
+				
+				json_response = {status: "failure", is_user: false, is_friends: false, is_pending: false, is_waiting: false, is_following: false, events: []}.to_json
+				
+				response.body.should == json_response
+			end
+		end
+	end
 end

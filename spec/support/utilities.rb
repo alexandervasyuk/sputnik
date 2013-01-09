@@ -36,6 +36,14 @@ def generate_microposts_for(user, num_microposts)
 	end
 end
 
+def generate_microposts_for_user(user, num_microposts)
+	while num_microposts > 0 do
+		FactoryGirl.create(:micropost, user: user)
+		
+		num_microposts-=1
+	end
+end
+
 def generate_posts_for(micropost, num_posts)
 	creator = micropost.user
 

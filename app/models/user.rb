@@ -149,6 +149,16 @@ class User < ActiveRecord::Base
   def get_relationship(other_user)
     relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
   end
+  
+  def pending?(other_user)
+	relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id AND friend_status = 'PENDING'", {follower_id: self.id, followed_id: other_user.id})[0]
+	
+	if !relationship.nil?
+		return true
+	else
+		return false
+	end
+  end
 
   #Following
 
@@ -216,13 +226,15 @@ class User < ActiveRecord::Base
   def follow!(other_user)
     relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
     
-    if relationship.follower_id == self.id
-      relationship.follow1 = true
-    elsif  
-      relationship.follow2 = true
-    end
-    
-    relationship.save
+	if relationship
+		if relationship.follower_id == self.id
+		  relationship.follow1 = true
+		else
+		  relationship.follow2 = true
+		end
+		
+		relationship.save!
+	end
   end
 
   def unfollow!(other_user)

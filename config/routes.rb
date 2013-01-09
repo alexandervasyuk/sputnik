@@ -62,6 +62,7 @@ Sputnik::Application.routes.draw do
   match '/mobile/event_reply', to: 'posts#create_mobile'
   match '/mobile/event_refresh', to: 'microposts#mobile_refresh'
   match '/mobile/post_refresh', to: 'posts#mobile_refresh'
+  match '/mobile/user', to: 'users#show_mobile'
   #match '/microposts/detail/:id', to: 'microposts#detail'
   
   #Google routes
