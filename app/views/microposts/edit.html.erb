@@ -13,7 +13,7 @@
       <%= f.text_field :location %>
 
       <%= f.label :time, 'Time'%>
-      <%= f.text_field :time, value:@micropost.time.in_time_zone(user_timezone).strftime('%I:%M %p %d %b') %>
+      <%= f.text_field :time, value: @micropost.time.in_time_zone(user_timezone).strftime('%I:%M %p %d %b') if @micropost.time %>
 
       <%= f.submit "Save changes", class: "btn btn-large btn-primary" %>
     <% end %>
