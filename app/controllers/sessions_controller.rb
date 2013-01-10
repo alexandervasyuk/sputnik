@@ -23,11 +23,11 @@ class SessionsController < ApplicationController
   			mobile_feed << feed_item.to_mobile
   		end
   		
-  		json_response = {status: "success", feed_data: mobile_feed}
+  		json_response = {status: "success", name: @user.name, id: @user.id, feed_data: mobile_feed}
   		
   		render json: json_response
   	else
-  		json_response = {status: "failure", feed_data:[]}
+  		json_response = {status: "failure", name: nil, id: nil, feed_data:[]}
   		
   		render json: json_response
   	end
