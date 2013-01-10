@@ -11,7 +11,7 @@ function ajaxUpdate(postUrl, dataClass, replaceDiv){
 		 	   }
 		     }
 	     });
-    }, 10000);
+    }, 20000);
 }
 
 function postsUpdate(micropostId, postUrl, dataClass, replaceDiv){
@@ -27,7 +27,7 @@ function postsUpdate(micropostId, postUrl, dataClass, replaceDiv){
 				}
 			}
 		});
-	}, 10000);
+	}, 20000);
 }
 
 function notificationsUpdate(){
@@ -56,5 +56,5 @@ function notificationsUpdate(){
 				}
 			}
 		});
-	}, 10000);
+	}, 20000);
 }

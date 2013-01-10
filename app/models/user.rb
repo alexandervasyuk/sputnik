@@ -118,17 +118,33 @@ class User < ActiveRecord::Base
   end
   
   def friends?(other)
-    if other == self
-      return true
-    end    
-    
     relationship = get_relationship(other)
     
-    if !relationship.nil? && relationship.friend_status == "FRIENDS"
+    if relationship && relationship.friend_status == "FRIENDS"
       return true
     end
     
     return false
+  end
+  
+  def ignore!(other)
+	relationship = get_relationship(other)
+	
+	if relationship
+		relationship.friend_status = "IGNORED"
+		
+		relationship.save!
+	end
+  end
+  
+  def ignored?(other)
+	relationship = get_relationship(other)
+	
+	if relationship && relationship.friend_status == "IGNORED"
+		return true
+	end
+	
+	return false
   end
 
   def friends
@@ -214,7 +230,7 @@ class User < ActiveRecord::Base
   end
   
   def accept_friend!(other_user)
-    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id", {follower_id: other_user.id, followed_id: self.id})[0]
+    relationship = self.get_relationship(other_user)
     
     relationship.friend_status = "FRIENDS"
     relationship.follow1 = true
