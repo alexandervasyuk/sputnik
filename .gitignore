@@ -24,3 +24,6 @@ doc/
 
 
 config/database.yml
+
+#Ignore all cached things
+public/microposts
