@@ -118,6 +118,8 @@ class User < ActiveRecord::Base
   end
   
   def friends?(other)
+	return true if other == self
+  
     relationship = get_relationship(other)
     
     if relationship && relationship.friend_status == "FRIENDS"

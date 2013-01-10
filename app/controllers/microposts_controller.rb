@@ -6,18 +6,27 @@ class MicropostsController < ApplicationController
   include MicropostsHelper
   include TimeHelper
   
+  #Before Filters
   before_filter :signed_in_user
   before_filter :correct_user, only: [:destroy, :update, :edit]
   before_filter :time_input_parser, only: [:create, :update]
-  
   before_filter :detail_prepare, only: [:detail, :mobile_detail]
   
+  #After Filters
   after_filter :time_parser_error, only: :create
   
+  #Valid sources
   respond_to :html, :js
   
+  #Security
   protect_from_forgery except: [:mobile_detail, :mobile_refresh]
-
+  
+  #Caches
+  caches_page :detail
+  
+  #Sweepers
+  cache_sweeper :event_sweeper, only: [:create, :update, :destroy]
+  
   #Action responsible for creating a new micropost from form inputs
   #Input interface - content, location, time
   def create
