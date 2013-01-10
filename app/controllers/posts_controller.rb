@@ -1,12 +1,17 @@
 class PostsController < ApplicationController
   include NotificationsHelper
 
+  #Before Filters
   before_filter :signed_in_user
   before_filter :correct_user, only: :destroy
   
+  #After Filters
   before_filter :before_create, only: [:create, :create_mobile]
   after_filter :after_create, only: [:create, :create_mobile]
 
+  #Sweepers
+  cache_sweeper :event_sweeper, only: [:create, :create_mobile, :destroy]
+  
   def create
     if !@created
       flash[:error] = 'Post can not be empty'

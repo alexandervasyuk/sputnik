@@ -19,6 +19,7 @@ gem 'httparty'
 gem 'daemons'
 gem 'execjs'
 gem 'geo_ip'
+gem 'newrelic_rpm'
 
 gem 'omniauth-facebook'
 

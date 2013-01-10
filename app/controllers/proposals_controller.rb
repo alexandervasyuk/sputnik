@@ -1,7 +1,11 @@
 class ProposalsController < ApplicationController
 	include TimeHelper
 
+	#Before Filters
 	before_filter :time_input_parser, only: [:create, :update]
+	
+	#Sweepers
+	cache_sweeper :event_sweeper, only: [:create, :update, :destroy]
 	
 	def create
 		@proposal = current_user.proposals.build(params[:proposal])

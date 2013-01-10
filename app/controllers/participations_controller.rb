@@ -1,7 +1,9 @@
 class ParticipationsController < ApplicationController
-	include NotificationsHelper
+	#Before Filters
 	before_filter :signed_in_user
-	# respond_to :html, :js
+	
+	#Sweepers
+	cache_sweeper :event_sweeper, only: [:create, :destroy]
 
 	def create
 		@micropost = Micropost.find(params[:participation][:micropost_id])
@@ -20,7 +22,5 @@ class ParticipationsController < ApplicationController
 		@micropost = Participation.find(params[:id]).micropost
 		current_user.unparticipate!(@micropost)
 		redirect_to :back
-		# @user_and_post = [current_user, @micropost]
-		# respond_with @user_and_post	
 	end
 end
