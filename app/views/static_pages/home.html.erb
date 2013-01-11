@@ -18,12 +18,12 @@
       	  });
       </script>
         <% if current_user.friends.any? or current_user.feed.any? %>
-        <h3>Feed</h3>
-     	  <div id="div_feed">
-      	  	<%= render 'shared/feed' %>
-      	</div>
+			<h3>Feed</h3>
+			  <div id="div_feed">
+				<%= render 'shared/feed' %>
+			</div>
         <% else %>
-          <%= render 'static_pages/welcome' %>
+			<%= render 'static_pages/welcome' %>
         <% end %>
     </div>
   </div>

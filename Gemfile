@@ -19,7 +19,6 @@ gem 'httparty'
 gem 'daemons'
 gem 'execjs'
 gem 'geo_ip'
-gem 'newrelic_rpm'
 
 gem 'omniauth-facebook'
 
@@ -27,6 +26,7 @@ group :development, :test do
   gem 'sqlite3', '1.3.5'
   gem 'rspec-rails', '2.11.0'
   gem 'guard-rspec', '1.2.1'
+  gem 'guard-spork', '1.2.0'
   gem 'guard-spork', '1.2.0'  
   gem 'spork', '0.9.2'
   gem 'pg', '0.14.1'
@@ -52,5 +52,7 @@ end
 
 group :production do
   gem 'pg', '0.14.1'
+  gem 'newrelic_rpm'
+  gem 'dalli'
   gem 'aws-sdk'
 end
