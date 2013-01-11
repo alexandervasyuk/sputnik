@@ -1,12 +1,14 @@
 <% @user ||= current_user %>
 
-<%= javascript_include_tag "crop"%>
-<%= render "shared/image_crop"%>
+<% cache(@user) %>
+	<%= javascript_include_tag "crop"%>
+	<%= render "shared/image_crop"%>
 
-<a href="#" class="test-tooltip profile_image_default profile_image_link" title="change photo" data-placement="bottom">
-	<%= image_tag current_user.avatar.url(:thumb), id: "profile_image", rel: "#crop_div"%>
-</a>
+	<a href="#" class="test-tooltip profile_image_default profile_image_link" title="change photo" data-placement="bottom">
+		<%= image_tag current_user.avatar.url(:thumb), id: "profile_image", rel: "#crop_div"%>
+	</a>
 
-<h3 id = "username">
-	<%= link_to @user.name, @user %>
-</h3>
+	<h3 id = "username">
+		<%= link_to @user.name, @user %>
+	</h3>
+<% end %>
