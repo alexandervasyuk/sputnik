@@ -2,7 +2,11 @@ class StaticPagesController < ApplicationController
   def home
     if signed_in?
       @micropost  = current_user.microposts.build
-      @feed_items = current_user.feed
+	  
+	  if !fragment_exist?(current_user)
+		@feed_items = current_user.feed
+	  end
+	  
 	  @gcaches = current_user.gather_gcaches(current_location)
 	  
 	  session[:feed_latest] = @feed_items.maximum("updated_at")
