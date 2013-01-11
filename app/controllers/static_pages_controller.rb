@@ -3,9 +3,7 @@ class StaticPagesController < ApplicationController
     if signed_in?
       @micropost  = current_user.microposts.build
 	  
-	  if !fragment_exist?(current_user)
-		@feed_items = current_user.feed
-	  end
+      @feed_items = current_user.feed
 	  
 	  @gcaches = current_user.gather_gcaches(current_location)
 	  
