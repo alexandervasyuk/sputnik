@@ -1,10 +1,12 @@
 require 'csv'
+require 'new_relic/agent/method_tracer'
 
 class MicropostsController < ApplicationController
   #Helper classes
   include NotificationsHelper
   include MicropostsHelper
   include TimeHelper
+  include ::NewRelic::Agent::MethodTracer
   
   #Before Filters
   before_filter :signed_in_user
@@ -161,9 +163,10 @@ class MicropostsController < ApplicationController
       render partial:'shared/feed'
     end
   end
+  add_method_tracer :refresh, 'Custom/event_refresh'
+  
   
   def mobile_refresh
-	puts session[:feed_latest]
 	@new_feed_items = current_user.feed_after(session[:feed_latest])
 	
 	to_delete = []
