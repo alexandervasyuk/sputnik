@@ -1,6 +1,6 @@
 <% @user ||= current_user %>
 
-<% cache(@user) %>
+<% cache(@user) do %>
 	<%= javascript_include_tag "crop"%>
 	<%= render "shared/image_crop"%>
 
