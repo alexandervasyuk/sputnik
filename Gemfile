@@ -19,6 +19,7 @@ gem 'httparty'
 gem 'daemons'
 gem 'execjs'
 gem 'geo_ip'
+gem 'redis'
 
 gem 'omniauth-facebook'
 
@@ -30,6 +31,7 @@ group :development, :test do
   gem 'guard-spork', '1.2.0'  
   gem 'spork', '0.9.2'
   gem 'pg', '0.14.1'
+  gem 'rack-mini-profiler'
 end
 
 # Gems used only for assets and not required
