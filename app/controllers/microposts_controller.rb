@@ -1,47 +1,53 @@
 require 'csv'
-require 'new_relic/agent/method_tracer'
 
 class MicropostsController < ApplicationController
   #Helper classes
   include NotificationsHelper
   include MicropostsHelper
   include TimeHelper
-  include ::NewRelic::Agent::MethodTracer
   
   #Before Filters
   before_filter :signed_in_user
   before_filter :correct_user, only: [:destroy, :update, :edit]
   before_filter :time_input_parser, only: [:create, :update]
   before_filter :detail_prepare, only: [:detail, :mobile_detail]
-  
-  #After Filters
-  after_filter :time_parser_error, only: :create
+  before_filter :create_prepare, only: [:create, :mobile_create]
   
   #Valid sources
   respond_to :html, :js
   
   #Security
-  protect_from_forgery except: [:mobile_detail, :mobile_refresh]
+  protect_from_forgery except: [:mobile_detail, :mobile_refresh, :mobile_create]
   
   #Caches
-  caches_page :detail
+  #caches_page :detail
   
   #Sweepers
-  cache_sweeper :event_sweeper, only: [:create, :update, :destroy]
+  #cache_sweeper :event_sweeper, only: [:create, :update, :destroy]
   
   #Action responsible for creating a new micropost from form inputs
   #Input interface - content, location, time
   def create
-  	@micropost = current_user.microposts.build(params[:micropost])
-    @micropost.invitees = {}
-  	
-    if @micropost.save
-      current_user.participate!(@micropost)
+    if @created
+	  redirect_to detail_micropost_path(@micropost.id)
+	else 
+	  @feed_items = current_user.feed
+	  @pool_items = @feed_items
+	
+	  render 'static_pages/home'
 	end
-      
-    @feed_items = current_user.feed
-    
-    render 'static_pages/home'
+  end
+  
+  def mobile_create
+	if @created
+		json_response = {status: "success", created: @micropost.to_mobile}
+		
+		render json: json_response
+	else
+		json_response = {status: "failure", created: {}}
+		
+		render json: json_response
+	end
   end
 
   #Action responsible for destroying a micropost from the database
@@ -163,11 +169,15 @@ class MicropostsController < ApplicationController
       render partial:'shared/feed'
     end
   end
-  add_method_tracer :refresh, 'Custom/event_refresh'
   
   
   def mobile_refresh
+    logger.debug "mobile refresh feed latest: #{session[:feed_latest]}"
+	
 	@new_feed_items = current_user.feed_after(session[:feed_latest])
+	
+	logger.debug "\n\n all new feed items: "
+	logger.debug @new_feed_items
 	
 	to_delete = []
 	params[:ids].each do |id|
@@ -215,8 +225,24 @@ class MicropostsController < ApplicationController
   
   #BEFORE FILTER - Helper method that selects and parses the time input according to its syntax
   def time_input_parser
-	params[:time] = params[:micropost][:time]
-	params[:micropost][:time] = parse_time(params[:micropost][:time])
+	user_time = params[:micropost][:time]
+	params[:micropost][:time] = parse_time(params[:micropost][:time]) if !user_time.blank?
+  
+    end_user_time = params[:micropost][:end_time]
+	params[:micropost][:end_time] = parse_time(params[:micropost][:end_time]) if !end_user_time.blank?
+  
+	@micropost = current_user.microposts.build(params[:micropost])
+  
+	# Case where the user types something but the text conversion fails
+	if user_time && params[:micropost][:time].nil?
+	   @micropost.errors[:time].clear
+	   @micropost.errors.add(:time, "incorrect time format")
+	   
+	   render 'static_pages/home'
+	elsif end_user_time && params[:micropost][:end_time].nil?
+	   @micropost.errors[:time].clear
+	   @micropost.errors.add(:time, "incorrect time format")
+	end
   end
   
   #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
@@ -227,8 +253,9 @@ class MicropostsController < ApplicationController
 	
     if @friends
       @post = current_user.posts.build(micropost_id:params[:id])
-	  @proposal = current_user.proposals.find_by_micropost_id(params[:id]) || current_user.proposals.build(micropost_id:params[:id])
-      @friends = current_user.friends
+	  #@proposal = current_user.proposals.find_by_micropost_id(params[:id]) || current_user.proposals.build(micropost_id:params[:id])
+      
+	  @friends = current_user.friends
 	  
 	  #Gather Participants
       @participants = []
@@ -237,20 +264,22 @@ class MicropostsController < ApplicationController
       end
 	  
 	  #Gather the correct proposals for each category
-	  @activity_proposals = @micropost.proposals.select("content, count(*) as content_count").where("content != ?", "").group("content").order("content_count DESC")
-	  @location_proposals = @micropost.proposals.select("location, count(*) as location_count").where("location != ?", "").group("location").order("location_count DESC")
-	  @time_proposals = @micropost.proposals.select("time, count(*) as time_count").where("time is not null").group("time").order("time_count DESC")
+	  #@location_proposals = @micropost.proposals.select("location, count(*) as location_count").where("location != ?", "").group("location").order("location_count DESC")
+	  #@time_proposals = @micropost.proposals.select("time, count(*) as time_count").where("time is not null").group("time").order("time_count DESC")
 	  
 	  #Reply data
       @post_items = @micropost.posts.reverse!
 	end
   end
   
-  #AFTER FILTER - Helper method that responds to incorrect format errors and sets the correct error messages for them
-  def time_parser_error
-  	if !params[:time].empty? and params[:micropost][:time].nil?
-	   @micropost.errors[:time].clear
-	   @micropost.errors.add(:time, "needs to follow this format: 4:15 pm, tomorrow 3am, in 10 min, in 2 days, 1:14 pm 15 Nov ")
+  #BEFORE FILTER - before filter that prepares the relevant information for create (web app and mobile)
+  def create_prepare
+	@micropost = current_user.microposts.build(params[:micropost])
+    @micropost.invitees = {}
+	
+	if @micropost.save
+		@created = true
+		current_user.participate!(@micropost)
 	end
   end
 end

@@ -66,6 +66,7 @@ Sputnik::Application.routes.draw do
   match '/mobile/relationship_update', to: 'relationships#mobile_update'
   match '/mobile/friend', to: 'relationships#mobile_create'
   match '/mobile/unfriend', to: 'relationships#mobile_destroy'
+  match '/mobile/event_create', to: 'microposts#mobile_create'
   #match '/microposts/detail/:id', to: 'microposts#detail'
   
   #Google routes

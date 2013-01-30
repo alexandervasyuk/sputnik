@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130111004831) do
+ActiveRecord::Schema.define(:version => 20130129234003) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -30,13 +30,19 @@ ActiveRecord::Schema.define(:version => 20130111004831) do
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "gcaches", :force => true do |t|
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
     t.string   "name"
     t.string   "address"
     t.decimal  "longitude"
     t.decimal  "latitude"
+    t.string   "term"
+    t.decimal  "search_latitude"
+    t.decimal  "search_longitude"
+    t.decimal  "rank"
   end
+
+  add_index "gcaches", ["term", "name", "search_latitude", "search_longitude", "latitude", "longitude"], :name => "primary_index", :unique => true
 
   create_table "microposts", :force => true do |t|
     t.string   "content"
@@ -51,6 +57,7 @@ ActiveRecord::Schema.define(:version => 20130111004831) do
     t.boolean  "location_proposal", :default => true
     t.decimal  "latitude"
     t.decimal  "longitude"
+    t.datetime "end_time"
   end
 
   add_index "microposts", ["updated_at"], :name => "index_microposts_on_updated_at"
@@ -78,6 +85,13 @@ ActiveRecord::Schema.define(:version => 20130111004831) do
   add_index "participations", ["user_id", "micropost_id"], :name => "index_participations_on_user_id_and_micropost_id", :unique => true
   add_index "participations", ["user_id"], :name => "index_participations_on_user_id"
 
+  create_table "polls", :force => true do |t|
+    t.integer  "micropost_id"
+    t.string   "type"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
     t.integer  "micropost_id"
@@ -94,14 +108,12 @@ ActiveRecord::Schema.define(:version => 20130111004831) do
     t.string   "location"
     t.datetime "time"
     t.integer  "user_id"
-    t.integer  "micropost_id"
     t.integer  "votes"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "poll_id"
   end
 
-  add_index "proposals", ["micropost_id"], :name => "index_proposals_on_micropost_id"
-  add_index "proposals", ["user_id", "micropost_id"], :name => "index_proposals_on_user_id_and_micropost_id", :unique => true
   add_index "proposals", ["user_id"], :name => "index_proposals_on_user_id"
 
   create_table "relationships", :force => true do |t|
