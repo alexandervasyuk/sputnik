@@ -19,15 +19,25 @@ class SessionsController < ApplicationController
   def create_mobile
   	if @sign_in_success
   		mobile_feed = []
-  		@feed.each do |feed_item|
+		mobile_pool = []
+		
+		feed = @user.feed
+		
+  		feed.each do |feed_item|
   			mobile_feed << feed_item.to_mobile
   		end
+		
+		pool = @user.pool
+		
+		pool.each do |pool_item|
+			mobile_pool << pool_item.to_mobile
+		end
   		
-  		json_response = {status: "success", name: @user.name, id: @user.id, feed_data: mobile_feed}
+  		json_response = {status: "success", name: @user.name, id: @user.id, feed_data: mobile_feed, pool_data: mobile_pool}
   		
   		render json: json_response
   	else
-  		json_response = {status: "failure", name: nil, id: nil, feed_data:[]}
+  		json_response = {status: "failure", name: nil, id: nil, feed_data:[], pool_data: []}
   		
   		render json: json_response
   	end
@@ -57,7 +67,6 @@ class SessionsController < ApplicationController
       sign_in(@user, timezone)
 	  set_location(request)
 	  
-	  @feed = @user.feed
 	  session[:feed_latest] = @feed.maximum("updated_at")
 	end
   end
