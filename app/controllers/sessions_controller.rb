@@ -21,15 +21,11 @@ class SessionsController < ApplicationController
   		mobile_feed = []
 		mobile_pool = []
 		
-		feed = @user.feed
-		
-  		feed.each do |feed_item|
+  		@feed.each do |feed_item|
   			mobile_feed << feed_item.to_mobile
   		end
 		
-		pool = @user.pool
-		
-		pool.each do |pool_item|
+		@pool.each do |pool_item|
 			mobile_pool << pool_item.to_mobile
 		end
   		
@@ -67,7 +63,11 @@ class SessionsController < ApplicationController
       sign_in(@user, timezone)
 	  set_location(request)
 	  
+	  @feed = @user.feed
+	  @pool = @user.pool
+	  
 	  session[:feed_latest] = @feed.maximum("updated_at")
+	  session[:pool_latest] = @pool.maximum("updated_at")
 	end
   end
 end
