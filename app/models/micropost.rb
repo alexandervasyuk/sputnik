@@ -62,7 +62,7 @@ class Micropost < ActiveRecord::Base
 		participants << {participant_id: participant.id, participant_name: participant.name, participant_picture: participant.avatar.url}
 	end
   
-  	{id: self.id, creator_picture: self.user.avatar.url, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time, latitude: self.latitude, longitude: self.longitude, participations: participants}
+  	{id: self.id, creator_picture: self.user.avatar.url, creator_id: self.user.id, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time, event_end_time: self.end_time, latitude: self.latitude, longitude: self.longitude, participations: participants}
   end
   
   #These are the actual participants in an event
