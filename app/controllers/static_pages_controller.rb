@@ -7,6 +7,7 @@ class StaticPagesController < ApplicationController
 	  @pool_items = current_user.pool
 	  
 	  session[:feed_latest] = @feed_items.maximum("updated_at")
+	  session[:pool_latest] = @pool_items.maximum("updated_at")
     else
       @user = User.new
     end

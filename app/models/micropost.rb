@@ -27,18 +27,6 @@ class Micropost < ActiveRecord::Base
   
   default_scope order: 'microposts.created_at DESC'
   
-  #Before Destroy
-  after_destroy do
-	participations.delete
-  end
-
-  def self.from_users_followed_by(user)
-    followed_user_ids = "SELECT followed_id FROM relationships
-                         WHERE follower_id = :user_id"
-    where("user_id IN (#{followed_user_ids}) OR user_id = :user_id", 
-          user_id: user.id)
-  end
-  
   def add_to_invited(user)
   	self.invitees[user.id] = 1
   	

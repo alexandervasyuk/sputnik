@@ -46,4 +46,14 @@ FactoryGirl.define do
 	location "Lorem ipsum"
 	time Time.now
   end
+  
+  factory :poll do
+	sequence(:id) { |n| }
+	micropost
+  end
+  
+  factory :characteristic do
+	sequence(:id) { |n| }
+	micropost
+  end
 end
