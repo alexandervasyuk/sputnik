@@ -1,0 +1,1 @@
+Rails.configuration.in_beta = true

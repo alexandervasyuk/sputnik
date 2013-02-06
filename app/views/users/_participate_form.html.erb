@@ -1,6 +1,6 @@
 <% if !current_user?(feed_item.user) %>
 	<% Time.use_zone(user_timezone) do %>
-		<% if feed_item.time.in_time_zone(user_timezone) > Time.current().beginning_of_day() %>
+		<% if !feed_item.time || feed_item.time.in_time_zone(user_timezone) > Time.current().beginning_of_day() %>
 			<div id="participate_form_<%=feed_item.id%>">
 			 	<% if current_user.participates?(feed_item) %>
 			 		<%= render 'users/unparticipate', feed_item: feed_item %> 

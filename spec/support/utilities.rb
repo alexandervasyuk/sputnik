@@ -56,3 +56,11 @@ def generate_posts_for(micropost, num_posts)
 		num_posts-=1
 	end
 end
+
+def set_in_beta
+	Rails.configuration.in_beta = true
+end
+
+def set_not_in_beta
+	Rails.configuration.in_beta = false
+end

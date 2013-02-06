@@ -65,5 +65,7 @@ module Sputnik
     config.autoload_paths += Dir["#{config.root}/lib/jobs/"]
 
     config.assets.initialize_on_precompile = false
+	
+	config.middleware.insert_before 0, "PlaceAutocomplete"
   end
 end

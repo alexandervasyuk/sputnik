@@ -2,8 +2,13 @@ class Post < ActiveRecord::Base
   after_save :update_micropost
   before_destroy :update_micropost
 
-  attr_accessible :content, :micropost_id
+  attr_accessible :content, :micropost_id, :user_id, :photo
 
+  has_attached_file :photo, styles: { standard: "400x400>" }, 
+     :path => ":rails_root/public/assets/posts/:id/:style/:basename.:extension",
+     :storage => :s3,
+     :s3_credentials => "#{Rails.root}/config/s3.yml"
+  
   belongs_to :user
   belongs_to :micropost
 

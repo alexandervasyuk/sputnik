@@ -9,29 +9,37 @@ class ProposalsController < ApplicationController
 	
 	def create
 		@proposal = current_user.proposals.build(params[:proposal])
+		@proposal.users << current_user
 		@proposal.save
 		
-		redirect_to detail_micropost_path(params[:proposal][:micropost_id])
+		respond_to do |format|
+			format.js 
+			format.html { redirect_to detail_micropost_path(params[:proposal][:micropost_id]) }
+		end
 	end
 	
 	def update
 		@proposal = Proposal.find(params[:id])
 		
-		if !params[:proposal][:content].blank?
-			@proposal.content = params[:proposal][:content]
-		end
+		Rails.logger.debug "params[:id] = #{params[:id]}"
 		
-		if !params[:proposal][:location].blank?
-			@proposal.location = params[:proposal][:location]
-		end
+		Rails.logger.debug "Proposal: #{@proposal.id}, #{@proposal.content}"
+		Rails.logger.debug "Proposal users: #{@proposal.users.all}"
 		
-		if !params[:proposal][:time].blank?
-			@proposal.time = params[:proposal][:time]
+		if @proposal.users.all.include? current_user
+			Rails.logger.debug "deleting current user"
+			@proposal.users.delete current_user
+		else
+			Rails.logger.debug "adding current user"
+			@proposal.users << current_user
 		end
 		
 		@proposal.save
 		
-		redirect_to detail_micropost_path(params[:proposal][:micropost_id])
+		respond_to do |format|
+			format.js
+			format.html { redirect_to detail_micropost_path(params[:proposal][:micropost_id]) }
+		end
 	end
 	
 	def destroy
@@ -42,5 +50,6 @@ class ProposalsController < ApplicationController
 	
 	def time_input_parser
 		params[:proposal][:time] = parse_time(params[:proposal][:time])
+		params[:proposal][:end_time] = parse_time(params[:proposal][:end_time])
 	end
 end

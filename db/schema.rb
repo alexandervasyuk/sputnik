@@ -11,7 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130129234003) do
+ActiveRecord::Schema.define(:version => 20130205055851) do
+
+  create_table "characteristics", :force => true do |t|
+    t.integer  "micropost_id"
+    t.string   "characteristic"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  create_table "characteristics_users", :id => false, :force => true do |t|
+    t.integer "characteristic_id"
+    t.integer "user_id"
+  end
+
+  add_index "characteristics_users", ["characteristic_id", "user_id"], :name => "index_characteristics_users_on_characteristic_id_and_user_id"
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -87,17 +101,22 @@ ActiveRecord::Schema.define(:version => 20130129234003) do
 
   create_table "polls", :force => true do |t|
     t.integer  "micropost_id"
-    t.string   "type"
+    t.string   "poll_type"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.string   "question"
   end
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
     t.integer  "micropost_id"
     t.string   "content"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+    t.string   "photo_file_name"
+    t.string   "photo_content_type"
+    t.integer  "photo_file_size"
+    t.datetime "photo_updated_at"
   end
 
   add_index "posts", ["micropost_id"], :name => "index_posts_on_micropost_id"
@@ -107,14 +126,19 @@ ActiveRecord::Schema.define(:version => 20130129234003) do
     t.string   "content"
     t.string   "location"
     t.datetime "time"
-    t.integer  "user_id"
     t.integer  "votes"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "poll_id"
+    t.datetime "end_time"
   end
 
-  add_index "proposals", ["user_id"], :name => "index_proposals_on_user_id"
+  create_table "proposals_users", :id => false, :force => true do |t|
+    t.integer "proposal_id"
+    t.integer "user_id"
+  end
+
+  add_index "proposals_users", ["proposal_id", "user_id"], :name => "index_proposals_users_on_proposal_id_and_user_id"
 
   create_table "relationships", :force => true do |t|
     t.integer  "follower_id"

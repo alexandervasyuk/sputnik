@@ -38,6 +38,14 @@ class SessionsController < ApplicationController
     redirect_to root_url
   end
   
+  def destroy_mobile
+	sign_out
+	
+	json_response = {status: "success"}
+	
+	render json: json_response
+  end
+  
   #BEFORE FILTER - performs the sign in check
   def log_in
   	@user = User.find_by_email(params[:session][:email].downcase)

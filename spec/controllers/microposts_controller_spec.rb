@@ -16,16 +16,46 @@ describe MicropostsController do
 					
 					microposts_after = Micropost.all.count
 					
-					response.should render_template('static_pages/home')
-					
 					microposts_after.should == microposts_before + 1
 				end
+			end
+			
+			it "should successfully save the record and render the event details page even if there are empty fields in location or time" do
+				micropost = {micropost: {content: "Lorem ipsum", location: nil, time: nil}}
+				
+				microposts_before = Micropost.all.count
+				
+				post "create", micropost
+				
+				microposts_after = Micropost.all.count
+				
+				micropost = Micropost.all.last
+				
+				response.should redirect_to(detail_micropost_path(micropost.id))
+				
+				microposts_after.should == microposts_before + 1
+			end
+			
+			it "should successfully create the record on the mobile" do
+				micropost = {micropost: {content: "Lorem ipsum", location: nil, time: nil}}
+				
+				microposts_before = Micropost.all.count
+				
+				post "mobile_create", micropost
+				
+				microposts_after = Micropost.all.count
+				
+				micropost = Micropost.all.last
+				
+				response.body.should == {status: "success", created: micropost.to_mobile}.to_json
+				
+				microposts_after.should == microposts_before + 1
 			end
 		end
 		
 		describe "errors in form input" do
 			it "should not create records on incorrectly formatted times" do
-				["", "hi"].each do |time|
+				["hi"].each do |time|
 					micropost = {micropost: {content: "Lorem Ipsum", location: "Lorem Ipsum", time: time}}
 				
 					microposts_before = Micropost.all.count
@@ -33,6 +63,8 @@ describe MicropostsController do
 					post "create", micropost
 					
 					microposts_after = Micropost.all.count
+					
+					response.should render_template("static_pages/home")
 					
 					microposts_before.should == microposts_after
 				end
@@ -238,7 +270,7 @@ describe MicropostsController do
 				updates = []
 				to_delete = []
 				
-				user.feed.where("updated_at > :latest_update", {latest_update: first_event.updated_at}).each do |update_micropost|
+				user.feed.where("microposts.updated_at > :latest_update", {latest_update: first_event.updated_at}).each do |update_micropost|
 					updates << update_micropost.to_mobile
 				end
 				
@@ -246,6 +278,43 @@ describe MicropostsController do
 				
 				response.body.should == json_response
 				updates.count.should == 3
+			end
+			
+			it "should give the correct update on the mobile app when there is something to delete" do
+				first_event = FactoryGirl.create(:micropost, user: friend)
+				second_event = FactoryGirl.create(:micropost, user: friend)
+				third_event = FactoryGirl.create(:micropost, user: friend)
+				fourth_event = FactoryGirl.create(:micropost, user: friend)
+				fourth_event_id = fourth_event.id
+				
+				session[:feed_latest] = fourth_event.updated_at
+				
+				fourth_event.destroy
+				
+				post "mobile_refresh", {ids: [first_event.id, second_event.id, third_event.id, fourth_event_id]}
+				
+				json_response = {status: "success", feed_items: [], to_delete: ["#{fourth_event_id}"]}.to_json
+				
+				response.body.should == json_response
+			end
+			
+			it "should give the correct update on the mobile app where there are new items and something to delete" do
+				first_event = FactoryGirl.create(:micropost, user: friend)
+				second_event = FactoryGirl.create(:micropost, user: friend)
+				third_event = FactoryGirl.create(:micropost, user: friend)
+				fourth_event = FactoryGirl.create(:micropost, user: friend)
+				fourth_event_id = fourth_event.id
+				fifth_event = FactoryGirl.create(:micropost, user: friend)
+				
+				session[:feed_latest] = fourth_event.updated_at
+				
+				fourth_event.destroy
+				
+				post "mobile_refresh", {ids: [first_event.id, second_event.id, third_event.id, fourth_event_id]}
+				
+				json_response = {status: "success", feed_items: [fifth_event.to_mobile], to_delete: ["#{fourth_event_id}"]}.to_json
+				
+				response.body.should == json_response
 			end
 		end
 	end

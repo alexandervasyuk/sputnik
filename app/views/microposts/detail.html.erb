@@ -1,24 +1,22 @@
 <% if signed_in? %>
   <div class="row">
-    <aside class="span4">
-      <section>
-        <%= render 'shared/user_info' %>
-      </section>
-      <section>
-        <%= render 'shared/stats' %>
-      </section>
-      <section>
-        <%= render partial:'post_form', locals: {post:@post} %>
-      </section>
+    <aside class="span3">
+		<div id="user_info">
+		  <section>
+			<%= render 'shared/user_info' %>
+		  </section>
+		  <section>
+			<%= render 'shared/stats' %>
+		  </section>
+	  </div>
     </aside>
-    <div class="span8">
+    <div class="span9">
       <div class="micropost-info">
         <h3 class="detail_content"><%=@micropost.content%></h3> 
         <span><i class="icon-map-marker"></i></span>
         <span class="location"><%=@micropost.location%></span> 
         <span><i class="icon-time"></i></span> 
-        <span class="time"><%=@micropost.time.in_time_zone(user_timezone).strftime('%I:%M %p %d %b')%></span>
-        <br/>
+        <span class="time"><%= time_representation(@micropost.time, @micropost.end_time) %></span>
         <span><i class="icon-user"></i></span> 
         <h4 id="by-user">
           <%= link_to @micropost.user.name, @micropost.user %>
@@ -33,14 +31,9 @@
         <%= link_to "edit", {action:'edit', id:@micropost.id}, class:"micropost_edit_button"%>
       </span>
       <% end %>
-	  
-	  <%= render partial:'map', locals: {micropost: @micropost} %>
-	  
-	  <%= render partial:'proposal', locals: {proposal:@proposal, activity_proposals: @activity_proposals, location_proposals: @location_proposals, time_proposals: @time_proposals} %>
-	  
       </div>
-      <%= render partial:'detailed_post_info', locals: {micropost:@micropost, friends:@friends, participants:@participants, post_items:@post_items} %>        
-
+       
+	  <%= render partial:'detailed_post_info', locals: {micropost:@micropost, friends:@friends, participants:@participants, post_items:@post_items, proposal:@proposal, location_proposals: @location_proposals, time_proposals: @time_proposals, post: @post} %>        
     </div>
   </div>
 <% else %>

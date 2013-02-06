@@ -1,19 +1,9 @@
 class Proposal < ActiveRecord::Base
-  after_save :update_micropost
-  before_destroy :update_micropost
-
-  attr_accessible :content, :location, :micropost_id, :time, :user_id
+  attr_accessible :content, :location, :poll_id, :time, :end_time
   
-  belongs_to :user
-  belongs_to :micropost
+  belongs_to :poll
   
-  validates :user_id, presence: true
-  validates :micropost_id, presence: true
+  has_and_belongs_to_many :users
   
-  def update_micropost
-	micropost = self.micropost
-	
-	micropost.updated_at = Time.now
-	micropost.save
-  end
+  validates :poll_id, presence: true
 end

@@ -6,4 +6,6 @@ class ApplicationController < ActionController::Base
   include CropHelper
   include NotificationsHelper
   include GoogleHelper
+  include ProposalsHelper
+  include BetaHelper
 end

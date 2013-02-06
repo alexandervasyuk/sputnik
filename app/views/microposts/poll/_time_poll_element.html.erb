@@ -1,0 +1,16 @@
+<label id="time-proposal-<%= time_proposal.time.to_s.gsub(/[-\s:]/, "_").html_safe %>" class="checkbox">
+	<%= form_for(time_proposal, :html => { :class => "inline"}, remote: true) do |f| %>
+		<% if time_proposal.users.include? current_user %>
+			<input type="checkbox" class="poll_checkbox" checked>
+		<% else %>
+			<input type="checkbox" class="poll_checkbox">
+		<% end %>
+	
+		<%= f.hidden_field :location, value: "" %>
+		<%= f.hidden_field :time, value: time_proposal.time %>
+		<%= f.hidden_field :end_time, value: time_proposal.end_time %>
+	<% end %>
+
+	<span id="time-proposal-name-<%= time_proposal.time.to_s.gsub(/[-\s:]/, "_").html_safe %>"><%= time_representation(time_proposal.time, time_proposal.end_time)%></span>
+	<span id="time-proposal-count-<%= time_proposal.time.to_s.gsub(/[-\s:]/, "_").html_safe %>" class="badge badge-info"><%= time_proposal.users.count %></span>
+</label>

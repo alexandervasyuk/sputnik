@@ -1,6 +1,6 @@
 <% if signed_in? %>
   <div class="row">
-    <aside class="span4">
+    <aside class="span3">
       <section>
         <%= render 'shared/user_info' %>
       </section>
@@ -11,19 +11,27 @@
         <%= render 'shared/micropost_form' %>
       </section>
     </aside>
-    <div class="span8">
-      <script type="text/javascript">
-          $(function(){
-            ajaxUpdate('/micropost/refresh', '.feed_item', $('#div_feed'));
-      	  });
-      </script>
+    <div class="span9">
         <% if current_user.friends.any? or current_user.feed.any? %>
-			<h3>Feed</h3>
-			  <div id="div_feed">
-				<%= render 'shared/feed' %>
+        <div class="row">
+			<div class="span4">
+				<div id="div_feed">
+					<h3>Pool</h3>
+					<%= render 'shared/pool' %>
+				</div>
 			</div>
+            
+			<div class="span5">
+				<div id="div_feed">
+					<h3>Feed</h3>
+					<%= render 'shared/feed' %>
+				</div>
+			</div>
+        </div>
+        
+     	  
         <% else %>
-			<%= render 'static_pages/welcome' %>
+          <%= render 'static_pages/welcome' %>
         <% end %>
     </div>
   </div>

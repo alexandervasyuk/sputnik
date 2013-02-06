@@ -6,102 +6,89 @@
       <div class="micropost_create_field">
         <div class="input-prepend">
           <span class="add-on"><i class="icon-globe"></i></span>
-          <%= f.text_field :content, placeholder: "What? Ex: food, study session, workout", class:"prepended_input", :id=>"content_input" %>
+          <%= f.text_field :content, placeholder: "What you want to do", class:"prepended_input", :id=>"content_input" %>
         </div>
+      </div>
+
+      <div class="micropost_create_field">	  
+        <div class="input-prepend">
+          <span class="add-on"><i class="icon-map-marker"></i></span>
+          <%= f.text_field :location, placeholder: "Add a location?", class:"prepended_input google_location_autocomplete", :id=>"location_input", "rel" => "popover", "data-content" => "", "data-original-title" => "Find the place on the map", "data-html" => "true"%>
+        </div>
+		<script type="text/javascript">
+			$(function() {
+				createAutocompletePopover($('#location_input'));
+			});
+		</script>
       </div>
 
       <div class="micropost_create_field">
 		<script type="text/javascript">
-			$(function () { 
-				$('#location_input').autocomplete({
-					source: <%= raw @gcaches %>,
-					minLength: 3
+			$(function() {
+				$('#time_input_container').datetimepicker({
+					language: 'en',
+					pick12HourFormat: true
+				});
+				
+				$('#end_time_input_container').datetimepicker({
+					langugage: 'en',
+					pick12HourFormat: true
+				});
+				
+				$('#time_input').focus(function() {
+					$('#time_input_container').datetimepicker('show');
+				});
+				
+				$('#end_time_input').focus(function() {
+					$('#end_time_input_container').datetimepicker('show');
+				});
+				
+				$('#time_input').blur(function() {
+					$('#time_input_container').datetimepicker('hide');
+					
+					if ($(this).val().length > 0) {
+						$('#create_end_time').show();
+						
+						$('#create_end_time').click(function() {
+							$(this).remove();
+							
+							$('#end_time_field').show();
+						});	
+					}
+				});
+				
+				$('#end_time_input').blur(function() {
+					$('#end_time_input_container').datetimepicker('hide');
 				});
 			});
 		</script>
 	  
-        <div class="input-prepend">
-          <span class="add-on"><i class="icon-map-marker"></i></span>
-          <%= f.text_field :location, placeholder: "Where? Ex: asian ghetto, doe, RSF", class:"prepended_input google_location_autocomplete", :id=>"location_input" %>
-        </div>
-		
-		<div id="location-error">
-			
-		</div>
-		
-		<!-- Modal -->
-		<div id="map-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="myModalLabel">Click to Position Marker</h3>
-		  </div>
-		  <script type="text/javascript"
-			  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLJ6U6btyk5WgBPoSf8VJDe3LZsPI9NYs&sensor=false">
-			</script>
-			<script type="text/javascript">
-				$(function() {
-					var marker = null
-				
-					var mapOptions = {
-					  center: new google.maps.LatLng(-34.397, 150.644),
-					  zoom: 8,
-					  mapTypeId: google.maps.MapTypeId.ROADMAP
-					};
-					
-					var map = new google.maps.Map(document.getElementById("map-body"), mapOptions);
-					
-					$('#map-modal').on('shown', function () {
-					  google.maps.event.trigger(map, 'resize');
-					  map.setCenter(new google.maps.LatLng(-34.397, 150.644));
-					});
-					
-					google.maps.event.addListener(map, 'click', function(event) {
-						placeMarker(event.latLng, map);
-					});
-					
-					function placeMarker(location){
-						if (marker == null) {
-							marker = new google.maps.Marker({
-								position: location,
-								map: map
-							});
-
-							map.setCenter(location);
-						}
-						else {
-							marker.setPosition(location);
-							
-							map.setCenter(location);
-						}
-						
-						$('#micropost_latitude').val('' + location.lat());
-						$('#micropost_longitude').val('' + location.lng());
-					}
-				});
-			</script>
-		  <div id="map-body" class="modal-body" style="width: 100%; height: 400px;">
-			
-		  </div>
-		  <div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-			<button class="btn btn-primary">Save changes</button>
-		  </div>
-		</div>
-      </div>
-
-      <div class="micropost_create_field">
-        <div class="input-prepend">
-          <span class="add-on"><i class="icon-time"></i></span>
+        <div id="time_input_container" class="input-append">
+          <span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
           <% if @micropost.time.nil? %>
-            <%= f.text_field :time, placeholder: "When? Ex: in 10 min, at 3 pm", class:"prepended_input", :id=>"time_input" %>
+            <%= f.text_field :time, placeholder: "Add a time?", class:"prepended_input", :id=>"time_input", "data-format"=>"MM/dd/yyyy HH:mm PP"%>
           <% else %>
-            <%= f.text_field :time, value: @micropost.time.strftime('%I:%M %p %d %b '), class:"prepended_input", :id=>"time_input" %>
+            <%= f.text_field :time, "data-format"=>"MM/dd/yyyy HH:mm PP", value: @micropost.time.strftime('%I:%M %p %d %b '), class:"prepended_input", :id=>"time_input" %>
           <% end %>
-		  
-		  <%= f.hidden_field :latitude %>
-		  <%= f.hidden_field :longitude %>
         </div>
       </div>
+	  
+	  <span id="create_end_time" class="link" style="display:none">End Time?</span>
+	  
+	  <div id="end_time_field" class="micropost_create_field" style="display: none">
+		<div id="end_time_input_container" class="input-append">
+          <span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+          
+		  <% if @micropost.end_time.nil? %>
+			<%= f.text_field :end_time, placeholder: "Add an ending time?", class:"prepended_input", :id=>"end_time_input", "data-format"=>"MM/dd/yyyy HH:mm PP"%>
+		  <% else %>
+			<%= f.text_field :end_time, placeholder: "Add an ending time?", class:"prepended_input", :id=>"end_time_input", "data-format"=>"MM/dd/yyyy HH:mm PP", value: @micropost.end_time.strftime('%m/%d/%Y %I:%M %p')%>
+		  <% end %>
+        </div>
+	  </div>
+	  
+	  <%= f.hidden_field :latitude %>
+	  <%= f.hidden_field :longitude %>
       <%= f.submit "Create", class: "btn btn-primary" %>
     </div>
 

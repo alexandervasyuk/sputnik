@@ -1,0 +1,37 @@
+<% if @proposal.poll.poll_type == "LOCATION" %>
+	$('#poll<%= @proposal.poll.id %> #location-proposal-<%= @proposal.content.gsub(/[',\s]/, "_").html_safe %>').remove();
+
+	$('#poll<%= @proposal.poll.id %>').append("<%= escape_javascript(render(partial: "microposts/poll/location_poll_element", locals: {location_proposal: @proposal}))%>");
+
+	$('#poll<%= @proposal.poll.id %> #location-proposal-<%= @proposal.content.gsub(/[',\s]/, "_").html_safe %> .poll_checkbox').click(function() {
+		var form = $(this).parent();
+			
+		if (form) {
+			form.submit();
+		}
+	});
+<% elsif @proposal.poll.poll_type == "TIME" %>	
+	$('#poll<%= @proposal.poll.id %> #time-proposal-<%= @proposal.time.to_s.gsub(/[-\s:]/, "_").html_safe %>').remove();
+	
+	$('#poll<%= @proposal.poll.id %>').append("<%= escape_javascript(render(partial: "microposts/poll/time_poll_element", locals: {time_proposal: @proposal}))%>");
+	
+	$('#poll<%= @proposal.poll.id %> #time-proposal-<%= @proposal.time.to_s.gsub(/[-\s:]/, "_").html_safe %> .poll_checkbox').click(function() {
+		var form = $(this).parent();
+			
+		if (form) {
+			form.submit();
+		}
+	});
+<% elsif @proposal.poll.poll_type == "NONE" %>	
+	$('#poll<%= @proposal.poll.id %> #default-proposal-<%= @proposal.content.gsub(/[',\s]/, "_").html_safe %>').remove();
+	
+	$('#poll<%= @proposal.poll.id %>').append("<%= escape_javascript(render(partial: "microposts/poll/default_poll_element", locals: {proposal: @proposal}))%>");
+	
+	$('#poll<%= @proposal.poll.id %> #default-proposal-<%= @proposal.content.gsub(/[',\s]/, "_").html_safe %> .poll_checkbox').click(function() {
+		var form = $(this).parent();
+			
+		if (form) {
+			form.submit();
+		}
+	});
+<% end %>

@@ -25,7 +25,7 @@ describe SessionsController do
 				describe "with no feed" do
 					it "should sign in correctly" do
 						post "create_mobile", session
-						expected = {status: "success", name: user.name, id: user.id feed_data: []}.to_json
+						expected = {status: "success", name: user.name, id: user.id, feed_data: []}.to_json
 						
 						response.body.should == expected
 					end

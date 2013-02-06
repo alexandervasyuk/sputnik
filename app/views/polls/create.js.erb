@@ -1,0 +1,7 @@
+$('#mini_apps').append("<%= escape_javascript(render partial: "microposts/proposal", locals: {poll: @poll, proposals: @poll.proposals}) %>");
+
+animationLocked = false;
+$('.app_container').removeClass("app_create_container");
+
+$(".create_poll").hide();
+$('.display_apps').slideDown();

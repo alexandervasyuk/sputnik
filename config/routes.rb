@@ -18,6 +18,8 @@ Sputnik::Application.routes.draw do
   resources :relationships, only: [:create, :update, :destroy]
   resources :password_resets
   resources :proposals, only: [:create, :update, :destroy]
+  resources :polls, only: [:create, :update, :destroy]
+  resources :characteristics, only: [:create, :update, :destroy]
   
   root to: 'static_pages#home'
 

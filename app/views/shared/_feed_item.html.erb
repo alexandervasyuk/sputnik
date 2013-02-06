@@ -1,34 +1,33 @@
-<% cache(feed_item) do %>
-	<li id="<%= feed_item.id %>" class="feed_item">
-	  <% if current_user?(feed_item.user) %>
-		<%= link_to content_tag('i', '', class: 'icon-trash close'), feed_item, confirm: "Are you sure you want to delete this event?", method: :delete %>
-	  <% end %>
+<li id="<%= feed_item.id %>" class="feed_item">
+    <% if current_user?(feed_item.user) %>
+      <%= link_to content_tag('i', '', class: 'icon-trash close'), feed_item, confirm: "Are you sure you want to delete this event?", method: :delete %>
+    <% end %>
 
-	  <%= link_to image_tag(feed_item.user.avatar.url(:thumb), class: 'gravatar profile_image'), feed_item.user %>
+    <span class="what_and_by_who">
+      <span class="content"><%= feed_item.content %></span>
+      <span class="initiated_text"> initiated by </span>
+      <span class="initiated_by_user"><%= link_to feed_item.user.name, feed_item.user %> </span>
+    </span>
 
-	  <span class="user">
-		<%= link_to feed_item.user.name, feed_item.user %>
-	  </span>
-	  
-	  <span class="participating_feed">
-		<%= render 'users/participate_form', feed_item: feed_item if signed_in? %>
-	  </span>
-	 
-	  <span class="content"><%= feed_item.content %></span>
-	  <span><i class="icon-map-marker"></i></span>
-	  <span class="location"><%= feed_item.location %></span>
-	  <span><i class="icon-time"></i></span>
-	  <!-- Displaying time according to user's timezone. Using in_time_zone method.-->
-	  <span class="time"> <%= feed_item.time.in_time_zone(user_timezone).strftime('%I:%M %p') %></span>
-	  <% Time.use_zone(user_timezone) do %>
-		<% if Time.current().beginning_of_day() < feed_item.time.in_time_zone(user_timezone) and feed_item.time.in_time_zone(user_timezone) < Time.current().end_of_day() %>
-		  Today
-		<% elsif Time.current().beginning_of_day.tomorrow < feed_item.time.in_time_zone(user_timezone) and feed_item.time.in_time_zone(user_timezone) < Time.current().beginning_of_day.advance(days: 2)  %>
-		  Tomorrow
-		<% else %>
-		  <%= feed_item.time.in_time_zone(user_timezone).strftime('%d %b') %></span>
-		<%end%>
-	  <%end%>  
-	  <span class="details"></span>
-	</li>
-<% end %>
+    <span class="participating_feed">
+      <%= render 'users/participate_form', feed_item: feed_item if signed_in? %>
+    </span>
+ 
+    <span class="map_row"><i class="icon-map-marker"></i> <%= feed_item.location %></span>
+
+    <span><i class="icon-time"></i></span>
+    <span class="time"><%= time_representation(feed_item.time, feed_item.end_time) %></span>
+
+    <div class="participants">
+      <img alt="Default_profile" class="gravatar profile_image" src="/assets/default_profile.jpg">
+      <img alt="Default_profile" class="gravatar profile_image" src="/assets/default_profile.jpg">
+      <img alt="Default_profile" class="gravatar profile_image" src="/assets/default_profile.jpg">
+    
+		<span class="details">
+		  <!-- <%= link_to "view", detail_micropost_path(feed_item), class:"view"%> -->
+		  <%= link_to "interested", detail_micropost_path(feed_item), class:"interested"%>
+		</span>
+	</div>
+
+    
+</li>

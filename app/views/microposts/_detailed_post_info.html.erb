@@ -7,49 +7,147 @@
 <ol class="detailed_post_info">
   	<ol class="users">
   		<div class="row">
-  			<div class="span8">
-    			<h3>Participants</h3>
-    			<div class="user_avatars">
-      			<% if participants.any? %>
-      				<%= render partial: 'microposts/participant', collection:participants %>
-      			<% end %>
-      			
-      			<% if current_user.id == micropost.user.id%>
-      				<a id="invite_button" class="btn btn-small" role="button" href="#invite" data-toggle="modal"><i class="icon-plus"></i></a>
-      				<div id="invite" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					  <div class="modal-header">
-					    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					    <h3 id="myModalLabel">Invite Friends</h3>
-					  </div>
-					  <div class="modal-body">
-					  	<% if friends.any? %>
-					  		<% friends.each do |friend| %>
-							    <%= render partial: 'microposts/invite', locals: {friend: friend, micropost: micropost} %>
-							<% end %>
-					    <% end %>
-					  </div>
-					  <div class="modal-footer">
-					  	<%= render partial: 'microposts/email_invite_form', locals: {micropost: micropost}%>
-					  </div>
+			<div class="span4">
+				<div class="row">
+					<div class="span4">
+						<div class="participants_invite">
+							<%= render partial: 'participants', locals: {participants: participants, micropost: micropost, friends: friends} %>
+						</div>
 					</div>
-      			<% end %>
-        	</div>
-  			</div>
-		</div>
-    <ol class="microposts">
-      <div class="row">
-        <div class="span8">
-          <h3>Replies</h3>
-        	
-      	  	<ol class="microposts">
-      	  		<div id="post_feed">
-	      	  		<% if post_items.any? %>
-	      				<%= render partial: 'microposts/post_item', collection: post_items %>
-	      			<% end %>
-      			</div>
-  			</ol>
-        </div>
-      </div>
-    </ol>
+					
+					<div class="span4">
+						<script type="text/javascript">
+							var animating = false;
+							var animationLocked = false;
+						
+							$(function() {
+								// Attaching slide up and slide down functionality for adding apps
+								$('.app_container').hover(function() {
+									if (!animating && !animationLocked) {
+										animating = true;
+									
+										$(this).children(".add_app").slideUp(250, function() {
+											$(this).next(".display_apps").show();
+											
+											animating = false;
+										});
+									}
+								}, function() {
+									if (!animating && !animationLocked) {
+										animating = true;
+									
+										$(this).children(".display_apps").hide();
+										$(this).children(".add_app").slideDown(250, function() {
+											animating = false;
+										});
+									}
+								});
+								
+								// Attaching functionality to display the poll create form
+								$('.poll_app_create').click(function() {
+									animationLocked = true;
+									
+									var parent = $(this).parents(".app_container");
+									
+									$(parent).addClass("app_create_container");
+									
+									$(parent).children('.display_apps').hide();
+									$(parent).children(".create_poll").slideDown();
+								});
+								
+								// Attaching functionality to hide the poll create form
+								$('.poll_app_cancel').click(function() {
+									animationLocked = false;
+									
+									var parent = $(this).parents(".app_container");
+									
+									$(parent).removeClass("app_create_container");
+									
+									$(parent).children(".create_poll").hide();
+									$(parent).children('.display_apps').slideDown();
+								});
+							});
+						</script>
+					
+						<div class="app_container">
+							<div class="add_app">
+							
+							</div>
+							
+							<div class="display_apps" style="display: none">
+								<ol class="apps">
+									<li class="app poll_app_create">
+										<div class="app_info">
+											<span class="app_icon poll_icon"></span>
+											<span class="app_name">Poll</span>
+										</div>
+									</li>
+									<li class="app characteristics_app_create">
+										<div class="app_info">
+											<span class="app_icon crown_icon"></span>
+											<span class="app_name">Characters</span>
+										</div>
+									</li>
+									<li class="app">
+										<div class="app_info">
+											<span class="app_icon finance_icon"></span>
+											<span class="app_name">Split the Bill</span>
+										</div>
+									</li>
+									<li class="app">
+										<div class="app_info">
+											<span class="app_icon more_icon"></span>
+											<span class="app_name">More Apps</span>
+										</div>
+									</li>
+								</ol>
+							</div>
+							
+							<div class="create_poll" style="display:none">
+								<%= form_for(micropost.polls.new, remote: true) do |f| %>
+									<%= f.label :question, "Poll Question" %>
+									<%= f.text_field :question, "placeholder"=>"What is the meaning of life" %>
+									<%= f.label :poll_type, "Poll Type" %>
+									<%= f.select :poll_type, [['Location', 'LOCATION'], ['Time', 'TIME'], ['Movie', 'MOVIE'], ['None', 'NONE']] %>
+									<%= f.submit "Create", class: "btn btn-primary" %>
+									<%= f.hidden_field :micropost_id %>
+									<input type="button" class="btn poll_app_cancel" value="Cancel">
+								<% end %>
+							</div>
+						</div>
+					</div>
+					
+					<div class="span4">
+						<div id="mini_apps" class="micropost_create_field">
+							<% @polls.each do |poll| %>
+								<%= render partial:'proposal', locals: {poll: poll, proposals: poll.proposals} %>
+							<% end %>
+							
+							<%= render partial:'microposts/characteristic/characteristics', locals: {micropost: micropost} %>
+						</div>
+					</div>
+				</div>
+			</div>
+				
+			<div class="span5">
+				<div class="posts">
+					<div class="modal-header posts_header">
+						<span class="app_header_icon comments_icon"></span>
+						<h4>Discussion</h4>
+					</div>
+					
+					<div class="posts_body">
+						<ol class="microposts">
+							<%= render partial:'post_form', locals: {post:post} %>
+							<div id="post_feed">
+								<% if post_items.any? %>
+									<%= render partial: 'microposts/post_item', collection: post_items %>
+								<% end %>
+							</div>
+						</ol>
+					</div>
+				</div>
+			</div>
+  		</div>
   	</ol>
 </ol>

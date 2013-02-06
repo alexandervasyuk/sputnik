@@ -3,72 +3,110 @@ require 'capybara/rails'
 
 describe UsersController do
 	describe "creating a new user" do
-		describe "user is not temp" do
-			it "should correctly create the user and redirect to the feed page on a web app" do
-				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
+		describe "creating a new user in beta" do
+			let(:valid_user) { FactoryGirl.create(:temp_user) }
+			
+			before { set_in_beta }
+		
+			it "should allow the user to sign up if they've been invited/are temp" do
+				user = {user: {name: "bob dole", email: valid_user.email, password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
+				
+				User.where("name = 'bob dole'").count.should == 0
 				
 				post "create", user
 				
-				response.should redirect_to(root_path)
-				
-				created = User.find_by_email(user[:user][:email])
-				created.should_not be_nil
-				
-				mail = ActionMailer::Base.deliveries.last
-				
-				mail['from'].to_s.should == "Happpening Team <notification@happpening.com>"
-				mail['to'].to_s.should == created.email
+				User.where("name = 'bob dole'").count.should == 1
 			end
 			
-			it "should correctly create the user and return the correct response on mobile app" do
-				user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
+			it "should not allow the user to sign up if they've not been invited/are not temp" do
+				user = {user: {name: "bob dole", email: "bobdole@gmail.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
 				
-				post "create_mobile", user
+				previous_user_count = User.where("name = 'bob dole'").count
 				
-				json_response = {status: "success", failure_reason: ""}.to_json
+				post "create", user
 				
-				response.body.should == json_response
+				post_user_count = User.where("name = 'bob dole'").count
 				
-				created = User.find_by_email(user[:user][:email])
-				created.should_not be_nil
-				
-				mail = ActionMailer::Base.deliveries.last
-				
-				mail['from'].to_s.should == "Happpening Team <notification@happpening.com>"
-				mail['to'].to_s.should == created.email
+				post_user_count.should == previous_user_count
 			end
 		end
 		
-		describe "user is temp" do
-			let(:temp) { FactoryGirl.create(:temp_user) }
-			
-			it "should create the user successfully and redirect to the friends page" do
-				user = {user: {name: "testee", email: temp.email, password: "foobar", password_confirmation: "foobar"}}
-				
-				post "create", user
-				
-				response.should redirect_to("/friend")
-			end
-		end
+		describe "creating a new user not in beta" do
+			before { set_not_in_beta }
 		
-		describe "using incorrect inputs" do
-			let(:existing) { FactoryGirl.create(:user) }
-			
-			it "should not create when fields are empty" do
-				user = {user: {name: "", email: "test@testing.com", password: nil, password_confirmation: nil}}
+			describe "user is not temp" do
+				it "should correctly create the user and redirect to the feed page on a web app" do
+					user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
+					
+					post "create", user
+					
+					response.should redirect_to(root_path)
+					
+					created = User.find_by_email(user[:user][:email])
+					created.should_not be_nil
+					
+					mail = ActionMailer::Base.deliveries.last
+					
+					mail['from'].to_s.should == "Happpening Team <notification@happpening.com>"
+					mail['to'].to_s.should == created.email
+				end
 				
-				post "create", user
-				
-				response.should render_template("users/new")
+				it "should correctly create the user and return the correct response on mobile app" do
+					user = {user: {name: "Bo Chen", email: "test@testing.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
+					
+					post "create_mobile", user
+					
+					json_response = {status: "success", failure_reason: ""}.to_json
+					
+					response.body.should == json_response
+					
+					created = User.find_by_email(user[:user][:email])
+					created.should_not be_nil
+					
+					mail = ActionMailer::Base.deliveries.last
+					
+					mail['from'].to_s.should == "Happpening Team <notification@happpening.com>"
+					mail['to'].to_s.should == created.email
+				end
 			end
 			
-			it "should not create when a user with that email already exists" do
-				user = {user: {name: "bob", email: existing.email, password: "foobar", password_confirmation: "foobar"}}
+			describe "user is temp" do
+				let(:temp) { FactoryGirl.create(:temp_user) }
 				
-				post "create", user
+				it "should create the user successfully and redirect to the friends page" do
+					user = {user: {name: "testee", email: temp.email, password: "foobar", password_confirmation: "foobar"}}
+					
+					previous_user_count = User.where("name = 'testee'").count
+					
+					post "create", user
+					
+					post_user_count = User.where("name = 'testee'").count
+					
+					post_user_count.should == previous_user_count + 1
+					
+					response.should redirect_to("/friend")
+				end
+			end
+			
+			describe "using incorrect inputs" do
+				let(:existing) { FactoryGirl.create(:user) }
 				
-				response.should render_template("users/new");
-			end	
+				it "should not create when fields are empty" do
+					user = {user: {name: "", email: "test@testing.com", password: nil, password_confirmation: nil}}
+					
+					post "create", user
+					
+					response.should render_template("users/new")
+				end
+				
+				it "should not create when a user with that email already exists" do
+					user = {user: {name: "bob", email: existing.email, password: "foobar", password_confirmation: "foobar"}}
+					
+					post "create", user
+					
+					response.should render_template("users/new");
+				end	
+			end
 		end
 	end
 

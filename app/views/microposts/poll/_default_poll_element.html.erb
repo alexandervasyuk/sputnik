@@ -1,0 +1,18 @@
+<label id="default-proposal-<%= proposal.content.gsub(/[',\s]/, "_").html_safe %>" class="checkbox">
+	<%= form_for(proposal, :html => { :class => "inline"}, remote: true) do |f| %>
+		<% if proposal.users.include? current_user %>
+			<input name="option" type="checkbox" class="poll_checkbox" checked>
+		<% else %>
+			<input name="option" type="checkbox" class="poll_checkbox" >
+		<% end %>
+	
+		<%= f.hidden_field :content %>
+		<%= f.hidden_field :time, value: "" %>
+		<%= f.hidden_field :end_time, value: "" %>
+		
+		<%= f.hidden_field :poll_id %>
+	<% end %>
+	
+	<span><%= proposal.content %></span>
+	<span class="badge badge-info"><%= proposal.users.count %></span>
+</label>

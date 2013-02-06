@@ -4,8 +4,7 @@ class StaticPagesController < ApplicationController
       @micropost  = current_user.microposts.build
 	  
       @feed_items = current_user.feed
-	  
-	  @gcaches = current_user.gather_gcaches(current_location)
+	  @pool_items = current_user.pool
 	  
 	  session[:feed_latest] = @feed_items.maximum("updated_at")
     else

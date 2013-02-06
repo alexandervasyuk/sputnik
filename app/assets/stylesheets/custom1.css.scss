@@ -1,8 +1,10 @@
-  @import "bootstrap";
+@import "bootstrap";
 
 body {
   padding-top:60px;
   height: 100%;
+  
+  background-color: #fbfbfb;
 }
 
 /*@import "bootstrap-responsive";*/
@@ -10,11 +12,39 @@ body {
 /* mixins, variables, etc. */
 
 $grayMediumLight: #eaeaea;
+$headerColor: #ddd;
+$boxBorder: #ccc;
+
+$separatorColor: #ddd;
 
 @mixin box_sizing {
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 
   box-sizing: border-box;
+}
+
+@mixin link_style {
+  color: #0088cc;
+  cursor: pointer;
+}
+
+@mixin content-box {
+	border: 1px solid $boxBorder;
+	background-color: white;
+	border-radius: 2px;
+	
+	-webkit-box-shadow: 0px 1px 2px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    0px 1px 3px 2gba(50, 50, 50, 0.75);
+	box-shadow:         0px 1px 3px 2gba(50, 50, 50, 0.75);
+}
+
+@mixin content-padding {
+	padding: 5px;
+	padding-left: 10px;
+}
+
+@mixin standard_input_width {
+	width: 80%;
 }
 
 /* universal */
@@ -56,11 +86,20 @@ textarea {
 }
 
 .sign_up_button {
-margin-bottom:20px;
+	margin-bottom:20px;
 }
 
 .inline {
 	display: inline;
+}
+
+.link {
+	@include link_style;
+}
+
+// Style that corrects for the misalignments of buttons and text fields in a form
+.btn_correct {
+	margin-bottom: 9px;
 }
 
 /* typography */
@@ -88,6 +127,13 @@ h2 {
 p {
   font-size: 1.1em;
   line-height: 1.7em;
+}
+
+/* User Info */
+#user_info {
+	@include content-box;
+	
+	min-height: 500px;
 }
 
 
@@ -240,6 +286,24 @@ li.unread {
 	text-align: center;
 }
 
+/* Poll */
+
+#poll_preference_container {
+	margin-bottom: 15px;
+}
+
+.poll_in_place_edit {
+	width: 70%;
+}
+
+.in_place_icon {
+	vertical-align: text-top;
+}
+
+.editable_field {
+	cursor: text;
+}
+
 /* Modals */
 .modal { 
 	outline: none; 
@@ -363,8 +427,8 @@ li.unread {
 }
 
 .profile_image {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
 }
 
 .participant_image {
@@ -490,11 +554,6 @@ textarea {
   margin: 0;
   li {
     overflow: auto;
-    padding: 10px 0;
-    border-top: 1px solid $grayLighter;
-    &:last-child {
-      border-bottom: 1px solid $grayLighter;
-    }
   }
 }
 
@@ -505,17 +564,72 @@ textarea {
   margin: 10px 0 0 0;
   
   li {
-    padding: 10px;
-    border-top: 1px solid #e8e8e8;
     position: relative;
 
-    &:hover {
-      background-color: $grayLighter;
-    }
-    transition: 0.3s;
+	transition: 0.3s;
     -moz-transition: 0.3s; /* Firefox 4 */
     -webkit-transition: 0.3s; /* Safari and Chrome */
     -o-transition: 0.3s; /* Opera */
+	
+	border-bottom: 1px solid $separatorColor;
+	
+	padding-top: 10px;
+	padding-bottom: 10px;
+	
+    &:hover {
+      background-color: $grayLighter;
+    }
+	
+	&:first-child {
+		border-top: 1px solid $separatorColor;
+	}
+    
+	.post_image {
+		width: 45px;
+		float: left;
+	}
+	
+	.post_content {
+		width: 425px;
+		
+		font-size: 12px;
+		
+		.user {
+			font-weight: bold;
+		}
+		
+		.content {
+			padding-left: 44px;
+			font-size: 1.2em;
+		}
+		
+		.post_manager {
+			float: right;
+		}
+	}
+	
+	.what_and_by_who {
+		display: block;
+		margin-bottom: 5px;
+	
+		.content {
+			display: inline-block;
+			font-size: 1.5em;
+			font-weight: bolder;
+		}
+	}
+	
+	.map_row {
+		display: block;
+	}
+	
+	.interested {
+		float: right;
+	}
+	
+	.participants {
+		height: 35px;
+	}
   }
 }
 
@@ -568,12 +682,219 @@ span.add-on {
   width: 248px;
 }
 
+// Create poll styles
+.location_poll {
+	@include standard_input_width;
+}
+
+.time_poll {
+	width: 40%;
+}
+
+// END Create poll styles
+
+// Create characteristics styles
+
+.characteristics_create {
+	@include standard_input_width;
+}
+
+// End Create characteristics styles
+
+
+// Icons styles
+.app_icon {
+	width: 25px;
+	height: 25px;
+	background-repeat: no-repeat;
+	display: block;
+	
+	margin: 0 auto;
+}
+
+.app_header_icon {
+	width: 25px;
+	height: 25px;
+	background-repeat: no-repeat;
+	display: inline-block;
+	
+	float: left;
+	margin-top: 6px;
+}
+
+.poll_icon {
+	background-image: url('/assets/glyphicons/check.png');
+}
+
+.crown_icon {
+	background-image: url('/assets/glyphicons/crown.png');
+}
+
+.ride_icon {
+	background-image: url('/assets/glyphicons/car.png');
+}
+
+.finance_icon {
+	background-image: url('/assets/glyphicons/money.png');
+}
+
+.comments_icon {
+	background-image: url('/assets/glyphicons/comments.png');
+}	
+
+.more_icon {
+	background-image: url('/assets/glyphicons/more.png');
+}	
+
+// End Icons styles
+
+
+
+.app_create_container {
+	height: 200px !important;
+}
+
+.app_container {
+	height: 70px;
+	border: 3px dashed #ccc;
+	margin-top: 10px;
+	
+	cursor: pointer;
+	
+	&:hover {
+		border-color: #999;
+	}
+	
+	.add_app {
+		width: inherit;
+		height: inherit;
+	
+		background-image: url('/assets/plus_button.png');
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+	}
+	
+	.display_apps {
+		width: inherit;
+		height: inherit;
+		
+		.apps {
+			margin-left: 0px;
+			height: 100%;
+			
+			.app {
+				display: inline-block;
+				width: 24%;
+				position: relative;
+				height: 100%;
+				
+				&:hover {
+					background-color: #aaa;
+				}
+				
+				.app_info {
+					margin-top: 17px;
+					text-align: center;
+				}
+			}
+		}
+	}
+	
+	.create_poll {
+		width: inherit;
+		height: inherit;
+		
+		background-color: white;
+		
+		form {
+			padding: 10px;
+		}
+	}
+}
+
 .micropost_create_field {
   margin: 9px 0;
   input.prepended_input {
     width:87% !important;
   }
   
+  .micropost_field {
+	margin-bottom: 0px;
+	width: 100%;
+  }
+  
+  .fileupload {
+	display: inline-block;
+	
+	margin-top: 5px;
+  }
+  
+  .popover {
+	width: 550px;
+	height: 350px;
+	
+	.popover-content {
+		max-height: 400px;
+	}
+	
+	.map_view {
+		width: 300px;
+		height: 300px;
+		display: inline-block;
+		float: left;
+	}
+
+	.list_view {
+		width: 150px;
+		height: 265px;
+		display: inline-block;
+		float: left;
+		
+		ol {
+			margin-left: 0px;
+		}
+		
+		li {
+			cursor: pointer;
+			border-bottom: 1px solid $grayLight;
+			padding: 4px;
+			
+			&:hover {
+				background-color: $grayLighter;
+			}
+		}
+		
+		#location_name_list {
+			list-style-type: none;
+			width: 235px;
+			
+			.place_name {
+				font-weight: bold;
+				font-size: 1.1em;
+				margin-bottom: 5px;
+			}
+		}
+		
+		#location_autocomplete_options {
+			margin-top: 10px;
+			font-size: 12px;
+		}
+		
+		#current_location {
+			margin-top: 100px;
+			
+			p {
+				font-size: 12px;
+			}
+		}
+		
+		li {
+			font-size: 12px;
+		}	
+	}
+	
+	
+  }
 }
 
 .new_micropost {
@@ -605,8 +926,118 @@ span.add-on {
   font-size: 13px;
 }
 .micropost-info {
+  @include content-box;
+  @include content-padding;
+
   position:relative;
 }
+
+.participants_invite {
+	@include content-box;
+	@include content-padding;
+}
+
+// Micropost detail content container styles
+
+.micropost-content-container {
+	.modal-header {
+		height: 35px;
+		padding-left: 10px;
+		padding-right: 5px;
+		padding-top: 5px;
+		padding-bottom: 0px;
+		background-color: $headerColor;
+	}
+}
+
+.micropost-content-container-header {
+	h4 {
+		float: left;
+		margin-top: 8px;
+	}
+
+	.btn-group {
+		float: right;
+		
+		margin-top: 3px;
+		margin-right: 5px;
+		
+		.btn {
+			padding-right: 7px;
+			padding-left: 6px;
+			padding-top: 1px;
+			padding-bottom: 0px;
+		}
+	}
+}
+
+.micropost-content-container-body {
+	padding: 5px;
+	padding-left: 10px;
+}
+
+// END Micropost detail content container styles
+
+// Post response on micropost styles
+.posts {
+	@include content-box;
+	@extend .micropost-content-container;
+	
+	min-height: 500px;
+	
+	.posts_header {
+		@extend .micropost-content-container-header;
+	}
+	
+	.posts_body {
+		@extend .micropost-content-container-body;
+		
+		padding-right: 10px;
+		padding-bottom: 30px;
+	}
+}
+
+// END Post response on micropost styles
+
+// Poll details display styles
+.poll {
+	@include content-box;
+	@extend .micropost-content-container;
+	
+	margin-top: 8px;
+	
+	.poll_header {
+		@extend .micropost-content-container-header;
+	}
+	
+	.poll_body {
+		clear: both;
+	
+		@extend .micropost-content-container-body;
+	}
+}
+
+// END Poll details display styles
+
+// Characteristics details display styles
+.characteristics {
+	@include content-box;
+	@extend .micropost-content-container;
+	
+	margin-top: 8px;
+	
+	.characteristics_header {
+		@extend .micropost-content-container-header;
+	}
+	
+	.characteristics_body {
+		clear: both;
+		
+		@extend .micropost-content-container-body;
+	}
+}
+// END Characteristics details display styles
+
 .micropost_edit_button {
   position:absolute;
   bottom:0;
@@ -627,6 +1058,7 @@ ol.detailed_post_info {
 .detail_content {
   font-size:37px;
   margin-bottom:4px;
+  margin-top: 0px;
 }
 
 /*Header*/  

@@ -37,5 +37,9 @@ $.rails.allowAction = (element) ->
   $modal_html.find('.modal-footer').append($link)
   # Pop it up
   $modal_html.modal()
+  
+  $link.click ->
+    $modal_html.modal('hide')
+  
   # Prevent the original link from working
   return false

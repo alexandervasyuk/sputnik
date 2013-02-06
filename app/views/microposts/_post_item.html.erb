@@ -1,16 +1,25 @@
 <li id="<%= post_item.id %>" class="post_item">
-  <%= link_to image_tag(post_item.user.avatar.url(:thumb), class: 'gravatar profile_image'), post_item.user %>
-  <span class="user">
-    <%= link_to post_item.user.name, post_item.user %>
+  <span class="post_image">
+	<%= link_to image_tag(post_item.user.avatar.url(:thumb), class: 'participant_image profile_image'), post_item.user %>
   </span>
-  <span class="content"><%= post_item.content %></span>
-  <span class="timestamp">
-    Posted <%= time_ago_in_words(post_item.created_at) %> ago.
+  
+  <span class="post_content">
+	  <span class="post_manager">
+		  <span class="timestamp">
+			Posted <%= time_ago_in_words(post_item.created_at) %> ago.
+		  </span>
+		  <% if current_user?(post_item.user) %>
+			<%= link_to "delete", post_item, method: :delete,
+											 data: { confirm: "You sure?" },
+											 title: post_item.content,
+											 locals: {id:post_item.id} %>
+		  <% end %>
+	  </span>
+  
+	  <span class="user">
+		<%= link_to post_item.user.name, post_item.user %>
+	  </span>
+	  <%= image_tag(post_item.photo.url(:standard), class: 'post_image_content') %>
+	  <span class="content"><%= post_item.content %></span>
   </span>
-  <% if current_user?(post_item.user) %>
-    <%= link_to "delete", post_item, method: :delete,
-                                     data: { confirm: "You sure?" },
-                                     title: post_item.content,
-                                     locals: {id:post_item.id} %>
-  <% end %>
 </li>

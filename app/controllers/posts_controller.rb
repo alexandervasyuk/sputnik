@@ -18,7 +18,10 @@ class PostsController < ApplicationController
       @post_items = []
 	end
 	
-	redirect_to detail_micropost_path(@post.micropost_id)
+	respond_to do |format|
+		format.html { redirect_to detail_micropost_path(@post.micropost_id) }
+		format.js
+	end
   end
   
   def create_mobile
@@ -39,7 +42,7 @@ class PostsController < ApplicationController
   end
   
   #Code to handle ajax pulling requests
-  def refresh
+  def refresh  
   	@micropost = Micropost.find(params[:id])
   	
   	if @micropost
@@ -54,6 +57,8 @@ class PostsController < ApplicationController
   end
   
   def mobile_refresh
+	logger.debug "mobile refresh checking feed latest: #{session[:feed_latest]}"
+  
 	@micropost = current_user.feed.find(params[:micropost_id])
 	
 	if @micropost

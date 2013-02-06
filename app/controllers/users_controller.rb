@@ -47,8 +47,6 @@ class UsersController < ApplicationController
   end
 
   def create
-	@created = @temp_created || @user.save
-  
     if @created
 		sign_in(@user, params[:timezone])   
 		flash[:success] = "Welcome to Happpening!"
@@ -64,7 +62,7 @@ class UsersController < ApplicationController
   end
   
   def create_mobile
-	if @temp_created || @user.save
+	if @created
 		sign_in(@user, params[:timezone])
 		
 		json_response = {status: "success", failure_reason: ""}
@@ -132,16 +130,31 @@ class UsersController < ApplicationController
   def temp_create
 	tempuser = User.find_by_email(params[:user][:email])
   	
-  	@temp_created = false
-  	
-    @user = User.new(params[:user])
-    if !tempuser.nil? && tempuser.temp
+	@temp_created = false
+	
+	# Checks if the user is a temporary/invited user
+    if tempuser && tempuser.temp
     	@user = tempuser
-    	if @user.update_attributes(params[:user])	
-			@user.temp = false
+		@user.temp = false
+		
+    	if @user.update_attributes(params[:user])
 			@temp_created = true
 		end
+	else	
+		@user = User.new(params[:user])
     end
+	
+	if (is_in_beta && @temp_created) || !is_in_beta
+		@created = @temp_created || @user.save
+	end
+	
+	#Debugging Code
+	
+	Rails.logger.debug "\n END TEMP CREATE \n"
+	Rails.logger.debug is_in_beta
+	Rails.logger.debug @user.inspect
+	Rails.logger.debug @created.inspect
+	Rails.logger.debug "\n -------------- \n"
   end
   
   #AFTER FILTER - filters the creation methods to send out the emails on success

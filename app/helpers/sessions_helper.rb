@@ -8,11 +8,18 @@ module SessionsHelper
   
   def set_location(request)
 	geolocation_result = GeoIp.geolocation(request.remote_ip)
-	session[:current_location] = {latitude: geolocation_result[:latitude].to_f, longitude: geolocation_result[:longitude].to_f}
+	
+	if !Rails.env.development? && !Rails.env.test?
+		cookies.permanent[:latitude] = (geolocation_result[:latitude].to_f * 1000).round / 1000.0
+		cookies.permanent[:longitude] = (geolocation_result[:longitude].to_f * 1000).round / 1000.0
+	else
+		cookies.permanent[:latitude] = (39.07993 * 1000).round / 1000.0
+		cookies.permanent[:longitude] = (-77.181175 * 1000).round / 1000.0
+	end	
   end
   
   def current_location
-	session[:current_location]
+	{latitude: cookies[:latitude], longitude: cookies[:longitude]}
   end
 
   def signed_in?
@@ -45,6 +52,7 @@ module SessionsHelper
     cookies.delete(:return_to)
     cookies.delete(:remember_token)
     cookies.delete(:timezone)
+	cookies.delete(:current_location)
   end
   
   def clean_up

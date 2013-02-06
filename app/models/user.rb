@@ -33,7 +33,10 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
 
   #Proposals
-  has_many :proposals, dependent: :destroy
+  has_and_belongs_to_many :proposals
+  
+  #Characteristics
+  has_and_belongs_to_many :characteristics
   
   #Gcaches
   has_many :user_gcaches
@@ -66,25 +69,15 @@ class User < ActiveRecord::Base
   end
 
   def feed
-    relationships = Relationship.where("follower_id = :user_id and friend_status = 'FRIENDS' or followed_id = :user_id and friend_status = 'FRIENDS'", {user_id: self.id})
-    
-    friends = []
-    
-    relationships.each do |relationship|
-      if relationship.follower_id == self.id && relationship.follow1
-        friends.append(relationship.followed_id)
-      elsif relationship.followed_id == self.id && relationship.follow2  
-        friends.append(relationship.follower_id)
-      end  
-    end
-    
-    friends.append(self.id)
-    
-    Micropost.from_users(friends)
+    Micropost.where("microposts.user_id in (?) AND content IS NOT NULL AND location IS NOT NULL AND time IS NOT NULL AND (time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id").group("microposts.id").having("count(*) > 1").order("time ASC")
+  end
+  
+  def pool
+	Micropost.where("microposts.user_id in (?) AND (time IS NULL OR time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id ").group("microposts.id").having("count(*) = 1 OR (count(*) > 1 AND content IS NOT NULL AND location IS NOT NULL AND time IS NOT NULL)")
   end
   
   def feed_after(latest_update)
-	return self.feed.where("updated_at > :latest_update", {latest_update: latest_update})
+	return self.feed.where("microposts.updated_at > :latest_update", {latest_update: latest_update})
   end
   
   # def future_feed
@@ -161,6 +154,8 @@ class User < ActiveRecord::Base
       end
     end
 
+	friends << self
+	
     return friends  
   end
   
@@ -302,7 +297,9 @@ class User < ActiveRecord::Base
     future_participations = []
     
     participations.each do |participation|
-      if participation.micropost.time.future?
+	  current_micropost = participation.micropost
+	
+      if current_micropost.time && current_micropost.time.future?
         future_participations.append(participation)
       end
     end
@@ -317,7 +314,7 @@ class User < ActiveRecord::Base
       future_participations = []
       
       participations.each do |participation|
-        if participation.micropost.time.future?
+        if !participation.micropost.time || participation.micropost.time && participation.micropost.time.future?
           future_participations.append(participation)
         end
       end
@@ -328,7 +325,7 @@ class User < ActiveRecord::Base
     mutual_participations = []
     if self.friends?(user)
       self.participations.each do |participation|
-        if participation.micropost.time.future?
+        if !participation.micropost.time || participation.micropost.time && participation.micropost.time.future?
           mutual_participations.append(participation)
         end
       end

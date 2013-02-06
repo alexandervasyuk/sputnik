@@ -1,80 +1,76 @@
-<h4>Top Proposals</h4>
-<div>
-	<% activity_proposals.each do |activity_proposal| %>
-		<div class="proposal_entry">
-			<span class="icon-globe"></span>
-			<span><%= activity_proposal.content %></span>
-			<%= form_for(proposal, :html => { :class => "inline"}) do |f| %>
-				<%= f.hidden_field :content, value: activity_proposal.content %>
-				<%= f.hidden_field :location, value: "" %>
-				<%= f.hidden_field :time, value: "" %>
-				<%= f.hidden_field :user_id %>
-				<%= f.hidden_field :micropost_id %>
-				<%= f.submit "Vote", class: "btn"%>
-			<% end %>
-			<span class="badge badge-info"><%= activity_proposal.content_count %></span>
-		</div>
-	<% end %>
-</div>
-<div>
-	<% location_proposals.each do |location_proposal| %>
-		<div class="proposal_entry">
-			<span class="icon-map-marker"></span>
-			<span><%= location_proposal.location %></span>
-			<%= form_for(proposal, :html => { :class => "inline"}) do |f| %>
-				<%= f.hidden_field :content, value: "" %>
-				<%= f.hidden_field :location, value: location_proposal.location %>
-				<%= f.hidden_field :time, value: "" %>
-				<%= f.hidden_field :user_id %>
-				<%= f.hidden_field :micropost_id %>
-				<%= f.submit "Vote", class: "btn"%>
-			<% end %>
-			<span class="badge badge-info"><%= location_proposal.location_count %></span>
-		</div>
-	<% end %>
-</div>
-<div>
-	<% time_proposals.each do |time_proposal| %>
-		<div class="proposal_entry">
-			<span class="icon-time"></span>
-			<span><%= time_proposal.time %></span>
-			<%= form_for(proposal, :html => { :class => "inline"}) do |f| %>
-				<%= f.hidden_field :content, value: "" %>
-				<%= f.hidden_field :location, value: "" %>
-				<%= f.hidden_field :time, value: time_proposal.time %>
-				<%= f.hidden_field :user_id %>
-				<%= f.hidden_field :micropost_id %>
-				<%= f.submit "Vote", class: "btn"%>
-			<% end %>
-			<span class="badge badge-info"><%= time_proposal.time_count %></span>
-		</div>
-	<% end %>
-</div>
-
-<!-- Button to trigger modal -->
-<a href="#myModal" role="button" class="btn" data-toggle="modal">Make a proposal</a>
- 
-<!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
-  <%= form_for(proposal) do |f| %>
+<script type="text/javascript">
+	$(function() {
+		// Attaching date time pickers
+		$('#poll<%= poll.id %> .time_poll').datetimepicker({
+			language: 'en',
+			pick12HourFormat: true
+		});
 		
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="myModalLabel">New Proposal</h3>
-	  </div>
-	  <div class="modal-body">
-		<%= f.text_field :content, placeholder: "suggest a new thing to do" %>
-		<%= f.text_field :location, placeholder: "suggest a new place" %>
-		<%= f.text_field :time, placeholder: "suggest a new time" %>
+		// Attaching handlers to close date time pickers
+		$('#poll<%= poll.id %> .time_poll').blur(function() {
+			$(this).datetimepicker('hide');
+		});
 		
-		<%= f.hidden_field :user_id %>
-		<%= f.hidden_field :micropost_id %>
-	  </div>
-	  <div class="modal-footer">
-		<%= f.submit "Make proposal", class: "btn btn-primary" %>
-	  </div>
-  
-  <% end %>
-  
+		// Attaching correct handlers to checkbox to submit the form they are related to
+		$('#poll<%= poll.id %> .poll_checkbox').click(function() {
+			var form = $(this).parent();
+			
+			if (form) {
+				form.submit();
+			}
+		});
+	});
+</script>
+<div class="poll">
+	<div class="poll_header modal-header">
+		<span class="app_header_icon poll_icon"></span>
+		<h4>Poll App</h4>
+	
+		<div class="btn-group">
+		  <button class="btn dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+		  </button>
+		  <ul class="dropdown-menu">
+			<li><%= link_to "Remove", poll, method: :delete, remote: true,
+											 data: { confirm: "Are you sure?" },
+											 locals: {id:poll.id}, id: "poll#{poll.id}_remove" %></li>
+		  </ul>
+		</div>
+	</div>
+	
+	<div class="poll_body">
+		<h4>Q: <%= poll.question %></h4>
+		
+		<div id="poll<%= poll.id %>">
+			<%= form_for(current_user.proposals.build(poll_id: poll.id), remote: true) do |f| %>
+			<% if poll.poll_type == "LOCATION" %>
+				<%= f.text_field :content, class: "location_poll", "placeholder"=>"Place name"%>
+				<%= f.hidden_field :time, value: "" %>
+				<%= f.hidden_field :end_time, value: "" %>
+				<%= f.submit "Vote", class: "btn btn_correct"%>
+			<% elsif poll.poll_type == "TIME"%>
+				<%= f.text_field :time, class: "time_poll", "data-format"=>"MM/dd/yyyy HH:mm PP", "placeholder"=>"Start time"  %>
+				<%= f.text_field :end_time, class: "time_poll", "data-format"=>"MM/dd/yyyy HH:mm PP", "placeholder"=>"End time" %>
+				<%= f.submit "Vote", class: "btn btn_correct" %>
+			<% else %>
+				<%= f.text_field :content, class: "location_poll" %>
+				<%= f.hidden_field :time, value: "" %>
+				<%= f.hidden_field :end_time, value: "" %>
+				<%= f.submit "Vote", class: "btn btn_correct" %>
+			<% end %>
+
+			<%= f.hidden_field :poll_id %>
+		<% end %> 
+
+			<% poll.proposals.each do |proposal| %>
+				<% if poll.poll_type == "LOCATION" %>
+					<%= render partial: "microposts/poll/location_poll_element", locals: {location_proposal: proposal} %>
+				<% elsif poll.poll_type == "TIME" %>
+					<%= render partial: "microposts/poll/time_poll_element", locals: {time_proposal: proposal} %>
+				<% elsif poll.poll_type == "NONE" %>	
+					<%= render partial: "microposts/poll/default_poll_element", locals: {proposal: proposal} %>
+				<% end %>	
+			<% end %>
+		</div>
+	</div>
 </div>

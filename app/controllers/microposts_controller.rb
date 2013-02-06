@@ -254,6 +254,7 @@ class MicropostsController < ApplicationController
     if @friends
       @post = current_user.posts.build(micropost_id:params[:id])
 	  #@proposal = current_user.proposals.find_by_micropost_id(params[:id]) || current_user.proposals.build(micropost_id:params[:id])
+	  @polls = @micropost.polls.all
       
 	  @friends = current_user.friends
 	  

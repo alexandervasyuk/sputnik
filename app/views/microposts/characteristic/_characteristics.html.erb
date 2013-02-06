@@ -1,0 +1,29 @@
+<div class="characteristics">
+	<div class="characteristics_header modal-header">
+		<span class="app_header_icon crown_icon"></span>
+		<h4>Characters App</h4>
+		
+		<div class="btn-group">
+		  <button class="btn dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+		  </button>
+		  <ul class="dropdown-menu">
+			<li><a href="#">Remove</a></li>
+		  </ul>
+		</div>
+	</div>
+	
+	<div class="characteristics_body">
+		<%= form_for(micropost.characteristics.new, remote: true) do |f| %>
+			<%= f.label :characteristic, "New Characteristic" %>
+			<%= f.text_field :characteristic, "placeholder"=>"Ex: The Baddest A**, Token Russian, etc.", class: "characteristics_create" %>
+			<%= f.submit "Add", class: "btn btn_correct" %>
+			
+			<%= f.hidden_field :micropost_id %>
+		<% end %>
+		
+		<% micropost.characteristics.each do |characteristic| %>
+			<%= render partial: "microposts/characteristic/characteristic", locals: {characteristic: characteristic, micropost: micropost} %>
+		<% end %>
+	</div>
+</div>
