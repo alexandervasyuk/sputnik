@@ -1,6 +1,6 @@
 module MicropostsHelper
 	def update_micropost(micropost)
-		micropost.non_creator_participants.each do |participant|
+		micropost.participations.each do |participant|
   			MicropostMailer.delay.changed(micropost, participant)
   			updated_notification(micropost, participant)
 		end

@@ -55,12 +55,14 @@ class User < ActiveRecord::Base
   
   validates_attachment_content_type :avatar, content_type: ['image/jpeg', 'image/png', 'image/gif'], unless: :temp?
   
+  # Responsible for generating a password reset token
   def generate_token(column)
     begin
       self[column] = SecureRandom.urlsafe_base64
     end while User.exists?(column => self[column])
   end
   
+  # Sets the password reset token
   def send_password_reset
     generate_token(:password_reset_token)
     self.password_reset_sent_at = Time.zone.now
@@ -68,33 +70,35 @@ class User < ActiveRecord::Base
     UserMailer.delay.password_reset(self)
   end
 
+  # The user's feed. Items in a user's feed meets two reqs
+  # a. All fields (content, location, time) are specified
+  # b. There are at least two participants
   def feed
     Micropost.where("microposts.user_id in (?) AND content IS NOT NULL AND location IS NOT NULL AND time IS NOT NULL AND (time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id").group("microposts.id").having("count(*) > 1").order("time ASC")
   end
   
+  # The user's pool. Items in a user's pool FAIL one of the conditions of the feed
   def pool
 	Micropost.where("microposts.user_id in (?) AND (time IS NULL OR time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id ").group("microposts.id").having("count(*) = 1 OR (count(*) > 1 AND content IS NOT NULL AND location IS NOT NULL AND time IS NOT NULL)")
   end
   
+  # Method responsible for grabbing any new feed elements that were added after the page was rendered
   def feed_after(latest_update)
-	return self.feed.where("microposts.updated_at > :latest_update", {latest_update: latest_update})
+	if latest_update.present? 
+		self.feed.where("microposts.updated_at > :latest_update", {latest_update: latest_update})
+	end
   end
   
-  # def future_feed
-  #   feed = []
-    
-  #   self.feed.each do |feed_item|
-  #     if (feed_item.time + 180).future?
-  #       feed << feed_item
-  #     end
-  #   end
-    
-  #   return feed
-  # end
+  # Method responsible for grabbing any new pool elements that were added after the page was rendered
+  def pool_after(latest_update)
+	if latest_update.present?
+		self.pool.where("microposts.updated_at > :latest_update", {latest_update: latest_update})
+	end
+  end
   
   def self.text_search(query)
     if query.present?
-      find( :all, :conditions => [ 'name ~* ?', query ] )
+      find(:all, :conditions => [ 'name ~* ?', query ])
     end
   end
   

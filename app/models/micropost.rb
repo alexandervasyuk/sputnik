@@ -27,19 +27,38 @@ class Micropost < ActiveRecord::Base
   
   default_scope order: 'microposts.created_at DESC'
   
+  # ActiveRecord Hooks
+  before_save do
+	# Make sure that the invitees are set
+	if !self.invitees
+		self.invitees = {}
+	end
+  end
+  
+  # Instance Methods
+  
+  # Adds the specified user to the invited list
   def add_to_invited(user)
-  	self.invitees[user.id] = 1
-  	
-  	update_attribute(:invitees, self.invitees)
+	if user && !user.new_record?
+		self.invitees[user.id] = 1
+		
+		update_attribute(:invitees, self.invitees)
+	end
   end
   
-  def after_post(post_id)
-	self.posts.where("id > :id", {id: post_id})
+  # Gives the number of invitees that are in this micropost
+  def num_invitees
+	self.invitees.keys.count
   end
   
-  def invited(user)
-  	return !self.invitees[user.id].nil?
+  #  Checks if the given user is invited to this micropost
+  def invited?(user)
+  	return self.invitees[user.id]
   end
+  
+  #def after_post(post_id)
+	#self.posts.where("id > :id", {id: post_id})
+  #end
   
   def to_mobile
 	participants = []
@@ -54,9 +73,9 @@ class Micropost < ActiveRecord::Base
   end
   
   #These are the actual participants in an event
-  def non_creator_participants
-  	participations.where("user_id != ?", self.user.id)
-  end
+  #def non_creator_participants
+  #	participations.where("user_id != ?", self.user.id)
+  #end
   
   private
 

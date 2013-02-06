@@ -134,6 +134,37 @@ describe Micropost do
 	end
   end
   
+  # Instance method tests
   
+  # Testing add_to_invited
   
+  describe "adding a user to the invite list" do
+	it "should successfully add them to the list" do
+		num_invitees = 5
+		
+		invite_micropost = FactoryGirl.create(:micropost)
+	
+		expect do
+			generate_invitees_for(invite_micropost, num_invitees)
+		end.to change{ invite_micropost.num_invitees }.by(num_invitees)
+	end
+  end
+  
+  describe "adding an invalid user" do
+	it "should not add them if the user is not registered" do
+		invite_micropost = FactoryGirl.create(:micropost)
+		
+		expect do
+			invite_micropost.add_to_invited(FactoryGirl.build(:user))
+		end.to change{ invite_micropost.num_invitees }.by(0)
+	end
+	
+	it "should not add them if the user is nil" do
+		invite_micropost = FactoryGirl.create(:micropost)
+		
+		expect do
+			invite_micropost.add_to_invited(nil)
+		end.to change{ invite_micropost.num_invitees }.by(0)
+	end
+  end
 end

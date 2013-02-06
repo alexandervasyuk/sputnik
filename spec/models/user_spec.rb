@@ -3,8 +3,8 @@ require 'spec_helper'
 describe User do
 
   before do
-    @user = User.new(name: "Example User", email: "user@example.com", 
-                     password: "foobar", password_confirmation: "foobar")
+    @user = User.new(name: "Example User", email: "user@example.com", password: "foobar", password_confirmation: "foobar")
+	@friend = FactoryGirl.create(:user)
   end
 
   subject { @user }
@@ -30,6 +30,8 @@ describe User do
   it { should be_valid }
   it { should_not be_admin }
 
+  # Validation Testing
+  
   describe "accessible attributes" do
     it "should not allow access to admin" do
       expect do
@@ -143,73 +145,112 @@ describe User do
     its(:remember_token) { should_not be_blank }
   end
 
-
-  describe "micropost associations" do
-
-    before { @user.save }
-    let!(:older_micropost) do 
-      FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
-    end
-    let!(:newer_micropost) do
-      FactoryGirl.create(:micropost, user: @user, created_at: 1.hour.ago)
-    end
-
-    it "should have the right microposts in the right order" do
-      @user.microposts.should == [newer_micropost, older_micropost]
-    end
+  # Associations Tests
   
-    it "should destroy associated microposts" do
-      microposts = @user.microposts.dup
-      @user.destroy
-      microposts.should_not be_empty
-      microposts.each do |micropost|
-        Micropost.find_by_id(micropost.id).should be_nil
-      end
-    end
+  # Instance Methods Tests
   
-    describe "status" do
-      let(:unfollowed_post) do
-        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
-      end
-
-      let(:followed_user) { FactoryGirl.create(:user) }
-
-      before do
-        @user.follow!(followed_user)
-        3.times { followed_user.microposts.create!(content: "Lorem ipsum") }
-      end
-
-      its(:feed) { should include(newer_micropost) }
-      its(:feed) { should include(older_micropost) }
-      its(:feed) { should_not include(unfollowed_post) }
-      its(:feed) do
-        followed_user.microposts.each do |micropost|
-          should include(micropost)
-        end
-      end
-    end
+  describe "password reset" do
+	before do
+		@user.save
+		@user.send_password_reset
+	end
+	
+	its(:password_reset_token) { should_not be_blank }
   end
-
-  describe "following" do
-    let(:other_user) { FactoryGirl.create(:user) }    
-    before do
-      @user.save
-      @user.follow!(other_user)
-    end
-
-    it { should be_following(other_user) }
-    its(:followed_users) { should include(other_user) }
-
-    describe "followed user" do
-      subject { other_user }
-      its(:followers) { should include(@user) }
-    end
-
-    describe "and unfollowing" do
-      before { @user.unfollow!(other_user) }
-
-      it { should_not be_following(other_user) }
-      its(:followed_users) { should_not include(other_user) }
-    end
+  
+  # Instance Method Testing
+  
+  describe "feed" do
+	before do
+		@user.save
+		make_friends(@user, @friend)
+	end
+	
+	let(:feed_item) { generate_feed_item(@user) }
+	
+	it "should populate the feed of the creator successfully" do
+		@user.feed.should include(feed_item)
+	end
+	
+	it "should populate the pool of the creator successfully" do
+		@user.pool.should_not include(feed_item)
+	end
+	
+	it "should populate the feed of the creator's friends successfully" do
+		@friend.feed.should include(feed_item)
+	end
+	
+	it "should populate the pool of the creator's friends successfully" do
+		@friend.pool.should_not include(feed_item)
+	end
   end
-end
+  
+  describe "pool" do
+	before do
+		@user.save
+		make_friends(@user, @friend)
+	end
+	
+	let(:pool_item) { generate_pool_item(@user) }
+	
+	it "should populate the pool of the creator successfully" do
+		@user.pool.should include(pool_item) 
+	end
+	
+	it "should populate the feed of the creator successfully" do
+		@user.feed.should_not include(pool_item)
+	end
+	
+	it "should populate the pool of the creator's friends successfully" do
+		@friend.pool.should include(pool_item)
+	end
+	
+	it "should populate the feed of the creator's friends successfully" do
+		@friend.feed.should_not include(pool_item)
+	end
+  end
+  
+  # Testing feed update responds correctly to different update times
+  describe "feed update" do
+	before { @user.save }
+  
+	it "should respond will nil when the input is nil" do
+		@user.feed_after(nil).should be_nil
+	end	
+  
+	it "should respond with no feed items when there are no updates" do
+		earlier_feed_item = generate_feed_item(@user)
+		latest_feed_item = generate_feed_item(@user)
+		
+		@user.feed_after(latest_feed_item.updated_at).should be_empty
+	end
+	
+	it "should respond with the correct feed items when there are updates" do
+		earlier_feed_item = generate_feed_item(@user)
+		later_feed_item = generate_feed_item(@user)
+		latest_feed_item = generate_feed_item(@user)
+		
+		@user.feed_after(earlier_feed_item.updated_at).should include(later_feed_item)
+		@user.feed_after(earlier_feed_item.updated_at).should include(latest_feed_item)
+		@user.feed_after(later_feed_item.updated_at).should include(latest_feed_item)
+	end
+  end
+  
+  # Testing pool update responds correctly to different update times
+  describe "pool update" do
+	before { @user.save }  
+  
+	it "should respond with nil when the input is nil" do
+		
+	end
+	
+	it "should respond with no pool items when there are no updates" do
+		
+	end
+	
+	it "should respond with the correct pool items when there are updates" do
+		
+	end
+  end
+  
+end  

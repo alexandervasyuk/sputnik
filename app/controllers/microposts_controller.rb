@@ -87,7 +87,7 @@ class MicropostsController < ApplicationController
   	@micropost = Micropost.find(params[:event_id])
   	@invitee = User.find(params[:invitee_id])
   	
-  	if !@micropost.invited(@invitee) && !@invitee.participates?(@micropost)
+  	if !@micropost.invited?(@invitee) && !@invitee.participates?(@micropost)
 	  	@micropost.add_to_invited(@invitee)
 	
 	    #Creating a notification
@@ -121,7 +121,7 @@ class MicropostsController < ApplicationController
   		end
   		
   		#Only invite users that are valid emails and not currently invited and not participating
-  		if !user.errors.any? && !@micropost.invited(user) && !user.participates?(@micropost)
+  		if !user.errors.any? && !@micropost.invited?(user) && !user.participates?(@micropost)
   			if current_user.get_relationship(user).nil?
   				current_user.friend_request!(user)
   			end

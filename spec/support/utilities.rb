@@ -50,6 +50,15 @@ def generate_polls_for(micropost, num_polls)
 	end
 end	
 
+# Generates the specified number of invitees for the specified micropost
+def generate_invitees_for(micropost, num_invitees)
+	while num_invitees > 0 do
+		micropost.add_to_invited(FactoryGirl.create(:user))
+		
+		num_invitees-=1
+	end
+end
+
 # Generates the specified number of characteristics for the specified micropost
 def generate_characteristics_for(micropost, num_characteristics)
 	while num_characteristics > 0 do
@@ -57,6 +66,20 @@ def generate_characteristics_for(micropost, num_characteristics)
 		
 		num_characteristics-=1
 	end
+end
+
+# Generates a feed item for the user based on the qualifications of a feed item
+def generate_feed_item(user)
+	micropost = FactoryGirl.create(:micropost, user: user)
+	
+	generate_participants(micropost, 1)
+	
+	return micropost
+end
+
+# Generates a pool item for the user based on the qualifications of a pool item
+def generate_pool_item(user)
+	FactoryGirl.create(:micropost, user: user)
 end
 
 def make_friends(user1, user2)
@@ -74,16 +97,6 @@ def generate_microposts_for(user, num_microposts)
 		num_microposts-=1
 	end
 end
-
-def generate_microposts_for_user(user, num_microposts)
-	while num_microposts > 0 do
-		FactoryGirl.create(:micropost, user: user)
-		
-		num_microposts-=1
-	end
-end
-
-
 
 def set_in_beta
 	Rails.configuration.in_beta = true
