@@ -61,14 +61,11 @@ ActiveRecord::Schema.define(:version => 20130205055851) do
   create_table "microposts", :force => true do |t|
     t.string   "content"
     t.integer  "user_id"
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
     t.string   "location"
     t.datetime "time"
     t.text     "invitees"
-    t.boolean  "content_proposal",  :default => true
-    t.boolean  "time_proposal",     :default => true
-    t.boolean  "location_proposal", :default => true
     t.decimal  "latitude"
     t.decimal  "longitude"
     t.datetime "end_time"
