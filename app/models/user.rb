@@ -276,7 +276,19 @@ class User < ActiveRecord::Base
     return false
   end
   
-  #Method that returns all of the future events that both users are attending. It is important to do this because
+  def future_participations
+	future_participations = []
+      
+      participations.each do |participation|
+        if !participation.micropost.time || participation.micropost.time && participation.micropost.time.future?
+          future_participations.append(participation)
+        end
+      end
+      
+      return future_participations
+  end
+  
+  #Instance method that returns all of the future events that both users are attending. It is important to do this because
   #we do not want users to be able to see events that are not created by themselves or their friends
   # Candidate for condensation/refactor
   def common_participations(user)

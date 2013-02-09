@@ -694,4 +694,28 @@ describe User do
 		@friend.has_future_participations?.should be_true
 	end
   end
+  
+  describe "retrieving future participations" do
+	before { @user.save }
+	
+	it "should correctly return an empty list if the user has no future participations" do
+		@user.future_participations.should be_empty
+	end
+	
+	it "should correctly display the user's future participations when they exist" do
+		make_friends(@user, @friend)
+		
+		expect do
+			generate_microposts(@user, 3)
+		end.to change{ @user.future_participations.count }.by(3)
+		
+		expect do
+			@friend.participate(@user.microposts.first)
+		end.to change{ @friend.future_participations.count }.by(1)
+	end
+  end
+  
+  describe "common participations" do
+	
+  end
 end  
