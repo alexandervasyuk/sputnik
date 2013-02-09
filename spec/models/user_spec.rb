@@ -223,7 +223,7 @@ describe User do
 		Rails.logger.debug("\n\nfeed update test #2\n\n")
 	
 		earlier_feed_item = generate_feed_item(@user)
-		sleep(2)
+		sleep(1.1)
 		latest_feed_item = generate_feed_item(@user)
 		
 		@user.feed_after(latest_feed_item.updated_at + 1.seconds).should be_empty
@@ -233,9 +233,9 @@ describe User do
 		Rails.logger.debug("\n\nfeed update test #3\n\n")
 	
 		earlier_feed_item = generate_feed_item(@user)
-		sleep(2)
+		sleep(1.1)
 		later_feed_item = generate_feed_item(@user)
-		sleep(2)
+		sleep(1.1)
 		latest_feed_item = generate_feed_item(@user)
 		
 		@user.feed_after(earlier_feed_item.updated_at + 1.seconds).should_not include(earlier_feed_item)
@@ -255,7 +255,7 @@ describe User do
 	
 	it "should respond with no pool items when there are no updates" do
 		earlier_pool_item = generate_pool_item(@user)
-		sleep(2)
+		sleep(1.1)
 		later_pool_item = generate_pool_item(@user)
 		
 		@user.pool_after(later_pool_item.updated_at + 1.seconds).should be_empty
@@ -263,9 +263,9 @@ describe User do
 	
 	it "should respond with the correct pool items when there are updates" do
 		earlier_pool_item = generate_pool_item(@user)
-		sleep(2)
+		sleep(1.1)
 		later_pool_item = generate_pool_item(@user)
-		sleep(2)
+		sleep(1.1)
 		latest_pool_item = generate_pool_item(@user)
 		
 		@user.pool_after(later_pool_item.updated_at).should include(latest_pool_item)
@@ -518,8 +518,6 @@ describe User do
 	end
 	
 	it "should allow users to send friend requests correctly" do
-		
-		
 		@user.friend_request(@random_user).should be_true
 	end
   end
@@ -581,11 +579,27 @@ describe User do
 	end
 	
 	it "should not allow users to participate in microposts for which they are not friends with the user" do
-		
-		
 		generate_microposts(@user, 3)
 		
 		@random_user.participate(@user.microposts.first).should be_false
+	end
+	
+	it "should not allow users to participate in microposts in the past" do
+		micropost = FactoryGirl.build(:finished_micropost, user: @user)
+		micropost.save(validate: false)
+		
+		make_friends(@user, @friend)
+		
+		@friend.participate(micropost).should be_false
+	end
+	
+	it "should allow users to participate in microposts that are in progress" do
+		micropost = FactoryGirl.build(:in_progress_micropost, user: @user)
+		micropost.save(validate: false)
+		
+		make_friends(@user, @friend)
+		
+		@friend.participate(micropost).should be_true
 	end
 	
 	it "should allow users to participate in their friends microposts" do
@@ -716,6 +730,55 @@ describe User do
   end
   
   describe "common participations" do
+	before { @user.save }
 	
+	it "should respond with an empty list if the input user is nil" do
+		@user.common_participations(nil).should be_empty
+	end
+	
+	it "should respond with an empty list if the two users are not friends" do
+		@user.common_participations(@friend).should be_empty
+	end
+	
+	it "should respond with an empty list if the two users are friends but have no common participations" do
+		make_friends(@user, @friend)
+		
+		generate_microposts(@user, 3)
+		generate_microposts(@friend, 3)
+		
+		@user.common_participations(@friend).should be_empty
+		@friend.common_participations(@user).should be_empty
+	end
+	
+	it "should respond with the users own future participations if the input user is himself" do
+		generate_microposts(@user, 3)
+		
+		@user.common_participations(@user).should == @user.future_participations
+	end
+	
+	it "should respond correctly with the two users mutual participations if everything is valid" do
+		make_friends(@user, @friend)
+		
+		generate_microposts(@user, 3)
+		
+		@friend.participate(@user.microposts.first)
+
+		@friend.future_participations.should include(@user.microposts.first)
+			
+		@friend.common_participations(@user).should include(@user.microposts.first)
+		@user.common_participations(@friend).should include(@user.microposts.first)
+	end
+  end
+	
+  describe "crop profile" do
+	# UNTESTED
+  end
+  
+  describe "cropping check" do
+	# UNTESTED
+  end
+  
+  describe "avatar geometry" do
+	# UNTESTED
   end
 end  

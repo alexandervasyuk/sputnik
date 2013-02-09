@@ -234,7 +234,7 @@ class User < ActiveRecord::Base
 
   # Instance method that makes this user participate in the given micropost
   def participate(micropost)
-	if micropost.present? && friends?(micropost.user)
+	if micropost.present? && friends?(micropost.user) && (!micropost.time || micropost.time.future? || (micropost.end_time && micropost.end_time.future?))
 		participation = participations.build(micropost_id: micropost.id)
 		
 		participation.save
@@ -249,6 +249,10 @@ class User < ActiveRecord::Base
   end
   
   # Instance method that checks if this user is participating in the given micropost
+  # Input: The micropost that we want to check if the user is participating in
+  # Output:
+  # a. the participation IF the user is participating
+  # b. nil if user IF not participating
   def participating?(micropost)
 	if micropost.present?
 		participations.find_by_micropost_id(micropost.id)
@@ -276,61 +280,40 @@ class User < ActiveRecord::Base
     return false
   end
   
+  # Instance method that retrieves all of a user's future participations
   def future_participations
 	future_participations = []
-      
-      participations.each do |participation|
-        if !participation.micropost.time || participation.micropost.time && participation.micropost.time.future?
-          future_participations.append(participation)
-        end
-      end
-      
-      return future_participations
+
+	participations.each do |participation|
+		if !participation.micropost.time || (participation.micropost.time && participation.micropost.time.future?)
+			future_participations << participation.micropost
+		end
+	end
+
+	return future_participations
   end
   
   #Instance method that returns all of the future events that both users are attending. It is important to do this because
   #we do not want users to be able to see events that are not created by themselves or their friends
   # Candidate for condensation/refactor
   def common_participations(user)
-    if user == self
-      future_participations = []
-      
-      participations.each do |participation|
-        if !participation.micropost.time || participation.micropost.time && participation.micropost.time.future?
-          future_participations.append(participation)
-        end
-      end
-      
-      return future_participations
-    end
-    
-    mutual_participations = []
-    if self.friends?(user)
-      self.participations.each do |participation|
-        if !participation.micropost.time || participation.micropost.time && participation.micropost.time.future?
-          mutual_participations.append(participation)
-        end
-      end
-    end
-    
-    return mutual_participations
+	if user.present? && friends?(user)
+		self_participations = future_participations
+		
+		if user == self
+			return self_participations
+		end
+		
+		user_participations = user.future_participations
+		
+		return self_participations & user_participations
+	end
+	
+	return []
   end
   
-  # Paperclip Methods
-  def crop_profile
-    reprocess_avatar
-  end
-  
-  def cropping?
-    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
-  end
-  
-  def avatar_geometry(style = :original)
-    @geometry ||= {}
-    @geometry[style] ||= Paperclip::Geometry.from_file(avatar.path(style))
-  end
-
   #Notifications methods
+  
   def num_unread_notifications
     self.notifications.where("read = false").count
   end
@@ -349,24 +332,23 @@ class User < ActiveRecord::Base
   	self.notifications.where("id > ?", latest_time).order("created_at DESC")
   end
   
-  #Gcaches methods
-  def gather_gcaches(current_location)
-	result = []
-	
-	latitude_upper = 37.867868  + 0.45
-	latitude_lower = 37.867868  - 0.45
-	longitude_upper = -122.260797 + 0.45
-	longitude_lower = -122.260797 - 0.45
-	
-	
-	self.gcaches.where("latitude < :latitude_upper and latitude > :latitude_lower and longitude < :longitude_upper and longitude > :longitude_lower", {latitude_upper: latitude_upper, latitude_lower: latitude_lower, longitude_upper: longitude_upper, longitude_lower: longitude_lower}).each do |gcach|
-		result << gcach.name
-	end
-	
-	return result
+  # Paperclip Methods
+  
+  def crop_profile
+    reprocess_avatar
+  end
+  
+  def cropping?
+    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
+  end
+  
+  def avatar_geometry(style = :original)
+    @geometry ||= {}
+    @geometry[style] ||= Paperclip::Geometry.from_file(avatar.path(style))
   end
 
   private
+  
   def create_remember_token
     self.remember_token = SecureRandom.urlsafe_base64
   end

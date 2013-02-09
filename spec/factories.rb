@@ -36,6 +36,16 @@ FactoryGirl.define do
 		time Time.current() - 1.minutes
 	end
 	
+	factory :in_progress_micropost do
+		time Time.current() - 1.hours
+		end_time Time.current() + 1.hours
+	end
+	
+	factory :finished_micropost do
+		time Time.current() - 1.hours
+		end_time Time.current() - 30.minutes
+	end
+	
     factory :unsaved_micropost do 
     	id 1
     end
