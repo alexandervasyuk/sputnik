@@ -24,7 +24,7 @@ class UsersController < ApplicationController
 	elsif @user.friends?(current_user)	
 		events = @user.feed
 		
-		json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, is_following: current_user.following?(@user), events: events}
+		json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, events: events}
 		
 		render json: json_response	
 	elsif current_user.pending?(@user)	

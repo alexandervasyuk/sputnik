@@ -169,22 +169,9 @@ class User < ActiveRecord::Base
 	
 	return relationship && relationship.friend_status == "PENDING" && relationship.follower_id == self.id
   end
-
-  #Following
-
-  def following?(other_user)
-    relationship = get_relationship(other_user)
-    
-    if relationship.follower_id == self.id
-        return relationship.follow1
-      else  
-        return relationship.follow2
-      end
-    
-    return false
-  end
   
-  #Gets a list of users that the user may know sorted by 
+  # Instance method responsible for populating a list of users that the user may know sorted by how many of the user's current friends know that suggested user
+  # Candidate for condensation
   def suggested_friends
   	people_may_know_query = "select r.follower_id, r.followed_id from Relationships r where r.follower_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' and not u1.temp or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.followed_id != #{self.id} and r.followed_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS' or r.followed_id in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.follower_id != #{self.id} and r.follower_id not in (select u1.id from Users u1, Relationships r1 where r1.follower_id = #{self.id} and r1.followed_id = u1.id and r1.friend_status = 'FRIENDS' or r1.follower_id = u1.id and r1.followed_id = #{self.id} and r1.friend_status = 'FRIENDS') and r.friend_status = 'FRIENDS'"
   	
@@ -219,60 +206,27 @@ class User < ActiveRecord::Base
   	return mutual_users
   end
   
-  def friend_request!(other_user)
-    Relationship.create!(follower_id: self.id, followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
-  end
-  
-  def accept_friend!(other_user)
-    relationship = self.get_relationship(other_user)
-    
-    relationship.friend_status = "FRIENDS"
-    relationship.follow1 = true
-    relationship.follow2 = true
-    
-    relationship.save!
-  end
-
-  def follow!(other_user)
-    relationship = get_relationship(other_user)
-    
-	if relationship
-		if relationship.follower_id == self.id
-		  relationship.follow1 = true
-		else
-		  relationship.follow2 = true
-		end
-		
-		relationship.save!
+  # Instance method that allows this user to send a friend request to another user
+  def friend_request(other_user)
+	if other_user.present?
+		relationships.create(followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
 	end
   end
-
-  def unfollow!(other_user)
-    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
+  
+  # Instance method that allows this user to accept a friend request from another user
+  def accept_friend(other_user)
+    relationship = self.get_relationship(other_user)
     
-    if relationship.follower_id == self.id
-      relationship.follow1 = false
-    elsif  
-      relationship.follow2 = false
-    end
-    
-    relationship.save
+	if relationship && (relationship.friend_status == "PENDING" || relationship.friend_status == "IGNORED") && relationship.followed_id == self.id
+		relationship.friend_status = "FRIENDS"
+		relationship.follow1 = true
+		relationship.follow2 = true
+		
+		relationship.save
+	end
   end
   
-  def crop_profile
-    reprocess_avatar
-  end
-  
-  def cropping?
-    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
-  end
-  
-  def avatar_geometry(style = :original)
-    @geometry ||= {}
-    @geometry[style] ||= Paperclip::Geometry.from_file(avatar.path(style))
-  end  
-
-  #Participation
+  #Participation Methods
 
   def participate!(micropost)
     participations.create!(micropost_id: micropost.id)
@@ -329,6 +283,20 @@ class User < ActiveRecord::Base
     end
     
     return mutual_participations
+  end
+  
+  # Paperclip Methods
+  def crop_profile
+    reprocess_avatar
+  end
+  
+  def cropping?
+    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
+  end
+  
+  def avatar_geometry(style = :original)
+    @geometry ||= {}
+    @geometry[style] ||= Paperclip::Geometry.from_file(avatar.path(style))
   end
 
   #Notifications methods

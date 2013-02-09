@@ -123,7 +123,7 @@ class MicropostsController < ApplicationController
   		#Only invite users that are valid emails and not currently invited and not participating
   		if !user.errors.any? && !@micropost.invited?(user) && !user.participates?(@micropost)
   			if current_user.get_relationship(user).nil?
-  				current_user.friend_request!(user)
+  				current_user.friend_request(user)
   			end
   			
   			@micropost.add_to_invited(user)

@@ -1,7 +1,5 @@
 <%if signed_in? %>
-	<%if friends?(@user)%>
-		<%= render 'follow_form'%>
-    <%elsif my_pending?(@user)%>
+    <%if my_pending?(@user)%>
     	<%= render 'my_pending_form'%>
     <%elsif other_pending?(@user)%>
     	<%= render 'other_pending_form'%>	

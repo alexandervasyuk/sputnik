@@ -4,8 +4,7 @@
 		<h3 class="friend_name">
 			<%= link_to friend.name, friend%>
 		</h3>
-		<% @user = friend%>
-		<%= render partial: "users/follow_form"%>
+		<% @user = friend%>	
 		<%= render "users/unfriend_form", user: @user%>
 	</div>
 </li>

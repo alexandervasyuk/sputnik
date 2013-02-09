@@ -6,7 +6,7 @@ class RelationshipsController < ApplicationController
 
   def create
     @user = User.find(params[:relationship][:followed_id])
-    current_user.friend_request!(@user)
+    current_user.friend_request(@user)
 
     #Create notification
     creator_id = @user.id
@@ -23,7 +23,7 @@ class RelationshipsController < ApplicationController
 	@user = User.find(params[:id])
 	
 	if @user != current_user
-		current_user.friend_request!(@user)
+		current_user.friend_request(@user)
 		
 		#Create notification
 		creator_id = @user.id
@@ -42,7 +42,7 @@ class RelationshipsController < ApplicationController
   def update
     if params[:type] == 'ACCEPT'
       @user = User.find(params[:relationship][:follower_id])
-      current_user.accept_friend!(@user)
+      current_user.accept_friend(@user)
 		  #Create notification
       creator_id = @user.id
       message = current_user.name + " has accepted your friendship"
@@ -56,21 +56,7 @@ class RelationshipsController < ApplicationController
       relationship.save
       
       redirect_to :back
-    elsif params[:type] == 'UNFOLLOW'
-      @user = User.find(params[:side])
-      current_user.unfollow!(@user)
-        
-      @type_and_user = [params[:type], @user]
-      
-      respond_with @type_and_user
-    elsif params[:type] == 'FOLLOW'  
-      @user = User.find(params[:side])
-      current_user.follow!(@user)
-      
-      @type_and_user = [params[:type], @user]
-      
-      respond_with @type_and_user
-    end
+	
   end
   
   def mobile_update
@@ -78,7 +64,7 @@ class RelationshipsController < ApplicationController
 		user = User.find(params[:id])
 		
 		if user
-			current_user.accept_friend!(user)
+			current_user.accept_friend(user)
 			render json: {status: "success"}
 		else	
 			render json: {status: "failure"}

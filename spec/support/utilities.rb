@@ -95,8 +95,8 @@ def generate_alt_pool_item(user)
 end
 
 def make_friends(user1, user2)
-	user1.friend_request!(user2)
-	user2.accept_friend!(user1)
+	user1.friend_request(user2)
+	user2.accept_friend(user1)
 end
 
 def generate_microposts_for(user, num_microposts)
