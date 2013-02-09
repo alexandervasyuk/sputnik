@@ -151,6 +151,8 @@ class User < ActiveRecord::Base
 	return false
   end
 
+  # Instance method responsible for retrieving all of a user's friends
+  # Candidate for condensation
   def friends
     friends = []
     friendships = Relationship.where("follower_id = :user_id and friend_status = 'FRIENDS' or followed_id = :user_id and friend_status = 'FRIENDS'", {user_id: self.id})
@@ -252,7 +254,7 @@ class User < ActiveRecord::Base
     relationship.follow1 = true
     relationship.follow2 = true
     
-    relationship.save
+    relationship.save!
   end
 
   def follow!(other_user)

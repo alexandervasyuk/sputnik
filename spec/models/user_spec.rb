@@ -396,13 +396,24 @@ describe User do
 	
 	it "should not display any results if the user does not have any friends" do
 		# Case when there is nothing between them
+		random_user = FactoryGirl.create(:user)
 		
+		@user.friends.should_not include(random_user)
+		random_user.friends.should_not include(@user)
 	
 		# Case when there is a friend request between them
+		friend_requester = FactoryGirl.create(:user)
+		friend_requester.friend_request!(@user)
+		
+		@user.friends.should_not include(friend_requester)
+		friend_requester.friends.should_not include(@user)
 	end
 	
 	it "should displays the friends that the user has" do
-	
+		make_friends(@user, @friend)
+		
+		@user.friends.should include(@friend)
+		@friend.friends.should include(@user)
 	end
   end
 end  
