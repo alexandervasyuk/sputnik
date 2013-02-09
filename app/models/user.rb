@@ -241,22 +241,27 @@ class User < ActiveRecord::Base
 	end
   end
   
+  # Instance method that makes this user unparticipate in the given micropost
   def unparticipate(micropost)
 	if micropost.present? && !microposts.include?(micropost) && participating?(micropost)
 		participations.find_by_micropost_id(micropost.id).destroy
 	end
   end
   
+  # Instance method that checks if this user is participating in the given micropost
   def participating?(micropost)
 	if micropost.present?
 		participations.find_by_micropost_id(micropost.id)
 	end
   end
 
+  # Instance method that checks if the user has any participations
   def has_participations?
     participations.any?
   end
   
+  # Instance method that checks if the user has any participations in the future
+  # Candidate for condensation/refactor
   def has_future_participations?
     future_participations = []
     
@@ -264,15 +269,16 @@ class User < ActiveRecord::Base
 	  current_micropost = participation.micropost
 	
       if current_micropost.time && current_micropost.time.future?
-        future_participations.append(participation)
+        return true
       end
     end
     
-    future_participations.any?
+    return false
   end
   
   #Method that returns all of the future events that both users are attending. It is important to do this because
   #we do not want users to be able to see events that are not created by themselves or their friends
+  # Candidate for condensation/refactor
   def common_participations(user)
     if user == self
       future_participations = []

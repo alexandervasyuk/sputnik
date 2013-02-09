@@ -32,6 +32,10 @@ FactoryGirl.define do
 		time nil
 	end
 	
+	factory :past_micropost do
+		time Time.current() - 1.minutes
+	end
+	
     factory :unsaved_micropost do 
     	id 1
     end

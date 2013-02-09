@@ -650,4 +650,48 @@ describe User do
 		@friend.participating?(@user.microposts.first).should be_false
 	end
   end
+  
+  describe "checking has participations" do
+	before { @user.save }
+	
+	it "should correctly display when the user has no participations" do
+		@user.has_participations?.should be_false
+	end
+	
+	it "should correctly display when the user has participations" do
+		make_friends(@user, @friend)
+		
+		expect do
+			generate_microposts(@user, 3)
+		end.to change{ @user.has_participations? }.from(false).to(true)
+		
+		expect do
+			@friend.participate(@user.microposts.first)
+		end.to change{ @friend.has_participations? }.from(false).to(true)
+	end
+  end
+  
+  describe "checking has future participations" do
+	before { @user.save }
+	
+	it "should correctly display when the user has no future participations" do
+		@user.has_future_participations?.should be_false
+		
+		FactoryGirl.create(:past_micropost, user: @user)
+		
+		@user.has_future_participations?.should be_false
+	end
+	
+	it "should correctly display when the user has future participations" do
+		make_friends(@user, @friend)
+		generate_microposts(@user, 3)
+		
+		# Case of user participating in own event
+		@user.has_future_participations?.should be_true
+		
+		# Case of a friend participating in user's event
+		@friend.participate(@user.microposts.first)
+		@friend.has_future_participations?.should be_true
+	end
+  end
 end  
