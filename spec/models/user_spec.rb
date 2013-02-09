@@ -630,15 +630,24 @@ describe User do
 	it "should not allow users to unparticipate from microposts they are not participating in" do
 		generate_microposts(@user, 3)
 		
-		
+		@random_user.unparticipate(@user.microposts.first).should be_false
 	end
 	
 	it "should not allow users to unparticipate from their own events" do
-	
+		generate_microposts(@user, 3)
+		
+		@user.unparticipate(@user.microposts.first).should be_false
 	end
 	
 	it "should correctly allow users to unparticipate from microposts they are participating in" do
-	
+		make_friends(@user, @friend)
+		
+		generate_microposts(@user, 3)
+		
+		@friend.participate(@user.microposts.first)
+		@friend.unparticipate(@user.microposts.first).should be_true
+		
+		@friend.participating?(@user.microposts.first).should be_false
 	end
   end
 end  
