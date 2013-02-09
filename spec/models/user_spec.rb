@@ -5,6 +5,8 @@ describe User do
   before do
     @user = User.new(name: "Example User", email: "user@example.com", password: "foobar", password_confirmation: "foobar")
 	@friend = FactoryGirl.create(:user)
+	@random_user = FactoryGirl.create(:user)
+	@friend_requester = FactoryGirl.create(:user)
   end
 
   subject { @user }
@@ -336,16 +338,13 @@ describe User do
 	end
 	
 	it "should correctly show that two people are not friends" do
-		friend_requester = FactoryGirl.create(:user)
 		friend_requestee = FactoryGirl.create(:user)
 		
-		random_user = FactoryGirl.create(:user)
-		
 		# Testing case when someone else friend requests user
-		friend_requester.friend_request(@user)
+		@friend_requester.friend_request(@user)
 		
-		@user.friends?(friend_requester).should be_false
-		friend_requester.friends?(@user).should be_false
+		@user.friends?(@friend_requester).should be_false
+		@friend_requester.friends?(@user).should be_false
 		
 		# Testing case when user friend requests someone else
 		@user.friend_request(friend_requestee)
@@ -354,8 +353,8 @@ describe User do
 		friend_requestee.friends?(@user).should be_false
 		
 		# Testing case when users do not know each other at all
-		random_user.friends?(@user).should be_false
-		@user.friends?(random_user).should be_false
+		@random_user.friends?(@user).should be_false
+		@user.friends?(@random_user).should be_false
 	end
   end
   
@@ -366,25 +365,23 @@ describe User do
 		Rails.logger.debug("\n\nignore friend requests test #1\n\n")
 	
 		# Case when the two users are strangers
-		random_user = FactoryGirl.create(:user)
-		
-		@user.ignore(random_user).should be_false
+		@user.ignore(@random_user).should be_false
 		
 		# Case when the requester tries to ignore the request sent
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		friend_requester.ignore(@user).should be_false
+		@friend_requester.friend_request(@user)
+		
+		@friend_requester.ignore(@user).should be_false
 	end
 	
 	it "should allow a user to ignore another user if there is a pending friend request between them" do
 		Rails.logger.debug("\n\nignore friend requests test #2\n\n")
 		
 		# When there is a pending friend request between them
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		@user.ignore(friend_requester).should be_true
+		@friend_requester.friend_request(@user)
+		
+		@user.ignore(@friend_requester).should be_true
 	end
   end
   
@@ -393,17 +390,15 @@ describe User do
 	
 	it "should not display any results if the user does not have any friends" do
 		# Case when there is nothing between them
-		random_user = FactoryGirl.create(:user)
-		
-		@user.friends.should_not include(random_user)
-		random_user.friends.should_not include(@user)
+		@user.friends.should_not include(@random_user)
+		@random_user.friends.should_not include(@user)
 	
 		# Case when there is a friend request between them
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		@user.friends.should_not include(friend_requester)
-		friend_requester.friends.should_not include(@user)
+		@friend_requester.friend_request(@user)
+		
+		@user.friends.should_not include(@friend_requester)
+		@friend_requester.friends.should_not include(@user)
 	end
 	
 	it "should displays the friends that the user has" do
@@ -422,20 +417,20 @@ describe User do
 	end
 	
 	it "should respond with pending correctly" do
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		@user.get_relationship(friend_requester).should_not be_nil
-		friend_requester.get_relationship(@user).should_not be_nil
+		@friend_requester.friend_request(@user)
+		
+		@user.get_relationship(@friend_requester).should_not be_nil
+		@friend_requester.get_relationship(@user).should_not be_nil
 	end
 	
 	it "should respond with ignore correctly" do
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
-		@user.ignore(friend_requester)
 		
-		@user.get_relationship(friend_requester).should_not be_nil
-		friend_requester.get_relationship(@user).should_not be_nil
+		@friend_requester.friend_request(@user)
+		@user.ignore(@friend_requester)
+		
+		@user.get_relationship(@friend_requester).should_not be_nil
+		@friend_requester.get_relationship(@user).should_not be_nil
 	end
 	
 	it "should respond with friends correctly" do
@@ -454,13 +449,13 @@ describe User do
 		@user.pending?(nil).should be_false
 		
 		# Case where friend request is ignored
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		@user.ignore(friend_requester)
+		@friend_requester.friend_request(@user)
 		
-		friend_requester.pending?(@user).should be_false
-		@user.pending?(friend_requester).should be_false
+		@user.ignore(@friend_requester)
+		
+		@friend_requester.pending?(@user).should be_false
+		@user.pending?(@friend_requester).should be_false
 		
 		# Case where two users are friends
 		make_friends(@user, @friend)
@@ -470,11 +465,11 @@ describe User do
 	end
 	
 	it "should respond with true if there is a pending relationship" do
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		friend_requester.pending?(@user).should be_true
-		@user.pending?(friend_requester).should be_false
+		@friend_requester.friend_request(@user)
+		
+		@friend_requester.pending?(@user).should be_true
+		@user.pending?(@friend_requester).should be_false
 	end
   end
   
@@ -501,11 +496,11 @@ describe User do
 	
 	it "should not allow users to send friend requests if there is already a relationship between the two users" do
 		# Case where a friend request has already been made
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		friend_requester.friend_request(@user).should be_false
-		@user.friend_request(friend_requester).should be_false
+		@friend_requester.friend_request(@user)
+		
+		@friend_requester.friend_request(@user).should be_false
+		@user.friend_request(@friend_requester).should be_false
 		
 		# Case where users are friends
 		make_friends(@user, @friend)
@@ -523,9 +518,9 @@ describe User do
 	end
 	
 	it "should allow users to send friend requests correctly" do
-		random_user = FactoryGirl.create(:user)
 		
-		@user.friend_request(random_user).should be_true
+		
+		@user.friend_request(@random_user).should be_true
 	end
   end
   
@@ -538,15 +533,15 @@ describe User do
 	
 	it "should not allow users to accept friends if there is no friend request between the two users" do
 		# Case where the two users do not know each other
-		random_user = FactoryGirl.create(:user)
 		
-		@user.accept_friend(random_user).should be_false
+		
+		@user.accept_friend(@random_user).should be_false
 		
 		# Case where the user who sent a friend request is trying to make it accept
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
+		
+		@friend_requester.friend_request(@user)
 			
-		friend_requester.accept_friend(@user).should be_false
+		@friend_requester.accept_friend(@user).should be_false
 		
 		# Case where the friend request was ignored
 		ignored_user = FactoryGirl.create(:user)
@@ -563,10 +558,10 @@ describe User do
 	
 	it "should allow users to accept friends correctly" do
 		# Case of a standard request
-		friend_requester = FactoryGirl.create(:user)
-		friend_requester.friend_request(@user)
 		
-		@user.accept_friend(friend_requester).should be_true
+		@friend_requester.friend_request(@user)
+		
+		@user.accept_friend(@friend_requester).should be_true
 		
 		# Case where user ignores, and then accepts
 		ignored_user = FactoryGirl.create(:user)
@@ -586,11 +581,11 @@ describe User do
 	end
 	
 	it "should not allow users to participate in microposts for which they are not friends with the user" do
-		random_user = FactoryGirl.create(:user)
+		
 		
 		generate_microposts(@user, 3)
 		
-		random_user.participate(@user.microposts.first).should be_false
+		@random_user.participate(@user.microposts.first).should be_false
 	end
 	
 	it "should allow users to participate in their friends microposts" do
@@ -608,12 +603,41 @@ describe User do
 	it "should respond with nil if the input is nil" do
 		@user.participating?(nil).should be_nil
 	end
+	
+	it "should respond with the correct check for participation in an event" do
+		make_friends(@friend, @user)
+	
+		generate_microposts(@user, 4)
+		
+		# Case where user should be participating in his own micropost
+		@user.participating?(@user.microposts.first).should be_true
+		
+		# Case where a friend is participating in one of the user's microposts
+		@friend.participate(@user.microposts.first)
+		@friend.participating?(@user.microposts.first).should be_true
+		
+		@friend.participating?(@user.microposts.last).should be_false
+	end
   end
   
   describe "unparticipating in an event" do
 	before { @user.save } 
   
 	it "should respond with nil if the input is nil" do
+		@user.unparticipate(nil).should be_nil
+	end
+	
+	it "should not allow users to unparticipate from microposts they are not participating in" do
+		generate_microposts(@user, 3)
+		
+		
+	end
+	
+	it "should not allow users to unparticipate from their own events" do
+	
+	end
+	
+	it "should correctly allow users to unparticipate from microposts they are participating in" do
 	
 	end
   end

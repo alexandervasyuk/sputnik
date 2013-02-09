@@ -241,20 +241,18 @@ class User < ActiveRecord::Base
 	end
   end
   
+  def unparticipate(micropost)
+	if micropost.present?
+		participations.find_by_micropost_id(micropost.id).destroy
+	end
+  end
+  
   def participating?(micropost)
 	if micropost.present?
-		participates?(micropost)
+		participations.find_by_micropost_id(micropost.id)
 	end
   end
 
-  def participates?(micropost)
-    participations.find_by_micropost_id(micropost.id)
-  end
-
-  def unparticipate(micropost)
-    participations.find_by_micropost_id(micropost.id).destroy
-  end
-  
   def has_participations?
     participations.any?
   end
