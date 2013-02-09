@@ -47,6 +47,14 @@ describe Participation do
 			new_user.participate(new_micropost)
 		end.to change { new_micropost.reload.updated_at }
 	end
+	
+	it "should send the creator a notification" do
+		# UNTESTED
+	end
+	
+	it "should send the participant a notification" do
+		# UNTESTED
+	end
   end
   
   describe "removing a participant from a micropost" do
@@ -54,6 +62,14 @@ describe Participation do
 		expect do
 			@participation.destroy
 		end.to change { @micropost.reload.updated_at }
+	end
+	
+	it "should send the creator a notification" do
+		# UNTESTED
+	end
+	
+	it "should send the unparticipant a notification" do
+		# UNTESTED
 	end
   end
 end
