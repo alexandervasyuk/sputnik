@@ -20,7 +20,7 @@ def generate_participants(micropost, num_participants)
 		participant = FactoryGirl.create(:user)
 		
 		make_friends(owner, participant)
-		participant.participate!(micropost)
+		participant.participate(micropost)
 		
 		num_participants-=1
 	end
@@ -33,7 +33,7 @@ def generate_posts_for(micropost, num_posts)
 	while num_posts > 0 do
 		poster = FactoryGirl.create(:user)
 		make_friends(poster, creator)
-		poster.participate!(micropost)
+		poster.participate(micropost)
 		
 		post = FactoryGirl.create(:post, user: poster, micropost: micropost)
 		
@@ -83,7 +83,7 @@ end
 def generate_pool_item(user)
 	pool_item = FactoryGirl.create(:incomplete_micropost, user: user)
 	
-	user.participate!(pool_item)
+	user.participate(pool_item)
 	
 	Rails.logger.debug("\n\nGenerating Pool Item With ID: #{pool_item.id}\nContent: #{pool_item.content}\nLocation: #{pool_item.location}\nTime: #{pool_item.time}\nUser ID: #{pool_item.user.id}\nUpdated At: #{pool_item.updated_at}\n")
 	
@@ -99,12 +99,10 @@ def make_friends(user1, user2)
 	user2.accept_friend(user1)
 end
 
-def generate_microposts_for(user, num_microposts)
+def generate_microposts(user, num_microposts)
 	while num_microposts > 0 do
-		user1 = FactoryGirl.create(:user)
-		make_friends(user, user1)
-		
-		micropost = FactoryGirl.create(:micropost, user: user1)
+		micropost = FactoryGirl.create(:micropost, user: user)
+		user.participate(micropost)
 		
 		num_microposts-=1
 	end

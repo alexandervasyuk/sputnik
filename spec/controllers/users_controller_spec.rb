@@ -123,8 +123,8 @@ describe UsersController do
 			
 			before { 
 				sign_in(logged_in) 
-				generate_microposts_for_user(logged_in, logged_in_num_events)
-				generate_microposts_for_user(requested, requested_num_events)
+				generate_microposts(logged_in, logged_in_num_events)
+				generate_microposts(requested, requested_num_events)
 			}
 		
 			it "should give the correct result when it is the same user" do

@@ -582,7 +582,39 @@ describe User do
 	before { @user.save }
 	
 	it "should respond with nil if the input is nil" do
+		@user.participate(nil).should be_nil
+	end
+	
+	it "should not allow users to participate in microposts for which they are not friends with the user" do
+		random_user = FactoryGirl.create(:user)
 		
+		generate_microposts(@user, 3)
+		
+		random_user.participate(@user.microposts.first).should be_false
+	end
+	
+	it "should allow users to participate in their friends microposts" do
+		make_friends(@user, @friend)
+		
+		generate_microposts(@user , 3)
+		
+		@friend.participate(@user.microposts.first).should be_true
+	end
+  end
+  
+  describe "checking participation in an event" do
+	before { @user.save }
+	
+	it "should respond with nil if the input is nil" do
+		@user.participating?(nil).should be_nil
+	end
+  end
+  
+  describe "unparticipating in an event" do
+	before { @user.save } 
+  
+	it "should respond with nil if the input is nil" do
+	
 	end
   end
 end  

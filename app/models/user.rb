@@ -232,15 +232,26 @@ class User < ActiveRecord::Base
   
   #Participation Methods
 
-  def participate!(micropost)
-    participations.create!(micropost_id: micropost.id)
+  # Instance method that makes this user participate in the given micropost
+  def participate(micropost)
+	if micropost.present? && friends?(micropost.user)
+		participation = participations.build(micropost_id: micropost.id)
+		
+		participation.save
+	end
+  end
+  
+  def participating?(micropost)
+	if micropost.present?
+		participates?(micropost)
+	end
   end
 
   def participates?(micropost)
     participations.find_by_micropost_id(micropost.id)
   end
 
-  def unparticipate!(micropost)
+  def unparticipate(micropost)
     participations.find_by_micropost_id(micropost.id).destroy
   end
   

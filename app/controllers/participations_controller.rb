@@ -7,7 +7,7 @@ class ParticipationsController < ApplicationController
 
 	def create
 		@micropost = Micropost.find(params[:participation][:micropost_id])
-		current_user.participate!(@micropost)
+		current_user.participate(@micropost)
 		
 		#Creating a notification
 		creator_id = @micropost.user_id
@@ -20,7 +20,7 @@ class ParticipationsController < ApplicationController
 
 	def destroy
 		@micropost = Participation.find(params[:id]).micropost
-		current_user.unparticipate!(@micropost)
+		current_user.unparticipate(@micropost)
 		redirect_to :back
 	end
 end

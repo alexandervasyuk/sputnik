@@ -280,7 +280,7 @@ class MicropostsController < ApplicationController
 	
 	if @micropost.save
 		@created = true
-		current_user.participate!(@micropost)
+		current_user.participate(@micropost)
 	end
   end
 end

@@ -32,7 +32,7 @@ describe SessionsController do
 				end
 				
 				describe "with a feed" do
-					before { generate_microposts_for user, 3 }
+					before { generate_microposts user, 3 }
 					it "should return all of the feed in the feed_data" do
 						post "create_mobile", session
 						

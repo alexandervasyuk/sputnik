@@ -75,7 +75,7 @@ describe MicropostsController do
 	describe "destroying a micropost" do
 		it "should destroy a micropost if the user owns the micropost" do
 			micropost = FactoryGirl.create(:micropost, user: user)
-			user.participate!(micropost)
+			user.participate(micropost)
 			
 			delete = {id: micropost.id}
 			
