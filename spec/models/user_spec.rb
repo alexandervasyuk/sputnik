@@ -425,15 +425,27 @@ describe User do
 	end
 	
 	it "should respond with pending correctly" do
+		friend_requester = FactoryGirl.create(:user)
+		friend_requester.friend_request!(@user)
 		
+		@user.get_relationship(friend_requester).should_not be_nil
+		friend_requester.get_relationship(@user).should_not be_nil
 	end
 	
 	it "should respond with ignore correctly" do
-	
+		friend_requester = FactoryGirl.create(:user)
+		friend_requester.friend_request!(@user)
+		@user.ignore(friend_requester)
+		
+		@user.get_relationship(friend_requester).should_not be_nil
+		friend_requester.get_relationship(@user).should_not be_nil
 	end
 	
 	it "should respond with friends correctly" do
-	
+		make_friends(@user, @friend)
+		
+		@user.get_relationship(@friend).should_not be_nil
+		@friend.get_relationship(@user).should_not be_nil
 	end
   end
 end  
