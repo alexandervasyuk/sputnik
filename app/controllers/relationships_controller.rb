@@ -87,7 +87,7 @@ class RelationshipsController < ApplicationController
 		user = User.find(params[:id])
 		
 		if user
-			current_user.ignore!(user)
+			current_user.ignore(user)
 			render json: {status: "success"}
 		else
 			render json: {status: "failure"}

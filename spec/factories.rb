@@ -24,9 +24,14 @@ FactoryGirl.define do
   factory :micropost do
     content "Lorem ipsum"
     location "Lorem ipsum"
-    time Time.now
+    time Time.current() + 3.hours
     user
     
+	factory :incomplete_micropost do
+		location nil
+		time nil
+	end
+	
     factory :unsaved_micropost do 
     	id 1
     end

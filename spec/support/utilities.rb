@@ -72,14 +72,26 @@ end
 def generate_feed_item(user)
 	micropost = FactoryGirl.create(:micropost, user: user)
 	
-	generate_participants(micropost, 1)
+	generate_participants(micropost, 2)
+	
+	Rails.logger.debug("\n\nGenerating Feed Item With ID: #{micropost.id}\nContent: #{micropost.content}\nLocation: #{micropost.location}\nTime: #{micropost.time}\nUser ID: #{micropost.user.id}\nUpdated At: #{micropost.updated_at}\n")
 	
 	return micropost
 end
 
 # Generates a pool item for the user based on the qualifications of a pool item
 def generate_pool_item(user)
-	FactoryGirl.create(:micropost, user: user)
+	pool_item = FactoryGirl.create(:incomplete_micropost, user: user)
+	
+	user.participate!(pool_item)
+	
+	Rails.logger.debug("\n\nGenerating Pool Item With ID: #{pool_item.id}\nContent: #{pool_item.content}\nLocation: #{pool_item.location}\nTime: #{pool_item.time}\nUser ID: #{pool_item.user.id}\nUpdated At: #{pool_item.updated_at}\n")
+	
+	return pool_item
+end
+
+def generate_alt_pool_item(user)
+	
 end
 
 def make_friends(user1, user2)

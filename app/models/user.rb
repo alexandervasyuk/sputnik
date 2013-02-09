@@ -55,6 +55,15 @@ class User < ActiveRecord::Base
   
   validates_attachment_content_type :avatar, content_type: ['image/jpeg', 'image/png', 'image/gif'], unless: :temp?
   
+  # Class Methods
+  
+  # Class method responsible for running full text search on the name field 
+  def self.text_search(query)
+    if query.present?
+      find(:all, :conditions => [ 'name ~* ?', query ])
+    end
+  end
+  
   # Responsible for generating a password reset token
   def generate_token(column)
     begin
@@ -74,74 +83,70 @@ class User < ActiveRecord::Base
   # a. All fields (content, location, time) are specified
   # b. There are at least two participants
   def feed
-    Micropost.where("microposts.user_id in (?) AND content IS NOT NULL AND location IS NOT NULL AND time IS NOT NULL AND (time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id").group("microposts.id").having("count(*) > 1").order("time ASC")
+	Rails.logger.debug("\n\nEntering User#feed\n\n")
+  
+    Micropost.where("microposts.user_id in (?) AND location IS NOT NULL AND time IS NOT NULL AND (time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id").group("microposts.id").having("count(*) > 1").order("time ASC")
   end
   
   # The user's pool. Items in a user's pool FAIL one of the conditions of the feed
   def pool
-	Micropost.where("microposts.user_id in (?) AND (time IS NULL OR time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id ").group("microposts.id").having("count(*) = 1 OR (count(*) > 1 AND content IS NOT NULL AND location IS NOT NULL AND time IS NOT NULL)")
+	Rails.logger.debug("\n\nEntering User#pool\n\n")
+  
+	Micropost.where("microposts.user_id in (?) AND (time IS NULL OR (time IS NOT NULL AND time > ?) OR (end_time IS NOT NULL AND end_time > ?) OR location IS NULL)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id ").group("microposts.id").having("count(*) = 1 OR (count(*) > 1 AND (location IS NULL OR time IS NULL))")
   end
   
   # Method responsible for grabbing any new feed elements that were added after the page was rendered
   def feed_after(latest_update)
+	Rails.logger.debug("\n\nEntering User#feed_after latest_update=#{latest_update.to_s}\n\n")
+  
 	if latest_update.present? 
-		self.feed.where("microposts.updated_at > :latest_update", {latest_update: latest_update})
+		self.feed.where("microposts.updated_at > ?", latest_update)
 	end
   end
   
-  # Method responsible for grabbing any new pool elements that were added after the page was rendered
+  # Instance method responsible for grabbing any new pool elements that were added after the page was rendered
   def pool_after(latest_update)
+	Rails.logger.debug("\n\nEntering User#pool_after latest_update=#{latest_update.to_s}\n\n")
+  
 	if latest_update.present?
-		self.pool.where("microposts.updated_at > :latest_update", {latest_update: latest_update})
+		self.pool.where("microposts.updated_at > ?", latest_update)
 	end
   end
   
-  def self.text_search(query)
-    if query.present?
-      find(:all, :conditions => [ 'name ~* ?', query ])
-    end
-  end
-  
+  # Instance method responsible for grabbing the set of users that have made a friend request to this user
   def received_friend_requests
     self.followers.where("friend_status = 'PENDING'")
   end
   
-  def num_received_friend_requests
-    received_friend_requests.count
-  end
-  
+  # Instance method responsible for grabbing the set of users that this user has made a friend request to
   def sent_friend_requests
     self.followed_users.where("friend_status = 'PENDING'")
   end
   
+  # Instance method responsible for determining whether this user is friends with the specified user
   def friends?(other)
 	return true if other == self
   
     relationship = get_relationship(other)
     
-    if relationship && relationship.friend_status == "FRIENDS"
-      return true
-    end
-    
-    return false
+    return relationship && relationship.friend_status == "FRIENDS"
   end
   
-  def ignore!(other)
+  # Instance method responsible for ignoring another user's friend request
+  def ignore(other)
+	Rails.logger.debug("\n\nEntered User#ignore\nSelf ID: #{self.id}\nOther ID: #{other.id}\n\n")
+  
 	relationship = get_relationship(other)
 	
-	if relationship
+	if relationship && relationship.friend_status == "PENDING" && relationship.followed_id == self.id
+		Rails.logger.debug("\n\nUser#ignore relationship found!\nRelationship Follower ID: #{relationship.follower_id}\nRelationship Followed ID: #{relationship.followed_id}\nRelationship status: #{relationship.friend_status}\n\n")
+	
 		relationship.friend_status = "IGNORED"
 		
-		relationship.save!
+		return relationship.save
 	end
-  end
-  
-  def ignored?(other)
-	relationship = get_relationship(other)
 	
-	if relationship && relationship.friend_status == "IGNORED"
-		return true
-	end
+	Rails.logger.debug("\n\nExiting User#ignore relationship not found!\n\n")
 	
 	return false
   end
@@ -164,7 +169,15 @@ class User < ActiveRecord::Base
   end
   
   def get_relationship(other_user)
+	Rails.logger.debug("\n\nEntered User#get_relationship\nSelf ID: #{self.id}\nOther ID: #{other_user.id}\n\n")
+  
     relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
+	
+	if relationship
+		Rails.logger.debug("\n\nExiting User#get_relationship\nFollowed User ID: #{relationship.followed_id}\nFollowing User ID: #{relationship.follower_id}\n\n")
+	end
+	
+	return relationship
   end
   
   def pending?(other_user)
@@ -227,7 +240,9 @@ class User < ActiveRecord::Base
   end
   
   def friend_request!(other_user)
-    relationships.create!(followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
+	Rails.logger.debug("\n\nEntered User#friend_request!\nself ID: #{self.id}\nother_user ID: #{other_user.id}\n\n")
+  
+    Relationship.create!(follower_id: self.id, followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
   end
   
   def accept_friend!(other_user)

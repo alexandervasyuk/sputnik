@@ -15,7 +15,6 @@ module TimeHelper
 	end
 	
 	def time_representation(start_time, end_time)
-		
 		if start_time && end_time
 			start_time_string = start_time.in_time_zone(user_timezone).strftime('%l:%M%p')
 			end_time_string = end_time.in_time_zone(user_timezone).strftime('%l:%M%p')
