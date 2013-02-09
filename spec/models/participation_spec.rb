@@ -39,12 +39,13 @@ describe Participation do
   describe "adding a participant to micropost" do
 	it "should update the micropost's updated_at field" do
 		new_user = FactoryGirl.create(:user)
+		new_micropost = FactoryGirl.create(:micropost)
 		
-		make_friends(new_user, @micropost.user)
+		make_friends(new_user, new_micropost.user)
 		
 		expect do
-			new_user.participate(@micropost)
-		end.to change { @micropost.updated_at }
+			new_user.participate(new_micropost)
+		end.to change { new_micropost.reload.updated_at }
 	end
   end
   
@@ -52,7 +53,7 @@ describe Participation do
 	it "should update its updated_at field" do
 		expect do
 			@participation.destroy
-		end.to change { @micropost.updated_at }
+		end.to change { @micropost.reload.updated_at }
 	end
   end
 end
