@@ -154,6 +154,8 @@ class User < ActiveRecord::Base
   # Instance method responsible for retrieving all of a user's friends
   # Candidate for condensation
   def friends
+	Rails.logger.debug("\n\nEntered User#friends\nSelf ID: #{self.id}\n\n")
+  
     friends = []
     friendships = Relationship.where("follower_id = :user_id and friend_status = 'FRIENDS' or followed_id = :user_id and friend_status = 'FRIENDS'", {user_id: self.id})
 
@@ -167,19 +169,16 @@ class User < ActiveRecord::Base
 
 	friends << self
 	
+	Rails.logger.debug("\n\nExiting User#friends\nfriends: #{friends}\n\n")
+	
     return friends  
   end
   
+  # Instance method responsible for retrieving the relationship between two users
   def get_relationship(other_user)
-	Rails.logger.debug("\n\nEntered User#get_relationship\nSelf ID: #{self.id}\nOther ID: #{other_user.id}\n\n")
-  
-    relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
-	
-	if relationship
-		Rails.logger.debug("\n\nExiting User#get_relationship\nFollowed User ID: #{relationship.followed_id}\nFollowing User ID: #{relationship.follower_id}\n\n")
+	if other_user
+		Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
 	end
-	
-	return relationship
   end
   
   def pending?(other_user)

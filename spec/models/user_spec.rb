@@ -416,4 +416,24 @@ describe User do
 		@friend.friends.should include(@user)
 	end
   end
+  
+  describe "get relationship" do
+	before { @user.save }
+	
+	it "should respond with nil when given nil" do
+		@user.get_relationship(nil).should be_nil
+	end
+	
+	it "should respond with pending correctly" do
+		
+	end
+	
+	it "should respond with ignore correctly" do
+	
+	end
+	
+	it "should respond with friends correctly" do
+	
+	end
+  end
 end  
