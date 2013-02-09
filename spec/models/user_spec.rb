@@ -484,6 +484,12 @@ describe User do
 	it "should give an empty array if the user has no friends" do
 		@user.suggested_friends.should be_empty
 	end
+	
+	it "should give an empty array if the user's friends don't have friends" do
+		generate_friends(@user, 5)
+		
+		@user.suggested_friends.should be_empty
+	end
   end
   
   describe "friend requesting" do
@@ -569,6 +575,14 @@ describe User do
 		@user.ignore(ignored_user)
 		
 		@user.accept_friend(ignored_user).should be_true
+	end
+  end
+  
+  describe "participating in an event" do
+	before { @user.save }
+	
+	it "should respond with nil if the input is nil" do
+		
 	end
   end
 end  

@@ -110,6 +110,15 @@ def generate_microposts_for(user, num_microposts)
 	end
 end
 
+def generate_friends(user, num_friends)
+	while num_friends > 0 do
+		user1 = FactoryGirl.create(:user)
+		make_friends(user1, user)
+		
+		num_friends-=1
+	end
+end
+
 def set_in_beta
 	Rails.configuration.in_beta = true
 end
