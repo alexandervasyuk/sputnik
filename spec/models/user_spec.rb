@@ -479,7 +479,11 @@ describe User do
   end
   
   describe "suggested friends" do
-	# Missing Test
+	before { @user.save }
+	
+	it "should give an empty array if the user has no friends" do
+		@user.suggested_friends.should be_empty
+	end
   end
   
   describe "friend requesting" do
@@ -490,7 +494,32 @@ describe User do
 	end
 	
 	it "should not allow users to send friend requests if there is already a relationship between the two users" do
+		# Case where a friend request has already been made
+		friend_requester = FactoryGirl.create(:user)
+		friend_requester.friend_request(@user)
 		
+		friend_requester.friend_request(@user).should be_false
+		@user.friend_request(friend_requester).should be_false
+		
+		# Case where users are friends
+		make_friends(@user, @friend)
+		
+		@user.friend_request(@friend).should be_false
+		@friend.friend_request(@user).should be_false
+		
+		# Case where the friend request was ignored
+		ignored_user = FactoryGirl.create(:user)
+		ignored_user.friend_request(@user)
+		@user.ignore(ignored_user)
+		
+		ignored_user.friend_request(@user).should be_false
+		@user.friend_request(ignored_user).should be_false
+	end
+	
+	it "should allow users to send friend requests correctly" do
+		random_user = FactoryGirl.create(:user)
+		
+		@user.friend_request(random_user).should be_true
 	end
   end
   

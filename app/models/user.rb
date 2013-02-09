@@ -209,7 +209,11 @@ class User < ActiveRecord::Base
   # Instance method that allows this user to send a friend request to another user
   def friend_request(other_user)
 	if other_user.present?
-		relationships.create(followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
+		relationship = get_relationship(other_user)
+		
+		if !relationship
+			relationships.create(followed_id: other_user.id, friend_status: 'PENDING', follow1: false, follow2: false)
+		end
 	end
   end
   
