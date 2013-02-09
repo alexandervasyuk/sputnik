@@ -448,4 +448,36 @@ describe User do
 		@friend.get_relationship(@user).should_not be_nil
 	end
   end
+  
+  describe "pending check" do
+	before { @user.save }
+	
+	it "should respond with false if there is no pending relationship" do
+		# Case where input is nil
+		@user.pending?(nil).should be_false
+		
+		# Case where friend request is ignored
+		friend_requester = FactoryGirl.create(:user)
+		friend_requester.friend_request!(@user)
+		
+		@user.ignore(friend_requester)
+		
+		friend_requester.pending?(@user).should be_false
+		@user.pending?(friend_requester).should be_false
+		
+		# Case where two users are friends
+		make_friends(@user, @friend)
+		
+		@user.pending?(@friend).should be_false
+		@friend.pending?(@user).should be_false
+	end
+	
+	it "should respond with true if there is a pending relationship" do
+		friend_requester = FactoryGirl.create(:user)
+		friend_requester.friend_request!(@user)
+		
+		friend_requester.pending?(@user).should be_true
+		@user.pending?(friend_requester).should be_false
+	end
+  end
 end  

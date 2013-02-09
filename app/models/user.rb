@@ -158,19 +158,16 @@ class User < ActiveRecord::Base
   
   # Instance method responsible for retrieving the relationship between two users
   def get_relationship(other_user)
-	if other_user
+	if other_user.present?
 		Relationship.where("follower_id = :follower_id and followed_id = :followed_id or follower_id = :followed_id and followed_id = :follower_id", {follower_id: other_user.id, followed_id: self.id})[0]
 	end
   end
   
+  # Instance method responsible for checking whether there is a pending friend request from this user to the other_user 
   def pending?(other_user)
-	relationship = Relationship.where("follower_id = :follower_id and followed_id = :followed_id AND friend_status = 'PENDING'", {follower_id: self.id, followed_id: other_user.id})[0]
+	relationship = get_relationship(other_user)
 	
-	if !relationship.nil?
-		return true
-	else
-		return false
-	end
+	return relationship && relationship.friend_status == "PENDING" && relationship.follower_id == self.id
   end
 
   #Following
