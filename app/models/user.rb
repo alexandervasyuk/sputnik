@@ -136,6 +136,13 @@ class User < ActiveRecord::Base
 	
 	return false
   end
+  
+  # Instance method responsible for determining whether this user is ignored by the specified user
+  def ignored?(other)
+	relationship = get_relationship(other)
+	
+	return relationship && relationship.friend_status == "IGNORED"
+  end
 
   # Instance method responsible for retrieving all of a user's friends
   # Candidate for condensation

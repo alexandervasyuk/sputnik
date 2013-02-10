@@ -56,7 +56,7 @@ class RelationshipsController < ApplicationController
       relationship.save
       
       redirect_to :back
-	
+	end
   end
   
   def mobile_update
@@ -74,24 +74,6 @@ class RelationshipsController < ApplicationController
 		
 		if user
 			current_user.ignore(user)
-			render json: {status: "success"}
-		else
-			render json: {status: "failure"}
-		end
-	elsif params[:type] == 'FOLLOW'	
-		user = User.find(params[:id])
-		
-		if user
-			current_user.follow!(user)
-			render json: {status: "success"}
-		else
-			render json: {status: "failure"}
-		end
-	elsif params[:type] == 'UNFOLLOW'
-		user = User.find(params[:id])
-		
-		if user
-			current_user.unfollow!(user)
 			render json: {status: "success"}
 		else
 			render json: {status: "failure"}

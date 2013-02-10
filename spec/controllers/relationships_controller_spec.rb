@@ -1,14 +1,12 @@
 require 'spec_helper'
 
 describe RelationshipsController do
-
   let(:user) { FactoryGirl.create(:user) }
   let(:other_user) { FactoryGirl.create(:user) }
 
   before { sign_in user }
 
   describe "creating a relationship" do
-
     it "should increment the Relationship count with AJAX" do
       expect do
         xhr :post, :create, relationship: { followed_id: other_user.id }
@@ -38,7 +36,6 @@ describe RelationshipsController do
   end
 
   describe "destroying a relationship" do
-
     before { make_friends(user, other_user) }
     let(:relationship) { user.get_relationship(other_user) }
 
@@ -66,10 +63,10 @@ describe RelationshipsController do
 	describe "accepting friend requests" do
 		let(:user) { FactoryGirl.create(:user) }
 		let(:other_user) { FactoryGirl.create(:user) }
-		before { 
+		before do
 			sign_in(other_user)
-			user.friend_request!(other_user) 
-		}
+			user.friend_request(other_user) 
+		end
 		
 		it "should work correctly on web app" do
 			
@@ -96,10 +93,10 @@ describe RelationshipsController do
 		let(:user) { FactoryGirl.create(:user) }
 		let(:other_user) { FactoryGirl.create(:user) }
 		
-		before {
+		before do
 			sign_in(other_user)
-			user.friend_request!(other_user)
-		}
+			user.friend_request(other_user)
+		end
 	
 		it "should work correctly on web app" do
 		
@@ -114,61 +111,6 @@ describe RelationshipsController do
 			json_response = {status: "success"}.to_json
 			
 			user.ignored?(other_user).should == true
-			
-			response.body.should == json_response
-		end
-	end
-		
-	describe "following other users" do
-		let(:user) { FactoryGirl.create(:user) }
-		let(:other_user) { FactoryGirl.create(:user) }
-		
-		before {
-			sign_in(user)
-			make_friends(user, other_user)
-			user.unfollow!(other_user)
-		}
-	
-		it "should work correctly on web app" do
-		
-		end
-		
-		it "should work correctly on mobile app" do
-			input = {type: "FOLLOW", id: other_user.id}
-			
-			user.following?(other_user).should == false
-			
-			post "mobile_update", input
-			json_response = {status: "success"}.to_json
-			
-			user.following?(other_user).should == true
-			
-			response.body.should == json_response
-		end
-	end
-		
-	describe "unfollowing other users" do
-		let(:user) { FactoryGirl.create(:user) }
-		let(:other_user) { FactoryGirl.create(:user) }
-	
-		before {
-			sign_in(user)
-			make_friends(user, other_user)
-		}
-	
-		it "should work correctly on web app" do
-		
-		end
-		
-		it "should work correctly on mobile app" do
-			input = {type:"UNFOLLOW", id: other_user.id}
-			
-			user.following?(other_user).should == true
-			
-			post "mobile_update", input
-			json_response = {status: "success"}.to_json
-			
-			user.following?(other_user).should == false
 			
 			response.body.should == json_response
 		end

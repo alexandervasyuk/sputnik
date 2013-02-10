@@ -1,21 +1,24 @@
 module TimeHelper
+	# Function that converts a user generated string into a time, using libraries that supports those input types
 	def parse_time(time_string)
-		if time_string[0..1] == "at"
-		   #Time parser used
-		   Time.use_zone(user_timezone) do
-			 return Time.zone.parse(time_string)
-		   end
-		else
-			#Chronic parser used
-			Time.use_zone(user_timezone) do
-			  Chronic.time_class = Time.zone
-			  return Chronic.parse(time_string)
+		if time_string.present?
+			if time_string[0..1] == "at"
+			   #Time parser used
+			   Time.use_zone(user_timezone) do
+				 return Time.zone.parse(time_string)
+			   end
+			else
+				#Chronic parser used
+				Time.use_zone(user_timezone) do
+				  Chronic.time_class = Time.zone
+				  return Chronic.parse(time_string)
+				end
 			end
 		end
 	end
 	
 	def time_representation(start_time, end_time)
-		if start_time && end_time
+		if start_time.present? && end_time.present?
 			start_time_string = start_time.in_time_zone(user_timezone).strftime('%l:%M%p')
 			end_time_string = end_time.in_time_zone(user_timezone).strftime('%l:%M%p')
 		

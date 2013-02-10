@@ -1,129 +1,148 @@
 require 'spec_helper'
 
 describe ProposalsController do
-	let(:micropost) { FactoryGirl.create(:micropost) }
+	let(:poll) { FactoryGirl.create(:poll) }
+	let(:micropost) { poll.micropost }
 	let(:creator) { micropost.user }
 	
 	before { sign_in(creator) }
 	
 	describe "creating a new proposal" do
-		it "should create a new proposal for a thing to do" do
-			request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", user_id: creator.id, micropost_id: micropost.id}}
+	
+		describe "who can make a proposal" do
+			it "should not allow users who are not signed in to make proposals" do
+				sign_out
+				
+				request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}}
+				
+				expect do
+					post "create", request_hash
+				end.not_to change { Proposal.all.count }
+			end
+		
+			it "should allow participants to add proposals" do
+				# Sign the current user out
+				sign_out
+				
+				participant = FactoryGirl.create(:user)
+				make_friends(participant, creator)
+				
+				participant.participate(micropost)
+				
+				sign_in(participant)
+				
+				request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}}
+				
+				expect do
+					post "create", request_hash
+				end.to change { Proposal.all.count }.by(1)
+			end
 			
-			previous_count = Proposal.all.count
-			
-			post "create", request_hash
-			
-			updated_count = Proposal.all.count
-			created_proposal = Proposal.where("user_id = :user_id AND micropost_id = :micropost_id", {micropost_id: micropost.id, user_id: creator.id})[0]
-			
-			#Tests
-			response.should redirect_to(detail_micropost_path(micropost.id))
-			updated_count.should == previous_count + 1
-			
-			created_proposal.content.should == "Lorem ipsum"
+			it "should allow non-participants to add proposals, but should also participate them in the event" do
+				# Sign the current user out
+				sign_out
+				
+				non_participant = FactoryGirl.create(:user)
+				make_friends(non_participant, creator)
+				
+				sign_in(non_participant)
+				
+				request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}}
+				
+				expect do
+					post "create", request_hash
+				end.to change { Proposal.all.count }.by(1)
+				
+				non_participant.participating?(micropost).should be_true
+			end
 		end
 		
-		it "should create a new proposal for a new place to go" do
-			request_hash = {proposal: {content: "", location: "Lorem ipsum", time: "", user_id: creator.id, micropost_id: micropost.id}}
+		it "should not create a proposal on a nil" do
+			request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: nil}}
 			
-			previous_count = Proposal.all.count
-			
-			post "create", request_hash
-			
-			updated_count = Proposal.all.count
-			created_proposal = Proposal.where("user_id = :user_id AND micropost_id = :micropost_id", {micropost_id: micropost.id, user_id: creator.id})[0]
-			
-			#Tests
-			response.should redirect_to(detail_micropost_path(micropost.id))
-			updated_count.should == previous_count + 1
-			
-			created_proposal.location.should == "Lorem ipsum"
+			expect do
+				post "create", request_hash
+			end.not_to change { creator.proposals.all.count }
 		end
 		
-		it "should create a new proposal for a time to go" do
-			request_hash = {proposal: {content: "", location: "", time: "now", user_id: creator.id, micropost_id: micropost.id}}
+		it "should not create a proposal on an invalid poll" do
+			request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: 1000}}
 			
-			previous_count = Proposal.all.count
+			expect do
+				post "create", request_hash
+			end.not_to change { creator.proposals.all.count }
+		end
+		
+		it "should increase the number of proposals of the user who made the proposal" do
+			request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}}
 			
-			post "create", request_hash
+			expect do
+				post "create", request_hash
+			end.to change { creator.proposals.all.count }.by(1)
+		end
+	
+		it "should create a new proposal for a thing to do using HTTP" do
+			request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}}
 			
-			updated_count = Proposal.all.count
-			created_proposal = Proposal.where("user_id = :user_id AND micropost_id = :micropost_id", {micropost_id: micropost.id, user_id: creator.id})[0]
+			expect do
+				post "create", request_hash
+			end.to change { Proposal.all.count }.by(1)
 			
 			#Tests
 			response.should redirect_to(detail_micropost_path(micropost.id))
-			updated_count.should == previous_count + 1
 			
-			created_proposal.time.should_not be_nil
+			Proposal.last.content.should == "Lorem ipsum"
+		end
+		
+		it "should create a new proposal for a new place to go using HTTP" do
+			request_hash = {proposal: {content: "", location: "Lorem ipsum", time: "", poll_id: poll.id}}
+			
+			expect do
+				post "create", request_hash
+			end.to change { Proposal.all.count }.by(1)
+			
+			#Tests
+			response.should redirect_to(detail_micropost_path(micropost.id))
+			
+			Proposal.last.location.should == "Lorem ipsum"
+		end
+		
+		it "should create a new proposal for a time to go using HTTP" do
+			request_hash = {proposal: {content: "", location: "", time: "now", poll_id: poll.id}}
+			
+			expect do
+				post "create", request_hash
+			end.to change { Proposal.all.count }.by(1)
+			
+			#Tests
+			response.should redirect_to(detail_micropost_path(micropost.id))
+			
+			Proposal.last.time.should_not be_nil
+		end
+		
+		it "should add the current user to an existing proposal if it exists using HTTP" do
+			existing_proposal = FactoryGirl.create(:content_proposal, poll: poll, content: "Testing123")
+			
+			request_hash = {proposal: {content: "Testing123", location: "", time: "", poll_id: poll.id}}
+			
+			expect do
+				expect do
+					post "create", request_hash
+				end.not_to change { Proposal.all.count }
+			end.to change { existing_proposal.users.all.count }.by(1)
+			
 		end
 	end
 	
 	describe "updating a proposal" do
-		let(:proposal) { FactoryGirl.create(:proposal, user: creator, micropost: micropost) }
+		let(:proposal) { FactoryGirl.create(:proposal) }
 	
-		it "should update the proposal when a new activity is proposed" do
-			request_hash = {proposal: {content: "New Activity", location: "", time: "", user_id: creator.id, micropost_id: micropost.id}, id: proposal.id}
-			
-			previous_count = Proposal.all.count
-			previous_location = proposal.location
-			previous_time = proposal.time
-			
-			post "update", request_hash
-			
-			updated_count = Proposal.all.count
-			updated_proposal = Proposal.where("user_id = :user_id AND micropost_id = :micropost_id", {micropost_id: micropost.id, user_id: creator.id})[0]
-			
-			#Tests
-			response.should redirect_to(detail_micropost_path(micropost.id))
-			updated_count.should == previous_count
-			
-			updated_proposal.content.should == "New Activity"
-			updated_proposal.location.should == previous_location
-			updated_proposal.time.should == previous_time
+		it "should add the user to the proposal if he is not on it" do
+		
 		end
 		
-		it "should update the proposal when a new location is proposed" do
-			request_hash = {proposal: {content: "", location: "New Location", time: "", user_id: creator.id, micropost_id: micropost.id}, id: proposal.id}
-			
-			previous_count = Proposal.all.count
-			previous_content = proposal.content
-			previous_time = proposal.time
-			
-			post "update", request_hash
-			
-			updated_count = Proposal.all.count
-			updated_proposal = Proposal.where("user_id = :user_id AND micropost_id = :micropost_id", {micropost_id: micropost.id, user_id: creator.id})[0]
-			
-			#Tests
-			response.should redirect_to(detail_micropost_path(micropost.id))
-			updated_count.should == previous_count
-			
-			updated_proposal.location.should == "New Location"
-			updated_proposal.content.should == previous_content
-			updated_proposal.time.should == previous_time
-		end
+		it "should remove the user from the proposal if he is on it" do
 		
-		it "should update the proposal when a new time is proposed" do
-			request_hash = {proposal: {content: "", location: "", time: "in 5 hours", user_id: creator.id, micropost_id: micropost.id}, id: proposal.id}
-			
-			previous_count = Proposal.all.count
-			previous_content = proposal.content
-			previous_location = proposal.location
-			previous_time = proposal.time
-			
-			post "update", request_hash
-			
-			updated_count = Proposal.all.count
-			updated_proposal = Proposal.where("user_id = :user_id AND micropost_id = :micropost_id", {micropost_id: micropost.id, user_id: creator.id})[0]
-			
-			#Tests
-			response.should redirect_to(detail_micropost_path(micropost.id))
-			updated_count.should == previous_count
-			
-			updated_proposal.time.should_not == previous_time
-			updated_proposal.location.should == previous_location
-			updated_proposal.content.should == previous_content
 		end
 	end
 end

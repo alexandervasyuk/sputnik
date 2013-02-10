@@ -59,11 +59,16 @@ FactoryGirl.define do
   
   factory :proposal do
 	sequence(:id) { |n| }
-	user
-	micropost
+	poll
 	content "Lorem ipsum"
 	location "Lorem ipsum"
 	time Time.now
+	
+	factory :content_proposal do
+		location ""
+		time nil
+		end_time nil
+	end
   end
   
   factory :poll do

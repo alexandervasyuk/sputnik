@@ -10,6 +10,10 @@ def sign_in(user)
   cookies[:time_zone] = "America/Los_Angeles"
 end
 
+def sign_out
+	cookies[:remember_token] = nil
+end
+
 # Micropost Generation Helper
 
 # Generates the specified number of participants for the specified micropost
