@@ -4,52 +4,40 @@ describe MicropostsController do
 	let(:user) { FactoryGirl.create(:user) }		
 	before { sign_in user }
 	
-	describe "creating a new micropost" do	
+	describe "creating a new micropost" do
 		describe "no errors in form input" do			
 			it "should successfully save the record and render the home page" do
-				["now"].each do |time|
+				["now", "12:30PM January 5th", "tomorrow", "tomorrow at 5PM"].each do |time|
 					micropost = {micropost: {content: "Lorem ipsum", location: "Lorem ipsum", time: time}}
 					
-					microposts_before = Micropost.all.count
-					
-					post "create", micropost
-					
-					microposts_after = Micropost.all.count
-					
-					microposts_after.should == microposts_before + 1
+					expect do
+						post "create", micropost
+					end.to change { Micropost.all.count }.by(1)
 				end
 			end
 			
 			it "should successfully save the record and render the event details page even if there are empty fields in location or time" do
 				micropost = {micropost: {content: "Lorem ipsum", location: nil, time: nil}}
 				
-				microposts_before = Micropost.all.count
-				
-				post "create", micropost
-				
-				microposts_after = Micropost.all.count
+				expect do
+					post "create", micropost
+				end.to change { Micropost.all.count }.by(1)
 				
 				micropost = Micropost.all.last
 				
 				response.should redirect_to(detail_micropost_path(micropost.id))
-				
-				microposts_after.should == microposts_before + 1
 			end
 			
 			it "should successfully create the record on the mobile" do
 				micropost = {micropost: {content: "Lorem ipsum", location: nil, time: nil}}
 				
-				microposts_before = Micropost.all.count
-				
-				post "mobile_create", micropost
-				
-				microposts_after = Micropost.all.count
+				expect do 
+					post "mobile_create", micropost
+				end.to change { Micropost.all.count }.by(1)
 				
 				micropost = Micropost.all.last
 				
 				response.body.should == {status: "success", created: micropost.to_mobile}.to_json
-				
-				microposts_after.should == microposts_before + 1
 			end
 		end
 		
@@ -58,15 +46,11 @@ describe MicropostsController do
 				["hi"].each do |time|
 					micropost = {micropost: {content: "Lorem Ipsum", location: "Lorem Ipsum", time: time}}
 				
-					microposts_before = Micropost.all.count
-					
-					post "create", micropost
-					
-					microposts_after = Micropost.all.count
+					expect do
+						post "create", micropost
+					end.not_to change { Micropost.all.count }
 					
 					response.should render_template("static_pages/home")
-					
-					microposts_before.should == microposts_after
 				end
 			end
 		end
@@ -79,14 +63,11 @@ describe MicropostsController do
 			
 			delete = {id: micropost.id}
 			
-			participations_before = user.participations.all.count
-			microposts_before = Micropost.all.count
-			post "destroy", delete
-			microposts_after = Micropost.all.count
-			participations_after = user.participations.all.count
-			
-			microposts_after.should == microposts_before - 1	
-			participations_after.should == participations_before - 1
+			expect do
+				expect do
+					post "destroy", delete
+				end.to change { Micropost.all.count }.by(-1)
+			end.to change { user.participations.all.count }.by(-1)
 		end
 		
 		it "should not destroy a micropost if the user does not own the micropost" do
@@ -95,11 +76,10 @@ describe MicropostsController do
 			other_user = FactoryGirl.create(:user)
 			other_micropost = FactoryGirl.create(:micropost, user: other_user)
 			
-			microposts_before = Micropost.all.count
-			post "destroy", {id: other_micropost.id}
-			microposts_after = Micropost.all.count
-				
-			microposts_after.should == microposts_before
+			expect do
+				post "destroy", {id: other_micropost.id}
+			end.not_to change { Micropost.all.count }
+			
 			flash[:error].should_not be_nil
 			response.should redirect_to(root_url)
 		end
@@ -258,21 +238,20 @@ describe MicropostsController do
 			end
 			
 			it "should give the correct update on the mobile app when there is nothing to delete" do
-				first_event = FactoryGirl.create(:micropost, user: friend)
-				second_event = FactoryGirl.create(:micropost, user: friend)
-				third_event = FactoryGirl.create(:micropost, user: friend)
-				fourth_event = FactoryGirl.create(:micropost, user: friend)
+				first_event = generate_feed_item(friend)
+				sleep(1.1)
+				second_event = generate_feed_item(friend)
+				sleep(1.1)
+				third_event = generate_feed_item(friend)
+				sleep(1.1)
+				fourth_event = generate_feed_item(friend)
 				
-				session[:feed_latest] = first_event.updated_at
+				session[:feed_latest] = first_event.updated_at + 1.seconds
 				
 				post "mobile_refresh", {ids: [first_event.id]}
 
-				updates = []
+				updates = [fourth_event.to_mobile, third_event.to_mobile, second_event.to_mobile]
 				to_delete = []
-				
-				user.feed.where("microposts.updated_at > :latest_update", {latest_update: first_event.updated_at}).each do |update_micropost|
-					updates << update_micropost.to_mobile
-				end
 				
 				json_response = {status: "success", feed_items: updates, to_delete: to_delete}.to_json
 				
@@ -281,13 +260,17 @@ describe MicropostsController do
 			end
 			
 			it "should give the correct update on the mobile app when there is something to delete" do
-				first_event = FactoryGirl.create(:micropost, user: friend)
-				second_event = FactoryGirl.create(:micropost, user: friend)
-				third_event = FactoryGirl.create(:micropost, user: friend)
-				fourth_event = FactoryGirl.create(:micropost, user: friend)
+				first_event = generate_feed_item(friend)
+				sleep(1.1)
+				second_event = generate_feed_item(friend)
+				sleep(1.1)
+				third_event = generate_feed_item(friend)
+				sleep(1.1)
+				fourth_event = generate_feed_item(friend)
+				
 				fourth_event_id = fourth_event.id
 				
-				session[:feed_latest] = fourth_event.updated_at
+				session[:feed_latest] = fourth_event.updated_at + 1.seconds
 				
 				fourth_event.destroy
 				
@@ -299,14 +282,19 @@ describe MicropostsController do
 			end
 			
 			it "should give the correct update on the mobile app where there are new items and something to delete" do
-				first_event = FactoryGirl.create(:micropost, user: friend)
-				second_event = FactoryGirl.create(:micropost, user: friend)
-				third_event = FactoryGirl.create(:micropost, user: friend)
-				fourth_event = FactoryGirl.create(:micropost, user: friend)
+				first_event = generate_feed_item(friend)
+				sleep(1.1)
+				second_event = generate_feed_item(friend)
+				sleep(1.1)
+				third_event = generate_feed_item(friend)
+				sleep(1.1)
+				fourth_event = generate_feed_item(friend)
+				sleep(1.1)
 				fourth_event_id = fourth_event.id
-				fifth_event = FactoryGirl.create(:micropost, user: friend)
+				fifth_event = generate_feed_item(friend)
+				sleep(1.1)
 				
-				session[:feed_latest] = fourth_event.updated_at
+				session[:feed_latest] = fourth_event.updated_at + 1.seconds
 				
 				fourth_event.destroy
 				

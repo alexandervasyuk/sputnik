@@ -170,14 +170,8 @@ class MicropostsController < ApplicationController
     end
   end
   
-  
   def mobile_refresh
-    logger.debug "mobile refresh feed latest: #{session[:feed_latest]}"
-	
 	@new_feed_items = current_user.feed_after(session[:feed_latest])
-	
-	logger.debug "\n\n all new feed items: "
-	logger.debug @new_feed_items
 	
 	to_delete = []
 	params[:ids].each do |id|
@@ -214,7 +208,8 @@ class MicropostsController < ApplicationController
   #BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
   def correct_user
     @micropost = current_user.microposts.find_by_id(params[:id])
-    if @micropost.nil?
+    
+	if @micropost.nil?
     	redirect_to root_url, flash: {error: "You cannot access this happpening =P"}
     end
   end
@@ -253,7 +248,6 @@ class MicropostsController < ApplicationController
 	
     if @friends
       @post = current_user.posts.build(micropost_id:params[:id])
-	  #@proposal = current_user.proposals.find_by_micropost_id(params[:id]) || current_user.proposals.build(micropost_id:params[:id])
 	  @polls = @micropost.polls.all
       
 	  @friends = current_user.friends
@@ -263,10 +257,6 @@ class MicropostsController < ApplicationController
       @micropost.participations.each do |participation|
         @participants << User.find(participation.user_id)
       end
-	  
-	  #Gather the correct proposals for each category
-	  #@location_proposals = @micropost.proposals.select("location, count(*) as location_count").where("location != ?", "").group("location").order("location_count DESC")
-	  #@time_proposals = @micropost.proposals.select("time, count(*) as time_count").where("time is not null").group("time").order("time_count DESC")
 	  
 	  #Reply data
       @post_items = @micropost.posts.reverse!
