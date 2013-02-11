@@ -83,6 +83,14 @@ def generate_feed_item(user)
 	return micropost
 end
 
+def generate_feed_items(user, num_feed_items)
+	while num_feed_items > 0
+		generate_feed_item(user)
+		
+		num_feed_items-=1
+	end
+end
+
 # Generates a pool item for the user based on the qualifications of a pool item
 def generate_pool_item(user)
 	pool_item = FactoryGirl.create(:incomplete_micropost, user: user)

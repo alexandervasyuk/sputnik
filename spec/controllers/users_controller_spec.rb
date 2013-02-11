@@ -11,23 +11,17 @@ describe UsersController do
 			it "should allow the user to sign up if they've been invited/are temp" do
 				user = {user: {name: "bob dole", email: valid_user.email, password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
 				
-				User.where("name = 'bob dole'").count.should == 0
-				
-				post "create", user
-				
-				User.where("name = 'bob dole'").count.should == 1
+				expect do
+					post "create", user
+				end.to change { User.where("name = 'bob dole'").count }.from(0).to(1)
 			end
 			
 			it "should not allow the user to sign up if they've not been invited/are not temp" do
 				user = {user: {name: "bob dole", email: "bobdole@gmail.com", password: "foobar", password_confirmation: "foobar"}, timezone: "America/Los_Angeles"}
-				
-				previous_user_count = User.where("name = 'bob dole'").count
-				
-				post "create", user
-				
-				post_user_count = User.where("name = 'bob dole'").count
-				
-				post_user_count.should == previous_user_count
+								
+				expect do
+					post "create", user
+				end.not_to change { User.where("name = 'bob dole'") }
 			end
 		end
 		
@@ -75,14 +69,10 @@ describe UsersController do
 				
 				it "should create the user successfully and redirect to the friends page" do
 					user = {user: {name: "testee", email: temp.email, password: "foobar", password_confirmation: "foobar"}}
-					
-					previous_user_count = User.where("name = 'testee'").count
-					
-					post "create", user
-					
-					post_user_count = User.where("name = 'testee'").count
-					
-					post_user_count.should == previous_user_count + 1
+
+					expect do
+						post "create", user
+					end.to change { User.where("name = 'testee'").count }.by(1)
 					
 					response.should redirect_to("/friend")
 				end
@@ -122,9 +112,9 @@ describe UsersController do
 			let(:requested_num_events) { 4 }
 			
 			before { 
-				sign_in(logged_in) 
-				generate_microposts(logged_in, logged_in_num_events)
-				generate_microposts(requested, requested_num_events)
+				sign_in(logged_in)
+				generate_feed_items(logged_in, logged_in_num_events)
+				generate_feed_items(requested, requested_num_events)
 			}
 		
 			it "should give the correct result when it is the same user" do
@@ -137,7 +127,7 @@ describe UsersController do
 				json_response = {status: "success", is_user: true, is_friends: false, is_pending: false, is_waiting: false, is_following: false, events: events}.to_json
 				
 				response.body.should == json_response
-				events.count.should == 3
+				events.count.should == logged_in_num_events
 			end
 			
 			it "should give the correct result when the two users are friends" do

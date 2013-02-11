@@ -170,14 +170,10 @@ describe ProposalsController do
 		
 		it "should not update a proposal on a nil proposal id" do
 			request_hash = {id: nil}
-			
-			
 		end
 		
 		it "should not update a proposal on an invalid proposal id" do
 			request_hash = {id: 10000}
-			
-			
 		end
 	
 		it "should add the user to the proposal if he is not on it" do

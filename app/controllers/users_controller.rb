@@ -147,14 +147,6 @@ class UsersController < ApplicationController
 	if (is_in_beta && @temp_created) || !is_in_beta
 		@created = @temp_created || @user.save
 	end
-	
-	#Debugging Code
-	
-	Rails.logger.debug "\n END TEMP CREATE \n"
-	Rails.logger.debug is_in_beta
-	Rails.logger.debug @user.inspect
-	Rails.logger.debug @created.inspect
-	Rails.logger.debug "\n -------------- \n"
   end
   
   #AFTER FILTER - filters the creation methods to send out the emails on success

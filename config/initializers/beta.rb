@@ -1,1 +1,1 @@
-Rails.configuration.in_beta = true
+Rails.configuration.in_beta = false
