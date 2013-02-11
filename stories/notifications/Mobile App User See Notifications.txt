@@ -1,0 +1,12 @@
+Story: I am a Mobile App User who wants to see my notifications
+
+Scenarios:
+
+Given: I am logged in
+When:  I request the notifications
+Then:  I should receive 10 notifications or all my unread notifications
+
+Given: I am not logged in
+When:  I request the notifications
+Then:  I should not receive any notifications
+And:   I should receive a failure indication that means I should sign in

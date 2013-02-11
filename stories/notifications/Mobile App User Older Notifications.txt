@@ -1,0 +1,19 @@
+Story: I am a Mobile App User who wants older notifications
+
+Scenarios:
+
+Given: I am not logged in
+When:  I request my older notifications
+Then:  I should not receive any of my older notifications
+And:   I should receive an indication to log in
+
+Given: I am logged in
+And:   I have an oldest notification
+When:  I request my older notifications
+Then:  I should receive up to 10 of my older notifications
+
+Given: I am logged in
+And:   I do not have any notifications
+When:  I request my older notifications
+Then:  I should not receive any older notifications
+

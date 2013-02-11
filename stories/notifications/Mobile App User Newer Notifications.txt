@@ -1,0 +1,16 @@
+Story: I am a Mobile App User who wants to retrieve my newer notifications
+
+Scenarios:
+
+Given: I am not logged in
+When:  I request my newer notifications
+Then:  I should not receive any newer notifications
+And:   I should receive any indication to log in
+
+Given: I am logged in
+And:   I have notifications
+Then:  I should receive all unread notifications newer than the ones I have
+
+Given: I am logged in
+And:   I do not have any notifications
+Then:  I should receive all unread notifications

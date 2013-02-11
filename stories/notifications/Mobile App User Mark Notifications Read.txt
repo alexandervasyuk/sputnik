@@ -1,0 +1,33 @@
+Story: I am a Mobile App User who wants to mark some notifications read
+
+Scenarios:
+
+Given: I am not logged in
+And:   I provide notifications to be marked read
+When:  I request notifications be marked read
+Then:  They should not be marked read
+And:   I should receive some failure indication, along with the failure reason
+
+Given: I am not logged in
+And:   I do not provide notifications to be marked read
+When:  I request notifications to be marked read
+Then:  Nothing should happen
+And:   I should receive some failure indication, along with the failure reason
+
+Given: I am logged in
+And:   I have notifications I want to mark
+And:   I own those notifications
+Then:  Those notifications should be marked read
+And:   I should receive a success indicator
+
+Given: I am logged in
+And:   I have notifications I want to mark
+And:   I do not own those notifications
+Then:  Those notifications should not be marked read
+And:   I should receive some failure indication, along with the failure reason
+
+Given: I am logged in
+And:   I do not have notifications I want to mark
+When:  I request notifications to be marked read
+Then:  Nothing should change about notifications
+And:   I should receive a success indicator

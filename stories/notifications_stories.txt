@@ -1,0 +1,15 @@
+Notification User Stories
+
+User: I am a Mobile App User
+	
+	1. I want my notifications
+	2. I want older notifications
+	3. I want all my new notifications
+	4. I want to mark some notifications read
+		
+User: I am a Desktop App User
+
+	1. I want my notifications
+	2. I want older notifications
+	3. I want all my new notifications
+	4. I want to mark some notifications read
