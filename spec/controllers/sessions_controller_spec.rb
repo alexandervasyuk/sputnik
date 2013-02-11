@@ -22,17 +22,17 @@ describe SessionsController do
 			end
 			
 			describe "from a mobile app" do
-				describe "with no feed" do
+				describe "with no feed and no pool" do
 					it "should sign in correctly" do
 						post "create_mobile", session
-						expected = {status: "success", name: user.name, id: user.id, feed_data: []}.to_json
+						expected = {status: "success", name: user.name, id: user.id, feed_data: [], pool_data: []}.to_json
 						
 						response.body.should == expected
 					end
 				end
 				
 				describe "with a feed" do
-					before { generate_microposts user, 3 }
+					before { generate_feed_items(user, 3) }
 					it "should return all of the feed in the feed_data" do
 						post "create_mobile", session
 						
@@ -41,7 +41,7 @@ describe SessionsController do
 							feed_data << feed_item.to_mobile
 						end
 						
-						expected = {status: "success", name: user.name, id: user.id, feed_data: feed_data}.to_json
+						expected = {status: "success", name: user.name, id: user.id, feed_data: feed_data, pool_data: []}.to_json
 						
 						response.body.should == expected
 					end
@@ -65,7 +65,7 @@ describe SessionsController do
 				it "should not sign in" do
 					post "create_mobile", session
 					
-					expected = {status: "failure", user: nil, id: nil, feed_data: []}.to_json
+					expected = {status: "failure", name: nil, id: nil, feed_data: [], pool_data: []}.to_json
 					
 					response.body.should == expected
 				end
