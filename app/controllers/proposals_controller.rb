@@ -5,6 +5,7 @@ class ProposalsController < ApplicationController
 	before_filter :time_input_parser, only: [:create, :update]
 	before_filter :signed_in_user
 	before_filter :valid_poll
+	before_filter :friends_with_creator
 	before_filter :participating_user, only: [:create, :update]
 	before_filter :proposal_exists, only: [:create]
 	before_filter :creator_user, only: [:delete]
@@ -57,6 +58,12 @@ class ProposalsController < ApplicationController
 		
 		if !@poll
 			redirect_to :back, flash: { error: "Cannot make a proposal to that poll" }
+		end
+	end
+	
+	def friends_with_creator
+		if !@poll.micropost || (@poll.micropost && !@poll.micropost.user) || (@poll.micropost && @poll.micropost.user && !current_user.friends?(@poll.micropost.user))
+			redirect_to :back, flash: { error: "Cannot make a proposal to this pool, please friend the creator first" }
 		end
 	end
 	

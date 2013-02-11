@@ -19,6 +19,20 @@ describe ProposalsController do
 					post "create", request_hash
 				end.not_to change { Proposal.all.count }
 			end
+			
+			it "should not allow users who are not friends with the creator to make proposals" do
+				sign_out
+				
+				non_friend = FactoryGirl.create(:user)
+				
+				sign_in(non_friend)
+				
+				request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}}
+				
+				expect do
+					post "create", request_hash
+				end.not_to change { Proposal.all.count }
+			end
 		
 			it "should allow participants to add proposals" do
 				# Sign the current user out
@@ -57,7 +71,7 @@ describe ProposalsController do
 			end
 		end
 		
-		it "should not create a proposal on a nil" do
+		it "should not create a proposal on a nil poll" do
 			request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: nil}}
 			
 			expect do
@@ -130,19 +144,61 @@ describe ProposalsController do
 					post "create", request_hash
 				end.not_to change { Proposal.all.count }
 			end.to change { existing_proposal.users.all.count }.by(1)
-			
 		end
 	end
 	
 	describe "updating a proposal" do
-		let(:proposal) { FactoryGirl.create(:proposal) }
+		let(:proposal) { FactoryGirl.create(:proposal, poll: poll) }
+	
+		describe "who can make an update" do
+			it "should not allow users who are not signed in to make updates" do
+				# SEE CORRESPONDING TEST IN CREATE
+			end
+			
+			it "should not allow users who are not friends with the creator to make updates" do
+				# SEE CORRESPONDING TEST IN CREATE
+			end
+			
+			it "should allow participants to make updates" do
+				
+			end
+			
+			it "should allow non-participants to make updates, but should also participate them in the micropost" do
+				
+			end
+		end
+		
+		it "should not update a proposal on a nil proposal id" do
+			request_hash = {id: nil}
+			
+			
+		end
+		
+		it "should not update a proposal on an invalid proposal id" do
+			request_hash = {id: 10000}
+			
+			
+		end
 	
 		it "should add the user to the proposal if he is not on it" do
-		
+			sign_out
+			
+			participant = FactoryGirl.create(:user)
+			make_friends(creator, participant)
+			
+			participant.participate(micropost)
+			
+			sign_in(participant)
+			
+			request_hash = {id: proposal.id, proposal: {poll_id: poll.id}}
+			
+			expect do
+				post "update", request_hash
+			end.to change { participant.proposals.all.count }.by(1)
 		end
 		
 		it "should remove the user from the proposal if he is on it" do
-		
+			
 		end
 	end
 end
