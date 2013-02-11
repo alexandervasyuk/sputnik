@@ -126,7 +126,7 @@ describe UsersController do
 				
 				Rails.logger.debug("\n\nEvents: #{events.to_json}\n\n")
 				
-				json_response = {status: "success", is_user: true, is_friends: false, is_pending: false, is_waiting: false, events: events}.to_json
+				json_response = {status: "success", picture: logged_in.avatar.url, is_user: true, is_friends: false, is_pending: false, is_waiting: false, events: events}.to_json
 				
 				response.body.should == json_response
 				events.all.count.should == logged_in_num_events
@@ -141,7 +141,7 @@ describe UsersController do
 				
 				events = requested.feed
 				
-				json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, events: events}.to_json
+				json_response = {status: "success", picture: requested.avatar.url, is_user: false, is_friends: true, is_pending: false, is_waiting: false, events: events}.to_json
 				
 				response.body.should == json_response
 				events.all.count.should == logged_in_num_events + requested_num_events
@@ -156,7 +156,7 @@ describe UsersController do
 				
 				events = []
 				
-				json_response = {status: "success", is_user: false, is_friends: false, is_pending: true, is_waiting: false, events: events}.to_json
+				json_response = {status: "success", picture: requested.avatar.url, is_user: false, is_friends: false, is_pending: true, is_waiting: false, events: events}.to_json
 				
 				response.body.should == json_response
 			end
@@ -168,7 +168,7 @@ describe UsersController do
 				
 				post "show_mobile", input
 				
-				json_response = {status: "success", is_user: false, is_friends: false, is_pending: false, is_waiting: true, events: []}.to_json
+				json_response = {status: "success", picture: requested.avatar.url, is_user: false, is_friends: false, is_pending: false, is_waiting: true, events: []}.to_json
 				
 				response.body.should == json_response
 			end
@@ -178,7 +178,7 @@ describe UsersController do
 				
 				post "show_mobile", input
 				
-				json_response = {status: "failure", is_user: false, is_friends: false, is_pending: false, is_waiting: false, events: []}.to_json
+				json_response = {status: "failure", picture: requested.avatar.url, is_user: false, is_friends: false, is_pending: false, is_waiting: false, events: []}.to_json
 				
 				response.body.should == json_response
 			end

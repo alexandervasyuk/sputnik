@@ -18,28 +18,25 @@ class UsersController < ApplicationController
 	if @user == current_user
 		events = current_user.feed
 	
-		json_response = {status: "success", is_user: true, is_friends: false, is_pending: false, is_waiting: false, events: events}
+		json_response = {status: "success", picture: @user.avatar.url, is_user: true, is_friends: false, is_pending: false, is_waiting: false, events: events}
 		
-		render json: json_response
 	elsif @user.friends?(current_user)	
 		events = @user.feed
 		
-		json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, events: events}
+		json_response = {status: "success", picture: @user.avatar.url, is_user: false, is_friends: true, is_pending: false, is_waiting: false, events: events}
 		
-		render json: json_response	
 	elsif current_user.pending?(@user)	
-		json_response = {status: "success", is_user: false, is_friends: false, is_pending: true, is_waiting: false, events: []}
+		json_response = {status: "success", picture: @user.avatar.url, is_user: false, is_friends: false, is_pending: true, is_waiting: false, events: []}
 		
-		render json: json_response
 	elsif @user.pending?(current_user)	
-		json_response = {status: "success", is_user: false, is_friends: false, is_pending: false, is_waiting: true, events: []}
+		json_response = {status: "success", picture: @user.avatar.url, is_user: false, is_friends: false, is_pending: false, is_waiting: true, events: []}
 		
-		render json: json_response
 	else	
-		json_response = {status: "failure", is_user: false, is_friends: false, is_pending: false, is_waiting: false, events: []}
-	
-		render json: json_response
+		json_response = {status: "failure", picture: @user.avatar.url, is_user: false, is_friends: false, is_pending: false, is_waiting: false, events: []}
+		
 	end
+	
+	render json: json_response
   end
 
   def new
