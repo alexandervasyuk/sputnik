@@ -124,15 +124,16 @@ describe UsersController do
 				
 				events = logged_in.feed
 				
-				json_response = {status: "success", is_user: true, is_friends: false, is_pending: false, is_waiting: false, is_following: false, events: events}.to_json
+				Rails.logger.debug("\n\nEvents: #{events.to_json}\n\n")
+				
+				json_response = {status: "success", is_user: true, is_friends: false, is_pending: false, is_waiting: false, events: events}.to_json
 				
 				response.body.should == json_response
-				events.count.should == logged_in_num_events
+				events.all.count.should == logged_in_num_events
 			end
 			
 			it "should give the correct result when the two users are friends" do
 				make_friends(logged_in, requested)
-				logged_in.follow!(requested)
 				
 				input = {id: requested.id}
 				
@@ -140,14 +141,14 @@ describe UsersController do
 				
 				events = requested.feed
 				
-				json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, is_following: true, events: events}.to_json
+				json_response = {status: "success", is_user: false, is_friends: true, is_pending: false, is_waiting: false, events: events}.to_json
 				
 				response.body.should == json_response
-				events.count.should == logged_in_num_events + requested_num_events
+				events.all.count.should == logged_in_num_events + requested_num_events
 			end
 			
 			it "should give the correct result when there is a pending request from the logged in user" do
-				logged_in.friend_request!(requested)
+				logged_in.friend_request(requested)
 				
 				input = {id: requested.id}
 				
@@ -155,19 +156,19 @@ describe UsersController do
 				
 				events = []
 				
-				json_response = {status: "success", is_user: false, is_friends: false, is_pending: true, is_waiting: false, is_following: false, events: events}.to_json
+				json_response = {status: "success", is_user: false, is_friends: false, is_pending: true, is_waiting: false, events: events}.to_json
 				
 				response.body.should == json_response
 			end
 			
 			it "should give the correct result when the given user has made a request to the logged in user" do
-				requested.friend_request!(logged_in)
+				requested.friend_request(logged_in)
 				
 				input = {id: requested.id}
 				
 				post "show_mobile", input
 				
-				json_response = {status: "success", is_user: false, is_friends: false, is_pending: false, is_waiting: true, is_following: false, events: []}.to_json
+				json_response = {status: "success", is_user: false, is_friends: false, is_pending: false, is_waiting: true, events: []}.to_json
 				
 				response.body.should == json_response
 			end
@@ -177,7 +178,7 @@ describe UsersController do
 				
 				post "show_mobile", input
 				
-				json_response = {status: "failure", is_user: false, is_friends: false, is_pending: false, is_waiting: false, is_following: false, events: []}.to_json
+				json_response = {status: "failure", is_user: false, is_friends: false, is_pending: false, is_waiting: false, events: []}.to_json
 				
 				response.body.should == json_response
 			end
