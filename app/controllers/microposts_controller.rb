@@ -40,11 +40,11 @@ class MicropostsController < ApplicationController
   
   def mobile_create
 	if @created
-		json_response = {status: "success", created: @micropost.to_mobile}
+		json_response = {status: "success", feed: current_user.feed, pool: current_user.pool, created: @micropost.to_mobile}
 		
 		render json: json_response
 	else
-		json_response = {status: "failure", created: {}}
+		json_response = {status: "failure", feed: [], pool: [], created: {}}
 		
 		render json: json_response
 	end

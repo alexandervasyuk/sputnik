@@ -37,7 +37,7 @@ describe MicropostsController do
 				
 				micropost = Micropost.all.last
 				
-				response.body.should == {status: "success", created: micropost.to_mobile}.to_json
+				response.body.should == {status: "success", feed: user.feed, pool: user.pool, created: micropost.to_mobile}.to_json
 			end
 		end
 		

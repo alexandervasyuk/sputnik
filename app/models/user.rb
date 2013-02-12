@@ -356,8 +356,6 @@ class User < ActiveRecord::Base
   	end
   end
   
-  
-  
   # Paperclip Methods
   
   def crop_profile

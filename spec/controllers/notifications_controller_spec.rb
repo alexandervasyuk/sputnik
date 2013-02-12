@@ -118,8 +118,10 @@ describe NotificationsController do
 		describe "who wants to mark some notifications read" do
 			describe "and is not logged in" do
 				describe "and provides notifications to be marked read" do
+					let(:notifications) { generate_unread_notifications(user, 10) }
+				
 					it "should not mark those notifications read" do
-					
+						
 					end
 					
 					it "should receive a failure indicator, along with the failure reason being not logged in" do
