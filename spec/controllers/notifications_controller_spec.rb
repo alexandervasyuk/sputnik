@@ -27,12 +27,10 @@ describe NotificationsController do
 			end
 			
 			describe "and is not logged in" do
-				it "should not receive any notifications" do
+				it "should not receive any notifications and give a failure indicator" do
+					get "index", format: "mobile"
 					
-				end
-				
-				it "should give a failure indicator" do
-				
+					response.body.should == {status: "failure", notifications: []}.to_json
 				end
 			end
 		end
