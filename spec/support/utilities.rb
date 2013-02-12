@@ -30,6 +30,30 @@ def generate_participants(micropost, num_participants)
 	end
 end
 
+def generate_unread_notifications(user, num_notifications)
+	notifications = []
+
+	while num_notifications > 0
+		notifications << FactoryGirl.create(:unread_notification, user: user)
+		
+		num_notifications-=1
+	end
+	
+	return notifications
+end
+
+def generate_read_notifications(user, num_notifications)
+	notifications = []
+	
+	while num_notifications > 0
+		notifications << FactoryGirl.create(:read_notification, user: user)
+		
+		num_notifications-=1
+	end
+	
+	return notifications
+end
+
 # Generates the specified number of posts for the specified micropost
 def generate_posts_for(micropost, num_posts)
 	creator = micropost.user

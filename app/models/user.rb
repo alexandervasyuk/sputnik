@@ -321,6 +321,19 @@ class User < ActiveRecord::Base
   
   #Notifications methods
   
+  # Instance method that returns up to 10 notifications if the number of unread notifications does not exceed 10 and all unread notifications otherwise
+  def retrieve_notifications
+	unread = self.notifications.where("read = ?", false).order("created_at DESC")
+	
+	if unread.count < 10
+		read = self.notifications.where("read = ?", true).order("created_at DESC").limit(10 - unread.count)
+		
+		unread = unread.concat(read)
+	end
+	
+	return unread
+  end
+  
   def num_unread_notifications
     self.notifications.where("read = false").count
   end

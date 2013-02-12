@@ -19,7 +19,7 @@ class ProposalsController < ApplicationController
 		@proposal.save
 		
 		respond_to do |format|
-			format.js 
+			format.js			
 			format.html { redirect_to detail_micropost_path(@proposal.poll.micropost) }
 		end
 	end

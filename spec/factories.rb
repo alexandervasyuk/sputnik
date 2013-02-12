@@ -80,4 +80,19 @@ FactoryGirl.define do
 	sequence(:id) { |n| }
 	micropost
   end
+  
+  factory :notification do
+	sequence(:id) { |n| }
+	user
+	message "Filler message"
+	link "test/1/link"
+	
+	factory :read_notification do
+		read true
+	end
+	
+	factory :unread_notification do
+		read false
+	end
+  end
 end

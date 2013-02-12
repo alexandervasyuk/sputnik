@@ -1,4 +1,13 @@
 class NotificationsController < ApplicationController
+	
+	def index
+		@notifications = current_user.retrieve_notifications
+		
+		respond_to do |format|
+			format.mobile { render json: {status: "success", notifications: @notifications } }
+		end
+	end
+	
 	def update_read
 		params[:ids].each do |id|
 			Notification.find(id).update_attribute(:read, true)

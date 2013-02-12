@@ -20,6 +20,7 @@ Sputnik::Application.routes.draw do
   resources :proposals, only: [:create, :update, :destroy]
   resources :polls, only: [:create, :update, :destroy]
   resources :characteristics, only: [:create, :update, :destroy]
+  resources :notifications, only: [:index]
   
   root to: 'static_pages#home'
 
@@ -49,7 +50,7 @@ Sputnik::Application.routes.draw do
   match '/post/refresh', to: 'posts#refresh'
   
   match '/crop/image', to: 'static_pages#crop_image_render'
-
+  
   #Notification update unread to read
   match '/notifications/update_read', to: 'notifications#update_read'
   

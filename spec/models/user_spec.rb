@@ -769,6 +769,38 @@ describe User do
 		@user.common_participations(@friend).should include(@user.microposts.first)
 	end
   end
+  
+  describe "notifications" do
+	before { @user.save }
+  
+	it "should grab up to 10 notifications if the number of unread notifications does not exceed 10" do
+		unread_notifications = generate_unread_notifications(@user, 9)
+		read_notifications = generate_read_notifications(@user, 5)
+		
+		# Testing Generator Utitility Functions
+		#unread_notifications.count.should == 9
+		#read_notifications.count.should == 5
+		
+		notifications = @user.retrieve_notifications
+		correct_notifications = unread_notifications.reverse!
+		correct_notifications << read_notifications.last
+		
+		correct_notifications.count.should == 10
+		notifications.count.should == 10
+		
+		notifications.should == correct_notifications
+	end
+	
+	it "should grab all unread notifications otherwise" do
+		unread_notifications = generate_unread_notifications(@user, 11)
+		read_notifications = generate_read_notifications(@user, 5)
+		
+		notifications = @user.retrieve_notifications
+		notifications.should == unread_notifications.reverse!
+		
+		notifications.count.should == 11
+	end
+  end
 	
   describe "crop profile" do
 	# UNTESTED

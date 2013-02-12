@@ -9,11 +9,20 @@ describe NotificationsController do
 				before { sign_in(user) }
 				
 				it "should receive 10 notifications when there are not more than 10 new unread notifications" do
+					unread_notifications = generate_unread_notifications(user, 5)
+					read_notifications = generate_read_notifications(user, 10)
 					
+					get "index", format: "mobile"
+					
+					response.body.should == {status: "success", notifications: unread_notifications.reverse.concat(read_notifications.reverse.first(5)) }.to_json
 				end
 				
 				it "should receive all unread notifications even if it exceeds 10" do
-				
+					unread_notifications = generate_unread_notifications(user, 11)
+					
+					get "index", format: "mobile"
+					
+					response.body.should == {status: "success", notifications: unread_notifications.reverse}.to_json
 				end
 			end
 			
