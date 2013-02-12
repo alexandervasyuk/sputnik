@@ -86,9 +86,29 @@ class User < ActiveRecord::Base
     Micropost.where("microposts.user_id in (?) AND location IS NOT NULL AND time IS NOT NULL AND (time > ? OR end_time > ?)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id").group("microposts.id").having("count(*) > 1").order("time ASC")
   end
   
+  def mobile_feed
+	mobile_feed = []
+  
+	feed.each do |feed_item|
+		mobile_feed << feed_item.to_mobile
+	end
+	
+	return mobile_feed
+  end
+  
   # The user's pool. Items in a user's pool FAIL one of the conditions of the feed
   def pool
 	Micropost.where("microposts.user_id in (?) AND (time IS NULL OR (time IS NOT NULL AND time > ?) OR (end_time IS NOT NULL AND end_time > ?) OR location IS NULL)", self.friends, Time.current().beginning_of_day, Time.current().beginning_of_day).joins("INNER JOIN participations ON microposts.id = participations.micropost_id ").group("microposts.id").having("count(*) = 1 OR (count(*) > 1 AND (location IS NULL OR time IS NULL))")
+  end
+  
+  def mobile_pool
+	mobile_pool = []
+	
+	pool.each do |pool_item|
+		mobile_pool << pool_item.to_mobile
+	end
+	
+	return mobile_pool
   end
   
   # Method responsible for grabbing any new feed elements that were added after the page was rendered
