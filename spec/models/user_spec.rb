@@ -801,6 +801,28 @@ describe User do
 		notifications.count.should == 11
 	end
   end
+  
+  describe "older notifications" do
+	before { @user.save }
+  
+	it "should receive 10 older notifications if there are >= 10 older notifications" do
+		read_notifications = generate_read_notifications(@user, 11)
+		
+		notifications = @user.older_notifications(read_notifications.last.id)
+		notifications.should == read_notifications[0..9].reverse
+		
+		notifications.count.should == 10
+	end
+	
+	it "should receive all remaining notifications if there are < 10 older notifications" do
+		read_notifications = generate_read_notifications(@user, 10)
+		
+		notifications = @user.older_notifications(read_notifications.last.id)
+		notifications.should == read_notifications[0..8].reverse
+		
+		notifications.count.should == 9
+	end
+  end
 	
   describe "crop profile" do
 	# UNTESTED

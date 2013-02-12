@@ -3,10 +3,20 @@ class NotificationsController < ApplicationController
 	before_filter :signed_in
 	
 	def index
-		@notifications = current_user.retrieve_notifications
-		
 		respond_to do |format|
-			format.mobile { render json: {status: "success", notifications: @notifications } }
+			if params[:oldest_id]
+				notifications = current_user.older_notifications(params[:oldest_id])
+				
+				format.mobile do
+					render json: { status: "success", notifications: notifications }
+				end
+			else
+				notifications = current_user.retrieve_notifications
+				
+				format.mobile do
+					render json: { status: "success", notifications: notifications } 
+				end
+			end
 		end
 	end
 	

@@ -334,6 +334,10 @@ class User < ActiveRecord::Base
 	return unread
   end
   
+  def older_notifications(oldest_id)
+	self.notifications.where("id < ?", oldest_id).order("created_at DESC").limit(10)
+  end
+  
   def num_unread_notifications
     self.notifications.where("read = false").count
   end
@@ -349,7 +353,7 @@ class User < ActiveRecord::Base
   end
   
   def later_unread_notifications(latest_time)
-  	self.notifications.where("id > ?", latest_time).order("created_at DESC")
+  	self.notifications.where("id > ? AND read = ", latest_time, false).order("created_at DESC")
   end
   
   # Paperclip Methods

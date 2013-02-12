@@ -36,30 +36,38 @@ describe NotificationsController do
 		end
 		
 		describe "who wants older notifications" do
+			let(:notifications) { generate_read_notifications(user, 11) }
+		
 			describe "and is not logged in" do
-				it "should not receive any older notifications" do
-				
-				end
-				
-				it "should receive a failure indication, which means that I must log in first" do
-				
+				it "should not receive any older notifications and should give a failure indicator" do
+					get "index", oldest_id: notifications.last.id, format: "mobile"
+					
+					response.body.should == {status: "failure", notifications: []}.to_json
 				end
 			end
 			
 			describe "and is logged in" do
+				before { sign_in(user) }
+			
 				describe "and has an oldest notification" do
 					it "should receive 10 older notifications if there are >= 10 older notifications" do
-					
+						get "index", oldest_id: notifications.last.id, format: "mobile"
+						
+						response.body.should == {status: "success", notifications: notifications[0..9].reverse}.to_json
 					end
 					
 					it "should receive all remaining older notifications if there are < 10 of them" do
-					
+						get "index", oldest_id: notifications[9].id, format: "mobile"
+						
+						response.body.should == {status: "success", notifications: notifications[0..8].reverse}.to_json
 					end
 				end
 			
 				describe "and does not have an oldest notification" do
 					it "should not receive any older notifications" do
+						get "index", oldest_id: notifications[0].id, format: "mobile"
 						
+						response.body.should == {status: "success", notifications: []}.to_json
 					end
 				end
 			end
