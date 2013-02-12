@@ -823,6 +823,20 @@ describe User do
 		notifications.count.should == 9
 	end
   end
+  
+  describe "newer notifications" do
+	before { @user.save }
+	
+	it "should receive all newer notifications" do
+		read_notifications = generate_read_notifications(@user, 5)
+		unread_notifications = generate_unread_notifications(@user, 9)
+		
+		notifications = @user.newer_notifications(read_notifications.first.id)
+		notifications.should == unread_notifications.reverse.concat(read_notifications[1..4].reverse) 
+		
+		notifications.count.should == 13
+	end
+  end
 	
   describe "crop profile" do
 	# UNTESTED
