@@ -1,6 +1,6 @@
 class NotificationsController < ApplicationController
 	
-	before_filter :signed_in
+	before_filter :signed_in_user
 	
 	protect_from_forgery
 	
@@ -57,16 +57,6 @@ class NotificationsController < ApplicationController
 			render text: "cancel"
 		else
 			render json: [update_html(new_notifications), new_notifications[0].id]
-		end
-	end
-	
-	private
-	
-	def signed_in
-		if !signed_in?
-			respond_to do |format|
-				format.mobile { render json: {status: "failure", failure_reason: "LOGIN"} }
-			end
 		end
 	end
 end

@@ -19,7 +19,8 @@ class ProposalsController < ApplicationController
 		@proposal.save
 		
 		respond_to do |format|
-			format.js			
+			format.js	
+			format.mobile { render json: {status: "success", failure_reason: ""} }
 			format.html { redirect_to detail_micropost_path(@proposal.poll.micropost) }
 		end
 	end
@@ -63,7 +64,10 @@ class ProposalsController < ApplicationController
 	
 	def friends_with_creator
 		if !@poll.micropost || (@poll.micropost && !@poll.micropost.user) || (@poll.micropost && @poll.micropost.user && !current_user.friends?(@poll.micropost.user))
-			redirect_to :back, flash: { error: "Cannot make a proposal to this pool, please friend the creator first" }
+			respond_to do |format|
+				format.html { redirect_to :back, flash: { error: "Cannot make a proposal to this pool, please friend the creator first" } }
+				format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+			end
 		end
 	end
 	

@@ -4,7 +4,7 @@ describe ProposalsController do
 	let(:poll) { FactoryGirl.create(:poll) }
 	let(:micropost) { poll.micropost }
 	let(:creator) { micropost.user }
-	
+
 	describe "desktop app user" do
 		describe "who wants to create a new proposal" do
 			describe "who is logged in" do
@@ -125,7 +125,8 @@ describe ProposalsController do
 				end
 				
 				describe "who is not friends with the creator" do
-					it "should not allow users who are not friends with the creator to make proposals" do	 sign_out							
+					it "should not allow users who are not friends with the creator to make proposals" do	 
+						sign_out							
 						non_friend = FactoryGirl.create(:user)
 						
 						sign_in(non_friend)
@@ -146,6 +147,8 @@ describe ProposalsController do
 					expect do
 						post "create", request_hash
 					end.not_to change { Proposal.all.count }
+					
+					response.should redirect_to signin_url
 				end
 			end
 		end
@@ -196,6 +199,43 @@ describe ProposalsController do
 			
 			it "should remove the user from the proposal if he is on it" do
 				
+			end
+		end
+	end
+	
+	describe "mobile app user" do
+		describe "who wants to create a new proposal" do
+			describe "who is logged in" do
+				before { sign_in(creator) }
+				
+				describe "who is friends with the creator" do
+				
+				end
+				
+				describe "who is not friends with the creator" do
+					it "should not allow users who are not friends with the creator to make proposals" do	 
+						sign_out							
+						non_friend = FactoryGirl.create(:user)
+						
+						sign_in(non_friend)
+						
+						expect do
+							post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}, format: "mobile"
+						end.not_to change { Proposal.all.count }
+						
+						response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+					end
+				end
+			end
+			
+			describe "who is not logged in" do
+				it "should not allow users who are not signed in to make proposals and should return a failure indicator" do						
+					expect do
+						post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}, format: "mobile"
+					end.not_to change { Proposal.all.count }
+					
+					response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+				end
 			end
 		end
 	end

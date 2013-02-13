@@ -40,8 +40,13 @@ module SessionsHelper
 
   def signed_in_user
     unless signed_in?
-      store_location
-      redirect_to signin_url, notice: "Please sign in."
+	  respond_to do |format|
+		  format.html do
+			store_location
+			redirect_to signin_url, notice: "Please sign in."
+		  end
+		  format.mobile { render json: {status: "failure", failure_reason: "LOGIN"} }
+	  end
     end
   end
 
