@@ -5,22 +5,22 @@ describe ProposalsController do
 	let(:micropost) { poll.micropost }
 	let(:creator) { micropost.user }
 
+	before do
+		@participant = FactoryGirl.create(:user)
+		@participant.participate(micropost)
+		
+		@non_participant = FactoryGirl.create(:user)
+		
+		make_friends(@participant, creator)
+		make_friends(@non_participant, creator)
+	end
+	
 	describe "desktop app user" do
 		describe "who wants to create a new proposal" do
 			describe "who is logged in" do
 				before { sign_in(creator) }
 			
 				describe "who is friends with the creator" do
-					before do
-						@participant = FactoryGirl.create(:user)
-						@participant.participate(micropost)
-						
-						@non_participant = FactoryGirl.create(:user)
-						
-						make_friends(@participant, creator)
-						make_friends(@non_participant, creator)
-					end
-				
 					describe "who picks a valid poll to put their poposal in" do
 						it "should allow participants to add proposals to the poll for a generic poll" do	
 							sign_in(@participant)
@@ -109,8 +109,8 @@ describe ProposalsController do
 						it "should not create a proposal on a nil poll" do
 							request_hash = {proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: nil}}
 							
-								post "create", request_hash
 							expect do
+								post "create", request_hash
 							end.not_to change { creator.proposals.all.count }
 						end
 						
@@ -209,7 +209,24 @@ describe ProposalsController do
 				before { sign_in(creator) }
 				
 				describe "who is friends with the creator" do
-				
+					
+					describe "who does not pick a valid poll" do
+						it "should not create a proposal on a nil poll" do
+							expect do
+								post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: nil}, format: "mobile"
+							end.not_to change { creator.proposals.all.count }
+							
+							response.body.should == {status: "failure", failure_reason: "INVALID_POLL"}.to_json
+						end
+						
+						it "should not create a proposal on an invalid poll" do
+							expect do
+								post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: 1000}, format: "mobile"
+							end.not_to change { creator.proposals.all.count }
+							
+							response.body.should == {status: "failure", failure_reason: "INVALID_POLL"}.to_json
+						end
+					end
 				end
 				
 				describe "who is not friends with the creator" do

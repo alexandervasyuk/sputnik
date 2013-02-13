@@ -58,7 +58,10 @@ class ProposalsController < ApplicationController
 		@poll = Poll.find_by_id(params[:proposal][:poll_id])
 		
 		if !@poll
-			redirect_to :back, flash: { error: "Cannot make a proposal to that poll" }
+			respond_to do |format|
+				format.html { redirect_to :back, flash: { error: "Cannot make a proposal to that poll" } }
+				format.mobile { render json: {status: "failure", failure_reason: "INVALID_POLL"} }
+			end
 		end
 	end
 	
