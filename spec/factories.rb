@@ -73,6 +73,8 @@ FactoryGirl.define do
   
   factory :poll do
 	sequence(:id) { |n| }
+	poll_type "None"
+	question "generic ass question?"
 	micropost
   end
   

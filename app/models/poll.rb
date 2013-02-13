@@ -19,6 +19,6 @@ class Poll < ActiveRecord::Base
 		mobile_proposals << proposal.to_mobile
 	end
 	
-	{ id: micropost_id, poll_type: poll_type, question: question, proposals: mobile_proposals }
+	{ id: self.id, micropost_id: micropost_id, poll_type: poll_type, question: question, proposals: mobile_proposals }
   end
 end

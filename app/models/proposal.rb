@@ -8,6 +8,6 @@ class Proposal < ActiveRecord::Base
   validates :poll_id, presence: true
   
   def to_mobile
-	{ id: poll_id, content: content, location: location, time: time, end_time: end_time }
+	{ id: self.id, content: content, location: location, time: time, end_time: end_time }
   end
 end
