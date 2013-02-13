@@ -8,4 +8,10 @@ class ApplicationController < ActionController::Base
   include GoogleHelper
   include ProposalsHelper
   include BetaHelper
+  
+  def protect_against_forgery?
+	  unless request.format.mobile?
+		super
+	  end
+  end
 end

@@ -2,6 +2,8 @@ class NotificationsController < ApplicationController
 	
 	before_filter :signed_in
 	
+	protect_from_forgery
+	
 	def index
 		respond_to do |format|
 			if params[:oldest_id] && (Integer(params[:oldest_id]) rescue false)
