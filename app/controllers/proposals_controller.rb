@@ -20,7 +20,7 @@ class ProposalsController < ApplicationController
 		
 		respond_to do |format|
 			format.js	
-			format.mobile { render json: {status: "success", failure_reason: ""} }
+			format.mobile { render json: {status: "success", failure_reason: "", poll: @proposal.poll.to_mobile} }
 			format.html { redirect_to detail_micropost_path(@proposal.poll.micropost) }
 		end
 	end

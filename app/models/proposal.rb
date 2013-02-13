@@ -6,4 +6,8 @@ class Proposal < ActiveRecord::Base
   has_and_belongs_to_many :users
   
   validates :poll_id, presence: true
+  
+  def to_mobile
+	{ id: poll_id, content: content, location: location, time: time, end_time: end_time }
+  end
 end

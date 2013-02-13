@@ -209,6 +209,17 @@ describe ProposalsController do
 				before { sign_in(creator) }
 				
 				describe "who is friends with the creator" do
+					describe "who picks a valid poll to put their proposal in" do
+						it "should allow participants to add proposals to the poll for a generic poll" do	
+							sign_in(@participant)
+							
+							expect do
+								post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}, format: "mobile"
+							end.to change { Proposal.all.count }.by(1)
+							
+							response.body.should == {status: "success", failure_reason: "", poll: poll.to_mobile}.to_json
+						end
+					end
 					
 					describe "who does not pick a valid poll" do
 						it "should not create a proposal on a nil poll" do
