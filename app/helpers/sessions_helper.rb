@@ -46,6 +46,7 @@ module SessionsHelper
 			redirect_to signin_url, notice: "Please sign in."
 		  end
 		  format.mobile { render json: {status: "failure", failure_reason: "LOGIN"} }
+		  format.js { render json: {status: "failure", failure_reason: "LOGIN"} }
 	  end
     end
   end

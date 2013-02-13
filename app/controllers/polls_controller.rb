@@ -1,4 +1,8 @@
 class PollsController < ApplicationController
+	before_filter :signed_in_user
+	
+	protect_from_forgery
+	
 	def create
 		@micropost = Micropost.find(params[:poll][:micropost_id])
 		
