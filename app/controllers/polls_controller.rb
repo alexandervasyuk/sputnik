@@ -7,15 +7,22 @@ class PollsController < ApplicationController
 	protect_from_forgery
 	
 	def create
-		@micropost = Micropost.find(params[:poll][:micropost_id])
-		
 		@poll = @micropost.polls.build(params[:poll])
-		@poll.save
-			
+		
 		respond_to do |format|
-			format.html { redirect_to :back }
-			format.mobile { render json: {status: "success", failure_reason: "" } } 
-			format.js
+			if @poll.save
+				format.html { redirect_to :back }
+				format.mobile { render json: {status: "success", failure_reason: "" } } 
+				format.js
+			else
+				if @poll.errors.include?(:question)
+					format.html { redirect_to :back, flash: { error: "Please enter a poll question" } }
+					format.mobile { render json: {status: "failure", failure_reason: "INVALID_QUESTION" } }
+				elsif @poll.errors.include?(:poll_type)
+					format.html { redirect_to :back, flash: { error: "Please select a valid poll type" } }
+					format.mobile { render json: {status: "failure", failure_reason: "INVALID_POLL_TYPE" } }
+				end
+			end
 		end
 	end
 	

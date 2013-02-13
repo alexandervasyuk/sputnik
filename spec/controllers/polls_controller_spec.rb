@@ -20,11 +20,19 @@ describe PollsController do
 						
 						describe "who does not provide all the correct info to make a poll" do
 							it "should not create a new poll when type is missing and should give the reason for failure" do
+								expect do
+									post "create", poll: {micropost_id: micropost.id, poll_type: nil, question: "some question?" }, format: "mobile"
+								end.not_to change { Poll.all.count }
 								
+								response.body.should == { status: "failure", failure_reason: "INVALID_POLL_TYPE" }.to_json
 							end
 							
 							it "should not create a new poll when the question is missing and should give the reason for failure" do
+								expect do
+									post "create", poll: {micropost_id: micropost.id, poll_type: "NONE", question: nil }, format: "mobile"
+								end.not_to change { Poll.all.count }
 								
+								response.body.should == { status: "failure", failure_reason: "INVALID_QUESTION" }.to_json
 							end
 						end
 					end
