@@ -15,7 +15,15 @@ describe PollsController do
 				describe "who is trying to add the poll to a valid micropost" do
 					describe "who is friends with the creator" do
 						describe "who provides all the correct info for a poll" do
-							
+							it "should create a new poll and give a success indicator" do
+								expect do
+									expect do
+										post "create", poll: {micropost_id: micropost.id, poll_type: "NONE", question: "some question?" }, format: "mobile"
+									end.to change { Poll.all.count }.by(1)
+								end.to change { micropost.polls.count }.by(1)
+								
+								response.body.should == { status: "success", failure_reason: "" }.to_json
+							end
 						end
 						
 						describe "who does not provide all the correct info to make a poll" do
