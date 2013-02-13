@@ -69,17 +69,33 @@ describe PollsController do
 					sign_in(user)
 				end
 				
-				describe "who is friends with the creator" do
-				
+				describe "who is trying to add the poll to a valid micropost" do
+					describe "who is friends with the creator" do
+					
+					end
+					
+					describe "who is not friends with the creator" do
+						it "should not create the poll and should receive a failure indicator" do
+							sign_out
+							sign_in(non_friend)
+						
+							expect do
+								post "create", poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }
+							end.not_to change { Poll.all.count }
+						end
+					end
 				end
 				
-				describe "who is not friends with the creator" do
-					it "should not create the poll and should receive a failure indicator" do
-						sign_out
-						sign_in(non_friend)
-					
+				describe "who is trying to add the poll to an invalid micropost" do
+					it "should not create the poll on a nil micropost and should receive a failure indicator" do
 						expect do
-							post "create", poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }
+							post "create", poll: { micropost_id: nil, poll_type: "LOCATION", question: "some question?" }
+						end.not_to change { Poll.all.count }
+					end
+					
+					it "should not create the poll on a nonexistant micropost and should receive a failure indicator" do
+						expect do
+							post "create", poll: { micropost_id: 1000, poll_type: "LOCATION", question: "some question?" }
 						end.not_to change { Poll.all.count }
 					end
 				end
@@ -104,20 +120,40 @@ describe PollsController do
 					sign_in(user)
 				end
 				
-				describe "who is friends with the creator" do
-				
+				describe "who is trying to add it to a valid micropost" do
+					describe "who is friends with the creator" do
+					
+					end
+					
+					describe "who is not friends with the creator" do
+						it "should not create the poll and should receive a failure indicator" do
+							sign_out
+							sign_in(non_friend)
+						
+							expect do
+								xhr :post, :create, poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }
+							end.not_to change { Poll.all.count }
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+						end
+					end
 				end
 				
-				describe "who is not friends with the creator" do
-					it "should not create the poll and should receive a failure indicator" do
-						sign_out
-						sign_in(non_friend)
-					
+				describe "who is trying to add it to an invalid micropost" do
+					it "should not create the poll on a nil micropost and should receive a failure indicator" do
 						expect do
-							xhr :post, :create, poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }
+							xhr :post, :create, poll: { micropost_id: nil, poll_type: "LOCATION", question: "some question?" }
 						end.not_to change { Poll.all.count }
 						
-						response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+						response.body.should == { status: "failure", failure_reason: "INVALID_MICROPOST" }.to_json
+					end
+					
+					it "should not create the poll on a nonexistant micropost and should receive a failure indicator" do
+						expect do
+							xhr :post, :create, poll: { micropost_id: 1000, poll_type: "LOCATION", question: "some question?" }
+						end.not_to change { Poll.all.count }
+						
+						response.body.should == { status: "failure", failure_reason: "INVALID_MICROPOST" }.to_json
 					end
 				end
 			end
