@@ -2,9 +2,15 @@ class Poll < ActiveRecord::Base
   # attr_accessible :title, :body
   attr_accessible :micropost_id, :poll_type, :question
   
+  # Associations
   belongs_to :micropost
   
   has_many :proposals
+  
+  # Validations
+  validates_presence_of :poll_type
+  validates_presence_of :question
+  validates_presence_of :micropost_id
   
   def to_mobile
 	mobile_proposals = []

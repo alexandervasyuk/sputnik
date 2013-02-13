@@ -14,7 +14,19 @@ describe PollsController do
 				
 				describe "who is trying to add the poll to a valid micropost" do
 					describe "who is friends with the creator" do
+						describe "who provides all the correct info for a poll" do
+							
+						end
 						
+						describe "who does not provide all the correct info to make a poll" do
+							it "should not create a new poll when type is missing and should give the reason for failure" do
+								
+							end
+							
+							it "should not create a new poll when the question is missing and should give the reason for failure" do
+								
+							end
+						end
 					end
 					
 					describe "who is not friends with the creator" do
@@ -71,7 +83,19 @@ describe PollsController do
 				
 				describe "who is trying to add the poll to a valid micropost" do
 					describe "who is friends with the creator" do
-					
+						describe "who provides all the correct info to make a poll" do
+							
+						end
+						
+						describe "who does not provide all the correct info to make a poll" do
+							it "should not create a new poll when type is missing and should give the reason for failure" do
+								
+							end
+							
+							it "should not create a new poll when the question is missing and should give the reason for failure" do
+								
+							end
+						end
 					end
 					
 					describe "who is not friends with the creator" do
@@ -122,7 +146,19 @@ describe PollsController do
 				
 				describe "who is trying to add it to a valid micropost" do
 					describe "who is friends with the creator" do
-					
+						describe "who has all the correct info to make a poll" do
+						
+						end
+						
+						describe "who does not have all the correct info to make a poll" do
+							it "should not create a new poll when type is missing and should give the reason for failure" do
+								
+							end
+							
+							it "should not create a new poll when the question is missing and should give the reason for failure" do
+								
+							end
+						end
 					end
 					
 					describe "who is not friends with the creator" do
