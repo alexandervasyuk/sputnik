@@ -2,6 +2,7 @@ Mobile User Who Wants to Create a New Poll
 
 Given: I am signed in
 And:   I am friends with the creator
+And:   I am trying to add a poll to a valid micropost
 And:   I provide the necessary information about the poll
 When:  I try to create a new poll
 Then:  the poll should be created
@@ -9,7 +10,15 @@ And:   I should receive a success confirmation
 
 Given: I am signed in
 And:   I am friends with the creator
+And:   I am trying to add a poll to a valid micropost
 And:   I do not provide the necessary information about the poll
+When:  I try to create a new poll
+Then:  the poll should not be created
+And:   I should receive a failure response telling me what is wrong
+
+Given: I am signed in
+And:   I am friends with the creator
+And:   I am trying to add a poll to an invalid micropost
 When:  I try to create a new poll
 Then:  the poll should not be created
 And:   I should receive a failure response telling me what is wrong

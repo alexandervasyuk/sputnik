@@ -2,16 +2,32 @@ require 'spec_helper'
 
 describe PollsController do
 	let(:user) { FactoryGirl.create(:user) }
+	let(:non_friend) { FactoryGirl.create(:user) }
 	let(:micropost) { FactoryGirl.create(:micropost, user: user) }
-
+	
 	describe "mobile app user" do
 		describe "who wants to create a new poll" do
 			describe "who is signed in" do
 				before do
-					sign_in(@user)
+					sign_in(user)
 				end
 				
+				describe "who is friends with the creator" do
 				
+				end
+				
+				describe "who is not friends with the creator" do
+					it "should not create the poll and should receive a failure indicator" do
+						sign_out
+						sign_in(non_friend)
+					
+						expect do
+							post "create", poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }, format: "mobile"
+						end.not_to change { Poll.all.count }
+						
+						response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+					end
+				end
 			end
 			
 			describe "who is not signed in" do
@@ -29,7 +45,24 @@ describe PollsController do
 	describe "desktop app user" do
 		describe "who wants to create a new poll" do
 			describe "who is signed in" do
-			
+				before do
+					sign_in(user)
+				end
+				
+				describe "who is friends with the creator" do
+				
+				end
+				
+				describe "who is not friends with the creator" do
+					it "should not create the poll and should receive a failure indicator" do
+						sign_out
+						sign_in(non_friend)
+					
+						expect do
+							post "create", poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }
+						end.not_to change { Poll.all.count }
+					end
+				end
 			end
 			
 			describe "who is not signed in" do
@@ -47,7 +80,26 @@ describe PollsController do
 	describe "ajax app user" do
 		describe "who wants to create a new poll" do
 			describe "who is signed in" do
-			
+				before do
+					sign_in(user)
+				end
+				
+				describe "who is friends with the creator" do
+				
+				end
+				
+				describe "who is not friends with the creator" do
+					it "should not create the poll and should receive a failure indicator" do
+						sign_out
+						sign_in(non_friend)
+					
+						expect do
+							xhr :post, :create, poll: { micropost_id: micropost.id, poll_type: "LOCATION", question: "some question?" }
+						end.not_to change { Poll.all.count }
+						
+						response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+					end
+				end
 			end
 			
 			describe "who is not signed in" do
