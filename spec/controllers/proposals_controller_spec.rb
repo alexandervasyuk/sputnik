@@ -231,6 +231,8 @@ describe ProposalsController do
 							
 							response.body.should == { status: "success", failure_reason: "", poll: poll.to_mobile }.to_json
 						end
+					
+						# ... See the tests above for similar use cases
 					end
 					
 					describe "who does not pick a valid poll" do
