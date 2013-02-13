@@ -217,7 +217,19 @@ describe ProposalsController do
 								post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}, format: "mobile"
 							end.to change { Proposal.all.count }.by(1)
 							
-							response.body.should == {status: "success", failure_reason: "", poll: poll.to_mobile}.to_json
+							response.body.should == { status: "success", failure_reason: "", poll: poll.to_mobile }.to_json
+						end
+						
+						it "should allow non-participants to add proposals and should also participate them in the event for a generic poll" do
+							sign_in(@non_participant)
+							
+							expect do
+								post "create", proposal: {content: "Lorem ipsum", location: "", time: "", poll_id: poll.id}, format: "mobile"
+							end.to change { Proposal.all.count }.by(1)
+							
+							@non_participant.participating?(micropost).should be_true
+							
+							response.body.should == { status: "success", failure_reason: "", poll: poll.to_mobile }.to_json
 						end
 					end
 					
