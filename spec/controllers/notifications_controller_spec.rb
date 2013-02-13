@@ -32,7 +32,7 @@ describe NotificationsController do
 				it "should not receive any notifications and give a failure indicator" do
 					get "index", format: "mobile"
 					
-					response.body.should == {status: "failure", failure_reason: "LOGIN", notifications: []}.to_json
+					response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 				end
 			end
 		end
@@ -46,7 +46,7 @@ describe NotificationsController do
 					
 					user.notifications.count.should == 11
 					
-					response.body.should == {status: "failure", failure_reason: "LOGIN", notifications: []}.to_json
+					response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 				end
 			end
 			
@@ -82,7 +82,7 @@ describe NotificationsController do
 				it "should not receive any newer notifications and should receive a failure indicator" do
 					get "index", newest_id: nil, format: "mobile"
 					
-					response.body.should == {status: "failure", failure_reason: "LOGIN", notifications: []}.to_json
+					response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 				end
 			end
 			
@@ -120,45 +120,81 @@ describe NotificationsController do
 				describe "and provides notifications to be marked read" do
 					let(:notifications) { generate_unread_notifications(user, 10) }
 				
-					it "should not mark those notifications read" do
+					it "should not mark those notifications read and should receive a failure indicator" do
+						notification_ids = []
 						
-					end
+						notifications.each do |notification|
+							notification_ids << notification.id
+						end
 					
-					it "should receive a failure indicator, along with the failure reason being not logged in" do
-					
+						post "update_read", notification_ids: notification_ids, format: "mobile"
+						
+						response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+						
+						notifications.each do |notification|
+							notification.unread?.should be_true
+						end
 					end
 				end
 				
 				describe "and does not provide notifications to be marked read" do
-					it "should not change notifications in any way" do
+					let(:notifications) { generate_unread_notifications(user, 10) }
 					
-					end
-					
-					it "should receive a failure indicator, along with the failure reason being not logged in" do
-					
+					it "should not change notifications in any way and should receive a failure indicator" do
+						post "update_read", notification_ids: nil, format: "mobile"
+						
+						response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+						
+						notifications.each do |notification|
+							notification.reload.unread?.should be_true
+						end
 					end
 				end
 			end
 			
 			describe "and is logged in" do
+				before { sign_in(user) }
+			
 				describe "and have notifications to mark" do
 					describe "and own those notifications" do
-						it "should mark those notifications as read" do
+						let(:notifications) { generate_unread_notifications(user, 10) }
+					
+						it "should mark those notifications as read and receive a success indicator" do
+							notification_ids = []
 						
-						end
-						
-						it "should receive a success indicator" do
-						
+							notifications.each do |notification|
+								notification_ids << notification.id
+							end
+							
+							post "update_read", notification_ids: notification_ids, format: "mobile"
+							
+							notifications.each do |notification|
+								notification.reload.unread?.should be_false
+							end
+							
+							response.body.should == {status: "success", failure_reason: ""}.to_json
 						end
 					end
 					
 					describe "and do not own those notifications" do
+						let(:other_user) { FactoryGirl.create(:user) }
+					
 						it "should not mark those notifications as read" do
+							notifications = generate_unread_notifications(other_user, 10)
+							
+							notification_ids = []
 						
-						end
-						
-						it "should receive a failure indicator, along with the failure reason being not owning those notifications" do
-						
+							notifications.each do |notification|
+								notification_ids << notification.id
+							end
+							
+							post "update_read", notification_ids: notification_ids, format: "mobile"
+							
+							notifications.each do |notification|
+								notification.reload.unread?.should be_true
+							end
+							
+							response.body.should == {status: "success", failure_reason: ""}.to_json
 						end
 					end
 				end

@@ -15,8 +15,6 @@ class NotificationsController < ApplicationController
 				# Requesting newer notifications
 				notifications = current_user.newer_notifications(params[:newest_id])
 				
-				Rails.logger.debug("\n\n\nNewest ID: #{params[:newest_id]}\n\n\n")
-				
 				format.mobile do
 					render json: { status: "success", failure_reason: "", notifications: notifications }
 				end
@@ -36,10 +34,18 @@ class NotificationsController < ApplicationController
 	end
 	
 	def update_read
-		params[:ids].each do |id|
-			Notification.find(id).update_attribute(:read, true)
+		params[:notification_ids].each do |id|
+			notification = current_user.notifications.find_by_id(id)
+			
+			if notification
+				notification.update_attribute(:read, true)
+			end
 		end
-		render text: params[:ids]
+	
+		respond_to do |format|
+			format.mobile { render json: {status: "success", failure_reason: ""} }
+			format.js
+		end
 	end
 	
 	def ajax_update
@@ -57,7 +63,7 @@ class NotificationsController < ApplicationController
 	def signed_in
 		if !signed_in?
 			respond_to do |format|
-				format.mobile { render json: {status: "failure", failure_reason: "LOGIN", notifications: [] } }
+				format.mobile { render json: {status: "failure", failure_reason: "LOGIN"} }
 			end
 		end
 	end

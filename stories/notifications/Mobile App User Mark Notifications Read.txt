@@ -11,7 +11,7 @@ And:   I should receive some failure indication, along with the failure reason
 Given: I am not logged in
 And:   I do not provide notifications to be marked read
 When:  I request notifications to be marked read
-Then:  Nothing should happen
+Then:  Nothing should happen to my unread notifications
 And:   I should receive some failure indication, along with the failure reason
 
 Given: I am logged in
