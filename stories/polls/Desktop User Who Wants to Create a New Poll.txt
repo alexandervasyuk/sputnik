@@ -1,0 +1,37 @@
+Desktop User Who Wants to Create a New Poll
+
+Given: I am signed in
+And:   I am friends with the creator
+And:   I am trying to add a poll to a valid micropost
+And:   I provide the necessary information about the poll
+When:  I try to create a new poll
+Then:  the poll should be created
+And:   I should be redirected to the event page
+
+Given: I am signed in
+And:   I am friends with the creator
+And:   I am trying to add a poll to a valid micropost
+And:   I do not provide the necessary information about the poll
+When:  I try to create a new poll
+Then:  the poll should not be created
+And:   I should get a flash message telling me what the failure was
+
+Given: I am signed in
+And:   I am friends with the creator
+And:   I am trying to add a poll to an invalid micropost
+When:  I try to create a new poll
+Then:  the poll should not be created
+And:   I should get a flash message telling me what the failure was
+
+Given: I am signed in
+And:   I am not friends with the creator
+When:  I try to create a new poll
+Then:  the poll should not be created
+And:   I should get a flash message telling me what the failure was
+
+Given: I am not signed in
+When:  I try to create a new poll
+Then:  the poll should not be created
+And:   I should get a flash message telling me I need to log in
+And:   I should be redirected to the login page
+
