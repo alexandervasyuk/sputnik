@@ -1,0 +1,20 @@
+Mobile App User Wants Micropost Detail Information
+
+Scenarios:
+
+# TESTED
+Given: I am logged in
+And:   I am friends with the user who owns the micropost
+When:  I request the detail of that micropost
+Then:  I should receive information about it in JSON form
+
+# TESTED
+Given: I am logged in
+And:   I am not friends with the user who owns the micropost
+When:  I request the detail of that micropost
+Then:  I should receive an error indicator saying I need to be friends with that user
+
+# TESTED
+Given: I am not logged in
+When:  I request the detail of that micropost
+Then:  I should be directed to the sign in page

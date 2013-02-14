@@ -1,5 +1,7 @@
 I am a Desktop User who wants to make a new proposal on a poll
 
+TESTED
+
 Given: I am logged in
 And:   I am friends with the creator
 And:   I am not participating in the event

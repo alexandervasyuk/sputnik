@@ -1,0 +1,23 @@
+Mobile App User Who Wants to Add a Characteristic to a User
+
+UNTESTED
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   The event has a characteristics app
+When:  I try to add a characteristic
+Then:  It should be added to the characteristics application
+And:   I should receive a success indicator with an updated view of all the characteristics
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   The event does not have a characteristics app
+When:  I try to add a characteristic
+Then:  It should not be added to the characteristic application
+And:   I should receive a failure indicator with a corresponding failure reason
+
+Given: I am logged in
+And:   I am not friends with the creator
+When:  I try to add a characteristic
+Then:  It should not be added to the characteristic application
+And:   I should receive a failure indicator with a corresponding failure reason

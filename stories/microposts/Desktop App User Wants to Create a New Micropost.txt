@@ -1,0 +1,19 @@
+Desktop App User Wants to Create a New Micropost
+
+Scenarios:
+
+Given: I am logged in
+And:   The data I am passing in is valid
+When:  I try to create a new micropost
+Then:  I should create it successfully
+And:   I should be directed to the micropost I just created
+
+Given: I am logged in
+And:   The data I am passing in is invalid
+When:  I try to create a new micropost
+Then:  I should not create it successfully
+
+Given: I am not logged in
+When:  I try to create a new micropost
+Then:  I should not create it successfully
+And:   I should be directed to the log in page

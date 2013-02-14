@@ -1,0 +1,23 @@
+Desktop App User Who Wants to Destroy a Micropost
+
+TESTED
+
+Scenarios:
+
+Given: I am logged in
+And:   I own the micropost
+When:  I request to destroy that micropost
+Then:  I should successfully destroy that micropost
+And:   I should be displayed a success message saying that I successfully destroyed that micropost
+
+Given: I am logged in
+And:   I do not own the micropost
+When:  I request to destroy that micropost
+Then:  I should not destroy that micropost
+And:   I should be displayed an error message saying that I cannot destroy that micropost
+
+Given: I am not logged in
+When:  I request to destroy that micropost
+Then:  I should not destroy that micropost
+And:   I should be directed to the log in page
+And:   I should be displayed an error message saying I need to log in before doing that

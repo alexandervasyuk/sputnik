@@ -1,5 +1,7 @@
 Story: I am a Mobile App User who wants to mark some notifications read
 
+TESTED
+
 Scenarios:
 
 Given: I am not logged in

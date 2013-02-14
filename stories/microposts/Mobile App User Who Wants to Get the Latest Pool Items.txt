@@ -1,0 +1,12 @@
+Mobile App User Who Wants to Get the Latest Pool Items
+
+Scenarios:
+
+Given: I am logged in
+When:  I request for my latest Pool items
+Then:  I should receive my latest Pool items
+
+Given: I am not logged in
+When:  I request for my latest Pool items
+Then:  I should not receive any Pool items
+And:   I should receive a failure indicating I need to log in

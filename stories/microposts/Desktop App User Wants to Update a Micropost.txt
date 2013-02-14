@@ -1,0 +1,33 @@
+Desktop App User Wants to Update a Micropost
+
+Scenarios:
+
+# TESTED
+Given: I am logged in
+And:   I own the micropost
+And:   All the inputs are correct
+When:  I try to update the micropost information
+Then:  The micropost should be updated
+And:   All participants should receive an email about the changes
+And:   All participants should receive a notification about the changes
+
+# UNTESTED
+Given: I am logged in
+And:   I own the micropost
+And:   Any fields are invalid
+When:  I try to update the micropost information
+Then:  The micropost should not be updated
+And:   I should receive an error message saying those fields are incorrect
+
+# TESTED
+Given: I am logged in
+And:   I do not own the micropost
+When:  I try to update the micropost information
+Then:  The micropost should not be updated
+And:   I should receive an error message saying I do not have the rights to change the information
+
+# TESTED
+Given: I am not logged in
+When:  I try to update the micropost information
+Then:  The micropost should not be updated
+And:   I should be redirected to the sign in page

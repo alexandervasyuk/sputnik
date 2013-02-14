@@ -1,5 +1,7 @@
 Mobile User Who Wants to Create a New Poll
 
+TESTED
+
 Given: I am signed in
 And:   I am friends with the creator
 And:   I am trying to add a poll to a valid micropost

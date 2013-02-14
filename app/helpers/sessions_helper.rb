@@ -30,7 +30,7 @@ module SessionsHelper
     @current_user = user
   end
 
-  def current_user
+  def current_user  
     @current_user ||= User.find_by_remember_token(cookies[:remember_token])
   end
 
@@ -81,5 +81,4 @@ module SessionsHelper
   def user_timezone
     @user_timezone ||= cookies[:timezone]
   end
-
 end

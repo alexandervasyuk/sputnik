@@ -1,5 +1,3 @@
-require 'csv'
-
 class MicropostsController < ApplicationController
   #Helper classes
   include NotificationsHelper
@@ -8,9 +6,10 @@ class MicropostsController < ApplicationController
   
   #Before Filters
   before_filter :signed_in_user
+  before_filter :friends_with_creator, only: [:detail]
   before_filter :correct_user, only: [:destroy, :update, :edit]
   before_filter :time_input_parser, only: [:create, :update]
-  before_filter :detail_prepare, only: [:detail, :mobile_detail]
+  before_filter :detail_prepare, only: [:detail]
   before_filter :create_prepare, only: [:create, :mobile_create]
   
   #Valid sources
@@ -58,9 +57,19 @@ class MicropostsController < ApplicationController
 		end
 	end
   
-    @micropost.destroy
-	
-    redirect_to root_url
+    (session[:to_delete] ||= []) << @micropost.id
+    
+	@micropost.destroy
+    
+	respond_to do |format|
+		format.html do
+			redirect_to root_url
+		end
+		
+		format.mobile do
+			render json: {status: "success", failure_reason: ""}
+		end
+	end
   end
 
   #Action responsible for returning the micropost data and populating a form for the user to edit
@@ -136,70 +145,62 @@ class MicropostsController < ApplicationController
   end
 
   def detail
-    if !@friends
-      redirect_to :back, :flash => { :error => "You must become friends with the user who created that event to view its details" } 
-    end
-  end
-  
-  def mobile_detail
-	if @friends
-		replies_data = []
-		
-		@micropost.posts.each do |post|
-			replies_data << mobile_detail_convert(post)
+	respond_to do |format|
+		format.html
+		format.mobile do
+			replies_data = []
+
+			@micropost.posts.each do |post|
+				replies_data << mobile_detail_convert(post)
+			end
+
+			json_response = {status:"success", failure_reason: "", replies_data: replies_data}
+
+			render json: json_response
 		end
-	
-		json_response = {status:"success", replies_data: replies_data}
-	
-		render json: json_response
-	else
-		json_response = {status: "failure", replies_data: []}
-	
-		render json: json_response
 	end
   end
   
   #Action responsible for rendering an updated user feed
   def refresh
-    @feed_items = current_user.feed
-    
-    if params[:num].to_i == @feed_items.count
-      render text: "cancel"
-    else
-      render partial:'shared/feed'
-    end
-  end
+	to_delete = session[:to_delete] || []
   
-  def mobile_refresh
-	@new_feed_items = current_user.feed_after(session[:feed_latest])
-	
-	to_delete = []
-	params[:ids].each do |id|
-		if !Micropost.exists?(id)
-			to_delete << id
+	respond_to do |format|
+		format.js do 
+			@feed_items = current_user.feed
+			
+			if params[:num].to_i == @feed_items.count
+			  render text: "cancel"
+			else
+			  render partial:'shared/feed'
+			end
 		end
-	end
-	
-	if !@new_feed_items.empty?
-		session[:feed_latest] = @new_feed_items.maximum("updated_at")
-	
-		updates = []
-		
-		@new_feed_items.each do |update|
-			updates << update.to_mobile
+			
+		format.mobile do
+			@new_feed_items = current_user.feed_after(session[:feed_latest])
+			
+			if !@new_feed_items.empty?
+				session[:feed_latest] = @new_feed_items.maximum("updated_at")
+			
+				updates = []
+				
+				@new_feed_items.each do |update|
+					updates << update.to_mobile
+				end
+				
+				json_response = {status: "success", feed_items: updates, to_delete: to_delete}
+				
+				render json: json_response
+			elsif !to_delete.empty?
+				json_response = {status: "success", feed_items: [], to_delete: to_delete}
+				
+				render json: json_response
+			else
+				json_response = {status: "failure", feed_items: [], to_delete: to_delete}
+				
+				render json: json_response
+			end
 		end
-		
-		json_response = {status: "success", feed_items: updates, to_delete: to_delete}
-		
-		render json: json_response
-	elsif !to_delete.empty?
-		json_response = {status: "success", feed_items: [], to_delete: to_delete}
-		
-		render json: json_response
-	else
-		json_response = {status: "failure", feed_items: [], to_delete: to_delete}
-		
-		render json: json_response
 	end
   end
 
@@ -240,27 +241,34 @@ class MicropostsController < ApplicationController
 	end
   end
   
-  #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
-  def detail_prepare
+  #BEFORE FILTER - before filter that checks if the current user is friends with the owner of the miropost
+  def friends_with_creator
 	@micropost = Micropost.find(params[:id])
-    
 	@friends = current_user.friends?(@micropost.user)
 	
-    if @friends
-      @post = current_user.posts.build(micropost_id:params[:id])
+	if !@friends
+		respond_to do |format|
+			format.html {redirect_to :back, flash: {error: "You must become friends with the user who created that event to view its details" } }
+			format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+		end
+	end
+  end
+  
+  #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
+  def detail_prepare
+	  @post = current_user.posts.build(micropost_id:params[:id])
 	  @polls = @micropost.polls.all
-      
+	  
 	  @friends = current_user.friends
 	  
 	  #Gather Participants
-      @participants = []
-      @micropost.participations.each do |participation|
-        @participants << User.find(participation.user_id)
-      end
+	  @participants = []
+	  @micropost.participations.each do |participation|
+		@participants << User.find(participation.user_id)
+	  end
 	  
 	  #Reply data
-      @post_items = @micropost.posts.reverse!
-	end
+	  @post_items = @micropost.posts.reverse!
   end
   
   #BEFORE FILTER - before filter that prepares the relevant information for create (web app and mobile)
