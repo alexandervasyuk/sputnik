@@ -359,14 +359,14 @@ describe MicropostsController do
 					session[:feed_latest] = fourth_event.updated_at + 1.seconds
 					
 					sign_in(friend)
-					post "destroy", id: fourth_event.id
+					expect do
+						post "destroy", id: fourth_event.id
+					end.to change { Micropost.all.count }.by(-1)
 					
 					session[:to_delete].should include(fourth_event_id)
 					
 					sign_in(user)
 					post "refresh", format: "mobile"
-					
-					session[:to_delete].should include(fourth_event_id)
 					
 					json_response = {status: "success", feed_items: [fifth_event.to_mobile], to_delete: [fourth_event_id]}.to_json
 					

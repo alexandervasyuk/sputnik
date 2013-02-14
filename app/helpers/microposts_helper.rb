@@ -25,4 +25,20 @@ module MicropostsHelper
 			{replier_id: replier.id, replier_picture: replier.avatar.url, reply_text: post.content, replier_name: replier.name, posted_time: post.created_at}
 		end
 	end
+	
+	def add_to_deleted(micropost)
+		(session[:to_delete] ||= []) << micropost.id
+	end
+	
+	def retrieve_deleted
+		if session[:to_delete]
+			temp = (session[:to_delete] || []).dup
+			
+			session[:to_delete].clear
+			
+			return temp
+		end
+		
+		return []
+	end
 end

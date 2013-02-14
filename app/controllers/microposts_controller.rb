@@ -56,7 +56,7 @@ class MicropostsController < ApplicationController
 			participation.delete
 		end
 	end
-  
+	
     (session[:to_delete] ||= []) << @micropost.id
     
 	@micropost.destroy
@@ -163,7 +163,7 @@ class MicropostsController < ApplicationController
   
   #Action responsible for rendering an updated user feed
   def refresh
-	to_delete = session[:to_delete] || []
+	to_delete = retrieve_deleted
   
 	respond_to do |format|
 		format.js do 
