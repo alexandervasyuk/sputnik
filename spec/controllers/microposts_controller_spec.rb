@@ -224,12 +224,39 @@ describe MicropostsController do
 		end
 		
 		describe "who is not logged in" do
-			it "should redirect to the signin page" do
+			it "should redirect to the signin page on create" do
 				micropost = {micropost: {content: "Lorem Ipsum", location: "Lorem Ipsum", time: "now"}}
 							
-				expect do
-					post "create", micropost
-				end.not_to change { Micropost.all.count }
+				post "create", micropost
+				
+				response.should redirect_to signin_url
+			end
+			
+			it "should redirect to the signin page on create" do
+				micropost = FactoryGirl.create(:micropost, user: user)
+				user.participate(micropost)
+				
+				delete = {id: micropost.id}
+				
+				post "destroy", delete
+				
+				response.should redirect_to signin_url
+			end
+			
+			it "should redirect to the signin page on update" do
+				micropost = FactoryGirl.create(:micropost, user: user)
+				
+				edit = {id: micropost.id, micropost: {content: "new content", location: "new location", time: micropost.time}}
+				
+				post "update", edit
+				
+				response.should redirect_to signin_url
+			end
+			
+			it "should redirect to the signin page on detail request" do
+				micropost = FactoryGirl.create(:micropost, user: user)
+				
+				post "detail", id: micropost.id
 				
 				response.should redirect_to signin_url
 			end
