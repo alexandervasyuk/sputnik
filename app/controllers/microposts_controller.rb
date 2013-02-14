@@ -57,7 +57,7 @@ class MicropostsController < ApplicationController
 		end
 	end
 	
-    (session[:to_delete] ||= []) << @micropost.id
+    add_to_deleted(@micropost)
     
 	@micropost.destroy
     
