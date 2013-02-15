@@ -1,0 +1,29 @@
+Desktop App User Wants to Create a New Post
+
+Scenarios:
+
+Given: I am logged in
+And:   I am friends with the creator of the micropost that I am posting to
+And:   I am participating in the event
+When:  I try to create a new post
+Then:  I should create a new post
+And:   I should be redirected to the corresponding micropost
+
+Given: I am logged in
+And:   I am friends with the creator of the micropost that I am posting to
+And:   I am not participating in the event
+When:  I try to create a new post
+Then:  I should create a new post
+And:   I should be redirected to the corresponding micropost
+And:   I should be automatically participated in the micropost
+
+Given: I am logged in
+And:   I am not friends with the creator of the micropost that I am posting to
+When:  I try to create a new post
+Then:  I should not create a new post
+And:   I should get an error message saying I must be friends with the creator
+
+Given: I am not logged in
+When:  I try to create a new post
+Then:  I should not create a new post
+And:   I should be redirected to the signin page with an error saying I must sign in first
