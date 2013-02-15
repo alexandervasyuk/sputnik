@@ -2,6 +2,7 @@ Mobile App User Wants to Create a New Micropost
 
 Scenarios:
 
+# TESTED
 Given: I am logged in
 And:   The data I am passing in is valid
 When:  I try to create a new micropost
@@ -10,12 +11,14 @@ And:   I should get a success indicator
 And:   I should get the information of the created micropost
 And:   I should get the feed and pool information of the current user
 
+# TESTED
 Given: I am logged in
 And:   The data I am passing in is invalid
 When:  I try to create a new micropost
 Then:  I should not create it successfully
 And:   I should get the corresponding error message
 
+# TESTED
 Given: I am not logged in
 When:  I try to create a new micropost
 Then:  I should not create it successfully

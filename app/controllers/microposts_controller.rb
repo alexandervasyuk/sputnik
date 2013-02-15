@@ -158,10 +158,10 @@ class MicropostsController < ApplicationController
 			replies_data = []
 
 			@micropost.posts.each do |post|
-				replies_data << mobile_detail_convert(post)
+				replies_data << post.to_mobile
 			end
 
-			json_response = {status:"success", failure_reason: "", replies_data: replies_data}
+			json_response = {status:"success", failure_reason: "", micropost: @micropost.to_mobile, replies_data: replies_data}
 
 			render json: json_response
 		end

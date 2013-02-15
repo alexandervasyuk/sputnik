@@ -18,14 +18,6 @@ module MicropostsHelper
 		end
     end
 	
-	def mobile_detail_convert(post)
-		if post.present?
-			replier = post.user
-			
-			{replier_id: replier.id, replier_picture: replier.avatar.url, reply_text: post.content, replier_name: replier.name, posted_time: post.created_at}
-		end
-	end
-	
 	def add_to_deleted(micropost)
 		(session[:to_delete] ||= []) << micropost.id
 	end

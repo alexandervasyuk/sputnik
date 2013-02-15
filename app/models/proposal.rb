@@ -8,6 +8,12 @@ class Proposal < ActiveRecord::Base
   validates :poll_id, presence: true
   
   def to_mobile
-	{ id: self.id, content: content, location: location, time: time, end_time: end_time }
+	users = []
+	
+	self.users.each do |user|
+		users << user.id
+	end
+  
+	{ id: self.id, content: content, time: time, end_time: end_time, users: users }
   end
 end

@@ -301,21 +301,35 @@ describe MicropostsController do
 				let(:not_friend) { FactoryGirl.create(:user) }
 				
 				describe "who is friends with the creator of the micropost" do
-					before { generate_posts_for(micropost, 3) }
+					before do 
+						generate_posts_for(micropost, 3)
+						@poll = FactoryGirl.create(:poll, micropost: micropost)
+						
+						5.times do 
+							user.proposals << FactoryGirl.create(:proposal, poll: @poll)
+						end
+						
+						user.save
+					end
 		
-					it "should correctly return the information as json when the users are friends" do
+					it "should correctly return the information as json" do
 						make_friends(user, friend)
 						sign_in(friend)
 					
 						replies_data = []
+						polls_data = []
 						
 						micropost.posts.reverse.each do |post|
-							replies_data << {replier_id: post.user.id, replier_picture: post.user.avatar.url, reply_text: post.content, replier_name: post.user.name, posted_time: post.created_at}
+							replies_data << {replier_picture: post.user.avatar.url, replier_id: post.user.id, reply_text: post.content, reply_picture: post.photo.url, replier_name: post.user.name, posted_time: post.created_at}
+						end
+						
+						micropost.polls.reverse.each do |poll|
+							polls_data << poll.to_mobile
 						end
 						
 						post "detail", id: micropost.id, format: "mobile"
 						
-						response_json = {status: "success", failure_reason: "", replies_data: replies_data}.to_json
+						response_json = {status: "success", failure_reason: "", micropost: micropost.to_mobile, replies_data: replies_data}.to_json
 						
 						response.body.should == response_json
 					end

@@ -18,7 +18,7 @@ class Post < ActiveRecord::Base
 	def to_mobile
 		replier = self.user
 
-		{replier_picture: replier.avatar.url, reply_text: self.content, replier_name: replier.name, posted_time: self.created_at, posted_id: self.id}
+		{replier_picture: replier.avatar.url, replier_id: replier.id, reply_text: self.content, reply_picture: self.photo.url, replier_name: replier.name, posted_time: self.created_at}
 	end
 
 	def update_micropost
