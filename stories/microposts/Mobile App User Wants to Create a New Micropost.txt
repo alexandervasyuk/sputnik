@@ -7,6 +7,8 @@ And:   The data I am passing in is valid
 When:  I try to create a new micropost
 Then:  I should create it successfully
 And:   I should get a success indicator
+And:   I should get the information of the created micropost
+And:   I should get the feed and pool information of the current user
 
 Given: I am logged in
 And:   The data I am passing in is invalid

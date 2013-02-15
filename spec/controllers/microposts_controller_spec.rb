@@ -9,7 +9,7 @@ describe MicropostsController do
 		
 			describe "who wants to create a new micropost" do				
 				describe "no errors in form input" do
-					it "should successfully save the record and render the home page" do
+					it "should successfully save the record and redirect to the micropost's detail page" do
 						["now", "12:30PM January 5th", "tomorrow", "tomorrow at 5PM"].each do |time|
 							micropost = {micropost: {content: "Lorem ipsum", location: "Lorem ipsum", time: time}}
 							
@@ -30,23 +30,11 @@ describe MicropostsController do
 						
 						response.should redirect_to(detail_micropost_path(micropost.id))
 					end
-					
-					it "should successfully create the record on the mobile" do
-						micropost = {micropost: {content: "Lorem ipsum", location: nil, time: nil}}
-						
-						expect do 
-							post "mobile_create", micropost
-						end.to change { Micropost.all.count }.by(1)
-						
-						micropost = Micropost.all.last
-						
-						response.body.should == {status: "success", feed: user.mobile_feed, pool: user.mobile_pool, created: micropost.to_mobile}.to_json
-					end
 				end
 				
 				describe "errors in form input" do
 					it "should not create records on incorrectly formatted times" do
-						["hi"].each do |time|
+						["hi", "never"].each do |time|
 							micropost = {micropost: {content: "Lorem Ipsum", location: "Lorem Ipsum", time: time}}
 						
 							expect do
@@ -221,6 +209,14 @@ describe MicropostsController do
 					end
 				end
 			end
+		
+			describe "who wants to pull the newest feed items" do
+				
+			end
+			
+			describe "who wants to pull the newest pool items" do
+				
+			end
 		end
 		
 		describe "who is not logged in" do
@@ -268,7 +264,27 @@ describe MicropostsController do
 			before { sign_in user }
 			
 			describe "who wants to create a new micropost" do
-			
+				describe "no errors in form input" do
+					it "should successfully save the record and receive a success indicator" do
+						expect do
+							post "create", micropost: {content: "Lorem ipsum", location: "Lorem ipsum", time: "now"}, format: "mobile"
+						end.to change { Micropost.all.count }.by(1)
+						
+						response.body.should == {status: "success", feed: user.feed, pool: user.pool, created: Micropost.last.to_mobile}.to_json
+					end
+				end
+				
+				describe "errors in form input" do
+					it "should not create records on incorrectly formatted times" do
+						["hi", "never"].each do |time|
+							expect do
+								post "create", micropost: {content: "Lorem Ipsum", location: "Lorem Ipsum", time: time}, format: "mobile"
+							end.not_to change { Micropost.all.count }
+							
+							response.body.should == {status: "failure", failure_reason: "TIME_FORMAT"}.to_json
+						end
+					end
+				end
 			end
 			
 			describe "who wants to destroy a micropost" do

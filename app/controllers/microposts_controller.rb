@@ -27,21 +27,28 @@ class MicropostsController < ApplicationController
   #Action responsible for creating a new micropost from form inputs
   #Input interface - content, location, time
   def create
-    if @created
-	  redirect_to detail_micropost_path(@micropost.id)
-	else 
-	  @feed_items = current_user.feed
-	  @pool_items = @feed_items
-	
-	  render 'static_pages/home'
+	respond_to do |format|
+		if @created
+			format.html { redirect_to detail_micropost_path(@micropost.id) }
+			format.mobile do 
+				json_response = {status: "success", feed: current_user.mobile_feed, pool: current_user.mobile_pool, created: @micropost.to_mobile}
+			
+				render json: json_response
+			end
+		else
+			format.html do
+				@feed_items = current_user.feed
+				@pool_items = @feed_items
+		
+				render 'static_pages/home'
+			end
+		end
 	end
   end
   
   def mobile_create
 	if @created
-		json_response = {status: "success", feed: current_user.mobile_feed, pool: current_user.mobile_pool, created: @micropost.to_mobile}
 		
-		render json: json_response
 	else
 		json_response = {status: "failure", feed: [], pool: [], created: {}}
 		
@@ -224,20 +231,25 @@ class MicropostsController < ApplicationController
 	user_time = params[:micropost][:time]
 	params[:micropost][:time] = parse_time(params[:micropost][:time]) if !user_time.blank?
   
-    end_user_time = params[:micropost][:end_time]
+	end_user_time = params[:micropost][:end_time]
 	params[:micropost][:end_time] = parse_time(params[:micropost][:end_time]) if !end_user_time.blank?
   
 	@micropost = current_user.microposts.build(params[:micropost])
   
 	# Case where the user types something but the text conversion fails
-	if user_time && params[:micropost][:time].nil?
-	   @micropost.errors[:time].clear
-	   @micropost.errors.add(:time, "incorrect time format")
-	   
-	   render 'static_pages/home'
-	elsif end_user_time && params[:micropost][:end_time].nil?
-	   @micropost.errors[:time].clear
-	   @micropost.errors.add(:time, "incorrect time format")
+	if (user_time && params[:micropost][:time].nil?) || (end_user_time && params[:micropost][:end_time].nil?)
+		respond_to do |format|
+			format.html do
+			   @micropost.errors[:time].clear
+			   @micropost.errors.add(:time, "incorrect time format")
+			   
+			   render 'static_pages/home'
+			end
+		   
+			format.mobile do
+				render json: {status: "failure", failure_reason: "TIME_FORMAT"}
+			end
+		end
 	end
   end
   
