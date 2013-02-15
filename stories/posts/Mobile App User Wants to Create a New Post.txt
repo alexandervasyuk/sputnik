@@ -2,6 +2,7 @@ Mobile App User Wants to Create a New Post
 
 Scenarios:
 
+# TESTED
 Given: I am logged in
 And:   I am friends with the creator of the micropost that I am posting to
 And:   I am using valid values for the post
@@ -10,6 +11,7 @@ When:  I try to create a new post
 Then:  I should create a new post
 And:   I should receive a success indicator
 
+# TESTED
 Given: I am logged in
 And:   I am friends with the creator of the micropost that I am posting to
 And:   I am using valid values for the post
@@ -19,6 +21,7 @@ Then:  I should create a new post
 And:   I should receive a success indicator
 And:   I should be automatically participated in the micropost
 
+# NOT FULLY TESTED
 Given: I am logged in
 And:   I am friends with the creator of the micropost that I am posting to
 And:   I am not using valid values for the post
@@ -26,12 +29,14 @@ When:  I try to create a new post
 Then:  I should not create
 And:   I should receive an error indicator telling me I need to use valid values
 
+# TESTED
 Given: I am logged in
 And:   I am not friends with the creator of the micropost that I am posting to
 When:  I try to create a new post
 Then:  I should not create a new post
 And:   I should get an error indicator saying I must be friends with the creator
 
+# TESTED
 Given: I am not logged in
 When:  I try to create a new post
 Then:  I should not create a new post

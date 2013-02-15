@@ -1,0 +1,10 @@
+Mobile App User Wants to Delete a Post
+
+Scenarios:
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I made the post
+When:  I request to delete the post
+Then:  It should be deleted
+And:   I should receive a success indicator

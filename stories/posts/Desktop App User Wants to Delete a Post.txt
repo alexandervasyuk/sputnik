@@ -1,0 +1,4 @@
+Web App User Wants to Delete a Post
+
+Scenarios:
+
