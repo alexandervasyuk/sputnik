@@ -3,36 +3,28 @@ class PostsController < ApplicationController
 
   #Before Filters
   before_filter :signed_in_user
+  before_filter :valid_micropost, only: [:create]
+  before_filter :friends_with_creator, only: [:create]
+  before_filter :before_create, only: [:create]
+  
   before_filter :correct_user, only: :destroy
   
   #After Filters
-  before_filter :before_create, only: [:create, :create_mobile]
-  after_filter :after_create, only: [:create, :create_mobile]
+  after_filter :after_create, only: [:create]
 
   #Sweepers
-  cache_sweeper :event_sweeper, only: [:create, :create_mobile, :destroy]
+  cache_sweeper :event_sweeper, only: [:create, :destroy]
   
   def create
-    if !@created
-      flash[:error] = 'Post can not be empty'
-      @post_items = []
-	end
-	
 	respond_to do |format|
-		format.html { redirect_to detail_micropost_path(@post.micropost_id) }
 		format.js
-	end
-  end
+		format.html { redirect_to detail_micropost_path(@post.micropost_id) }
+		
+		format.mobile do
+			json_response = {status: "success"}
   
-  def create_mobile
-	if @created
-	  json_response = {status: "success"}
-	  
-	  render json: json_response
-	else
-	  json_response = {status: "failure"}
-	  
-	  render json: json_response
+			render json: json_response
+		end
 	end
   end
 
@@ -87,18 +79,51 @@ class PostsController < ApplicationController
     redirect_to root_url if @post.nil?
   end
   
+  def valid_micropost
+	@micropost = Micropost.find_by_id(params[:post][:micropost_id])
+	
+	if !@micropost
+		respond_to do |format|
+			format.html { redirect_to root_url, flash: {error: "That is not a valid happening to post to" } }
+			format.mobile { render json: {status: "failure", failure_reason: "INVALID_MICROPOST"} }
+		end
+	end
+  end
+  
+  def friends_with_creator
+	if !current_user.friends?(@micropost.user)
+		respond_to do |format|
+			format.html { redirect_to root_url, flash: {error: "You must be friends with that user to post in that happening"} }
+			format.mobile { render json: {status: "failure", failure_reason: "NOT_FRIENDS"} }
+		end
+	end
+  end
+  
   #BEFORE FILTER - filters to perform the actual creation that is common across all platform
   def before_create
 	@post = current_user.posts.create(params[:post])
 	
-	@created = @post.save
+	if !@post.save
+		respond_to do |format|
+			format.js
+			format.html { redirect_to detail_micropost_path(@post.micropost_id), flash: {error: 'Post can not be empty'} }
+			
+			format.mobile do
+				json_response = {status: "failure"}
+	  
+				render json: json_response
+			end
+		end
+	end
   end
   
   #AFTER FILTER - filters to send the correct notifications and other clean up duties after creation
   def after_create
-	if @created
 	  #Creates internal notifications for all the participants in the event
-      event_post(@post.micropost) 
-	end
+	  event_post(@micropost)
+	  
+	  if !current_user.participating?(@micropost)
+		current_user.participate(@micropost)
+	  end
   end
 end

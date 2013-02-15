@@ -64,7 +64,7 @@ class SessionsController < ApplicationController
     
     if @sign_in_success
       sign_in(@user, timezone)
-	  set_location(request)
+	  #set_location(request)
 	end
   end
 end

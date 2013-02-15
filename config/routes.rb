@@ -61,7 +61,6 @@ Sputnik::Application.routes.draw do
   match '/mobile/signin', to: 'sessions#create_mobile'
   match '/mobile/signout', to: 'sessions#destroy_mobile'
   match '/mobile/signup', to: 'users#create_mobile'
-  match '/mobile/event_reply', to: 'posts#create_mobile'
   match '/mobile/post_refresh', to: 'posts#mobile_refresh'
   match '/mobile/user', to: 'users#show_mobile'
   match '/mobile/relationship_update', to: 'relationships#mobile_update'
