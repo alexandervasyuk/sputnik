@@ -15,9 +15,6 @@ class MicropostsController < ApplicationController
   #Valid sources
   respond_to :html, :js
   
-  #Security
-  protect_from_forgery except: [:mobile_detail, :mobile_refresh, :mobile_create]
-  
   #Caches
   #caches_page :detail
   
@@ -30,7 +27,7 @@ class MicropostsController < ApplicationController
 	respond_to do |format|
 		if @created
 			format.html { redirect_to detail_micropost_path(@micropost.id) }
-			format.mobile do 
+			format.mobile do
 				json_response = {status: "success", feed: current_user.mobile_feed, pool: current_user.mobile_pool, created: @micropost.to_mobile}
 			
 				render json: json_response

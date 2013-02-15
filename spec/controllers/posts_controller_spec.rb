@@ -6,7 +6,6 @@ describe PostsController do
 	let(:micropost) { FactoryGirl.create(:micropost, user: friend) }
 
 	describe "desktop app user" do
-		
 		describe "who is logged in" do
 			before { sign_in(user) }
 			
@@ -106,7 +105,13 @@ describe PostsController do
 					
 					describe "who is using valid values" do
 						describe "who is not participating in the micropost" do
-							
+							it "should create the post and should make the user participating in the micropost afterwards" do							
+								expect do
+									post "create", post: {content: "Something ridiculous", micropost_id: micropost.id}, format: "mobile"
+								end.to change { Post.all.count }.by(1)
+								
+								user.participating?(micropost).should be_true
+							end
 						end
 					
 						it "should successfully create a post on the mobile app" do
@@ -118,6 +123,8 @@ describe PostsController do
 							
 							updated_post = Post.last
 							updated_post.content.should == "Super strange content"
+							
+							response.body.should == {status: "success"}.to_json
 						end
 						
 						it "should generate internal notifications for all participating users" do
