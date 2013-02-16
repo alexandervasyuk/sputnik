@@ -1,0 +1,20 @@
+Mobile User Wants to Make a Friend Request
+
+Scenarios:
+
+Given: I am logged in
+And:   We do not already have a relationship
+When:  I request to be friends
+Then:  My friend request should be sent
+And:   That person should be notified of this event
+
+Given: I am logged in
+And:   We already have a relationship
+When:  I request to be friends
+Then:  My friend request should not be sent
+And:   I should receive a failure indicator saying we already have a relationship
+
+Given: I am not logged in
+When:  I request to be friends
+Then:  My friend request should not be sent
+And:   I should receive a failure indicator saying I need to log in

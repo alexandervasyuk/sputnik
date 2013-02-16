@@ -1,0 +1,19 @@
+Mobile User Wants to Ignore a Friend Request
+
+Scenarios:
+
+Given: I am logged in
+And:   There is a friend request from that user
+When:  I ignore that user's friend request
+Then:  The friend request should become ignored
+
+Given: I am logged in
+And:   There is not a friend request from that user
+When:  I ignore that user's friend request
+Then:  Nothing should change about our relationship
+And:   I should receive a failure indicator
+
+Given: I am not logged in
+When:  I ignore that user's friend request
+Then:  Nothing should change about our relationship
+And:   I should receive a failure indicator saying I must log in first

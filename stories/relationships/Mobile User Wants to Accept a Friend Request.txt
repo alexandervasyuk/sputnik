@@ -1,0 +1,20 @@
+Mobile User Wants to Accept a Friend Request
+
+Scenarios:
+
+Given: I am logged in
+And:   There is a friend request from that person
+When:  I accept their friend request
+Then:  We should become friends
+And:   The other user should be notified of this event
+
+Given: I am logged in
+And:   There is not a friend request from that person
+When:  I accept their friend request
+Then:  Nothing about our relationship should change
+And:   I should receive a failure indicator saying I have not received a friend request from that user
+
+Given: I am not logged in
+When:  I accept their friend request
+Then:  Nothing should change about our relationship
+And:   I should receive a failure indicator saying I need to log in first

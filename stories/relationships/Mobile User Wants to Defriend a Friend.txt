@@ -1,0 +1,19 @@
+Mobile User Wants to Defriend a Friend
+
+Scenarios:
+
+Given: I am logged in
+And:   I am friends with that user
+When:  I defriend that user
+Then:  We should no longer be friends
+And:   I should receive a success indicator
+
+Given: I am logged in
+And:   I am not friends with that user
+When:  I defriend that user
+Then:  Nothing should change about our relationship
+And:   I should receive a failure indicator saying I must friend that user first
+
+Given: I am not logged in
+When:  I defriend that user
+Then:  I should receive a failure indicator saying I must log in first
