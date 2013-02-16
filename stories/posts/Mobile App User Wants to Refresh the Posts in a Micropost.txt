@@ -2,20 +2,30 @@ Mobile App User Wants to Refresh the Posts in a Micropost
 
 Scenarios:
 
+# TESTED
 Given: I am logged in
 And:   I am friends with the creator
 And:   I have new posts to display
+When:  I request a refresh of the posts
+Then:  I should receive a list of posts to add
+And:   I should receive a list of posts to remove from the view
+
+# TESTED
+Given: I am logged in
+And:   I am friends with the creator
 And:   I have posts that were deleted
 When:  I request a refresh of the posts
 Then:  I should receive a list of posts to add
 And:   I should receive a list of posts to remove from the view
 
+# TESTED
 Given: I am logged in
 And:   I am not friends with the creator
 When:  I request a refresh of the posts
 Then:  I should not receive any posts
 And:   I should receive an error indicator saying I need to be friends with the creator
 
+# TESTED
 Given: I am not logged in
 When:  I request a refresh of the posts
 Then:  I should not receive any posts

@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include NotificationsHelper
   include GoogleHelper
   include ProposalsHelper
+  include PostsHelper
   include BetaHelper
   
   def protect_against_forgery?

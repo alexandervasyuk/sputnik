@@ -10,7 +10,7 @@ class MicropostsController < ApplicationController
   before_filter :correct_user, only: [:destroy, :update, :edit]
   before_filter :time_input_parser, only: [:create, :update]
   before_filter :detail_prepare, only: [:detail]
-  before_filter :create_prepare, only: [:create, :mobile_create]
+  before_filter :create_prepare, only: [:create]
   
   #Valid sources
   respond_to :html, :js
@@ -278,6 +278,8 @@ class MicropostsController < ApplicationController
 	  
 	  #Reply data
 	  @post_items = @micropost.posts.reverse!
+	  
+	  set_latest_post(@micropost, @post_items.first)
   end
   
   #BEFORE FILTER - before filter that prepares the relevant information for create (web app and mobile)

@@ -3,14 +3,16 @@ class PostsController < ApplicationController
 
   #Before Filters
   before_filter :signed_in_user
-  before_filter :valid_micropost, only: [:create]
-  before_filter :friends_with_creator, only: [:create]
-  before_filter :before_create, only: [:create]	
+  before_filter :valid_micropost, only: [:create, :refresh]
+  before_filter :friends_with_creator, only: [:create, :refresh]
+  before_filter :before_create, only: [:create]
   
   before_filter :correct_user, only: :destroy
   
   #After Filters
   after_filter :after_create, only: [:create]
+  after_filter :after_destroy, only: [:destroy]
+  after_filter :after_refresh, only: [:refresh]
 
   #Sweepers
   cache_sweeper :event_sweeper, only: [:create, :destroy]
@@ -21,7 +23,7 @@ class PostsController < ApplicationController
 		format.html { redirect_to detail_micropost_path(@post.micropost_id) }
 		
 		format.mobile do
-			json_response = {status: "success"}
+			json_response = {status: "success", post: @post.to_mobile}
   
 			render json: json_response
 		end
@@ -30,52 +32,28 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    redirect_to :back
+	
+	respond_to do |format|
+		format.html { redirect_to :back }
+		format.mobile { render json: {status: "success"} }
+	end
   end
   
   #Code to handle ajax pulling requests
-  def refresh  
-  	@micropost = Micropost.find(params[:id])
-  	
-  	if @micropost
-  		@post_items = @micropost.posts
-  		
-  		if params[:num].to_i == @post_items.count
-  			render text: "cancel"
-  		else
-  			render partial: 'microposts/post_item', collection: @post_items
-  		end
-  	end
-  end
-  
-  def mobile_refresh
-	@micropost = current_user.feed.find(params[:micropost_id])
-	
-	if @micropost
-		@post_updates = @micropost.posts
+  def refresh
+		@post_items = get_later_posts(@micropost)
+		@mobile_post_items = @post_items.collect { |post_item| post_item.to_mobile }
 		
-		updates = []
-		
-		@post_updates.each do |update|
-			updates << update.to_mobile
+		respond_to do |format|
+			format.html { render partial: 'microposts/post_item', collection: @post_items }
+			format.mobile { render json: {status: "success", replies: @mobile_post_items, to_delete: retrieve_deleted_posts} }
 		end
-		
-		json_response = {status: "success", replies_data: updates}
-		
-		render json: json_response
-	else	
-		json_response = {status: "failure", replies_data: []}
-		
-		render json: json_response
-	end
   end
 
   private
 
   def correct_user
-	Rails.logger.debug("\n\nASDFASDF\n\n")
-  
-    @post = current_user.posts.find(params[:id])
+	@post = current_user.posts.find_by_id(params[:id])
 	
     if @post.nil?
 		respond_to do |format|
@@ -87,7 +65,7 @@ class PostsController < ApplicationController
   end
   
   def valid_micropost
-	@micropost = Micropost.find_by_id(params[:post][:micropost_id])
+	@micropost = Micropost.find_by_id(params[:micropost_id] || params[:post][:micropost_id])
 	
 	if !@micropost
 		respond_to do |format|
@@ -132,5 +110,15 @@ class PostsController < ApplicationController
 	  if !current_user.participating?(@micropost)
 		current_user.participate(@micropost)
 	  end
+	  
+	  set_latest_post(@micropost, @post)
+  end
+  
+  def after_destroy
+	add_deleted_post(@post)
+  end
+  
+  def after_refresh
+	set_latest_post(@micropost, @post_items.first)
   end
 end

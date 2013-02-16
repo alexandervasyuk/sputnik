@@ -1,4 +1,5 @@
 include ApplicationHelper
+include PostsHelper
 
 def sign_in(user)
   #visit signin_path
@@ -58,15 +59,19 @@ end
 def generate_posts_for(micropost, num_posts)
 	creator = micropost.user
 
+	posts = []
+	
 	while num_posts > 0 do
 		poster = FactoryGirl.create(:user)
 		make_friends(poster, creator)
 		poster.participate(micropost)
 		
-		post = FactoryGirl.create(:post, user: poster, micropost: micropost)
+		posts << FactoryGirl.create(:post, user: poster, micropost: micropost)
 		
 		num_posts-=1
 	end
+	
+	return posts
 end
 
 # Generates the specified number of polls for the specified micropost
