@@ -24,38 +24,16 @@ class RelationshipsController < ApplicationController
 	  respond_to do |format|
 		format.html { redirect_to :back }
 		format.js
-		format.mobile do 
-			render json: {status: "success"}
-		end
+		format.mobile { render json: {status: "success"} }
 	  end
     elsif params[:type] == 'IGNORE'
-      relationship = Relationship.find(params[:id])
-      relationship.friend_status = "IGNORED"
-      relationship.save
-      
-      redirect_to :back
-	end
-  end
-  
-  def mobile_update
-	if params[:type] == 'ACCEPT'
-		user = User.find(params[:id])
-		
-		if user
-			current_user.accept_friend(user)
-			render json: {status: "success"}
-		else	
-			render json: {status: "failure"}
-		end
-	elsif params[:type] == 'IGNORE'
-		user = User.find(params[:id])
-		
-		if user
-			current_user.ignore(user)
-			render json: {status: "success"}
-		else
-			render json: {status: "failure"}
-		end
+	  @updated = current_user.ignore(@friend_requester)
+	
+      respond_to do |format|
+		format.html { redirect_to :back }
+		format.js
+		format.mobile { render json: {status: "success"} }
+      end
 	end
   end
 
@@ -97,9 +75,9 @@ class RelationshipsController < ApplicationController
   end
   
   def before_update
-	@friend_requester = User.find_by_id(params[:id]) || User.find_by_id(params[:relationship][:follower_id])
+	@friend_requester = User.find_by_id(params[:requester_id]) || User.find_by_id(params[:relationship][:follower_id])
 	
-	if !@friend_requester.pending?(current_user) && params[:type] == "ACCEPT"
+	if !@friend_requester.pending?(current_user)
 		respond_to do |format|
 			format.html
 			format.js
@@ -121,11 +99,13 @@ class RelationshipsController < ApplicationController
   end
   
   def after_update
-	if params[:type] == "ACCEPT" && @updated
-		creator_id = @friend_requester.id
-		message = current_user.name + " has accepted your friendship"
-		link = '/friend'
-		create_notification(creator_id, message, link) 
+	 if @updated
+		if params[:type] == "ACCEPT"
+			creator_id = @friend_requester.id
+			message = current_user.name + " has accepted your friendship"
+			link = '/friend'
+			create_notification(creator_id, message, link)
+		end
 	end
   end
 end

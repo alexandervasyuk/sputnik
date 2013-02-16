@@ -67,21 +67,23 @@ describe RelationshipsController do
 				before { other_user.friend_request(user) }
 				
 				it "should successfully accept the friend request" do
-					post "update", id: other_user.id, type: "ACCEPT", format: "mobile"
+					post "update", id: other_user.id, requester_id: other_user.id, type: "ACCEPT", format: "mobile"
 					
 					response.body.should == {status: "success"}.to_json
+					
+					user.get_relationship(other_user).friend_status.should == "FRIENDS"
 				end
 				
 				it "should alert the user who sent the friend request that their request has been accepted" do
 					expect do
-						post "update", id: other_user.id, type: "ACCEPT", format: "mobile"
+						post "update", id: other_user.id, requester_id: other_user.id, type: "ACCEPT", format: "mobile"
 					end.to change { other_user.notifications.count }.by(1)
 				end
 			end
 			
 			describe "when there is not a pending friend request from the other user" do
 				it "should not make the two users friends and should respond with a failure indicator saying there is no pending request" do
-					post "update", id: other_user.id, type: "ACCEPT", format: "mobile"
+					post "update", id: other_user.id, requester_id: other_user.id, type: "ACCEPT", format: "mobile"
 					
 					response.body.should == {status: "failure", failure_reason: "NO_FRIEND_REQUEST"}.to_json
 				end
@@ -90,14 +92,22 @@ describe RelationshipsController do
 		
 		describe "who wants to ignore a friend request" do
 			describe "when there is a pending friend request from the other user" do
-				it "should successfully ignore the friend request" do
+				before { other_user.friend_request(user) }
 				
+				it "should successfully ignore the friend request" do
+					post "update", id: other_user.id, requester_id: other_user.id, type: "IGNORE", format: "mobile"
+					
+					response.body.should == {status: "success"}.to_json
+					
+					user.get_relationship(other_user).friend_status.should == "IGNORED"
 				end
 			end
 			
 			describe "when there is not a pending friend request from the other user" do
 				it "should not ignore the other user and should respond with a failure indicator saying that there is no pending request" do
-				
+					post "update", id: other_user.id, requester_id: other_user.id, type: "IGNORE", format: "mobile"
+					
+					response.body.should == {status: "failure", failure_reason: "NO_FRIEND_REQUEST"}.to_json
 				end
 			end
 		end
@@ -153,8 +163,6 @@ describe RelationshipsController do
       xhr :post, :create, relationship: { followed_id: other_user.id }
       response.should be_success
     end
-	
-	
   end
 
   describe "destroying a relationship" do
@@ -178,64 +186,6 @@ describe RelationshipsController do
 		json_response = {status: "success"}.to_json
 		
 		response.body.should == json_response
-	end
-  end
-
-  describe "updating a relationship" do	
-	describe "accepting friend requests" do
-		let(:user) { FactoryGirl.create(:user) }
-		let(:other_user) { FactoryGirl.create(:user) }
-		before do
-			sign_in(other_user)
-			user.friend_request(other_user) 
-		end
-		
-		it "should work correctly on web app" do
-			
-		end
-		
-		#it "should work correctly on mobile app" do
-	#		relationship = user.get_relationship(other_user)
-	#		relationship.friend_status.should == "PENDING"
-	#	
-	#		input = {type: "ACCEPT", id: user.id}
-	#		
-	#		user.friends?(other_user).should == false
-	#		
-	#		post "mobile_update", input
-	#		json_response = {status: "success"}.to_json
-	#		
-	#		user.friends?(other_user).should == true
-	#		
-	#		response.body.should == json_response
-	#	end
-	end
-		
-	describe "ignoring friend requests" do
-		let(:user) { FactoryGirl.create(:user) }
-		let(:other_user) { FactoryGirl.create(:user) }
-		
-		before do
-			sign_in(other_user)
-			user.friend_request(other_user)
-		end
-	
-		it "should work correctly on web app" do
-		
-		end
-		
-		it "should work correctly on mobile app" do
-			input = {type: "IGNORE", id: user.id}
-			
-			user.friends?(other_user).should == false
-			
-			post "mobile_update", input
-			json_response = {status: "success"}.to_json
-			
-			user.ignored?(other_user).should == true
-			
-			response.body.should == json_response
-		end
 	end
   end
 end
