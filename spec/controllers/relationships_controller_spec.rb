@@ -114,11 +114,23 @@ describe RelationshipsController do
 		
 		describe "who wants to defriend one of his friends" do
 			describe "when that person is one of the users friends" do
-			
+				before { make_friends(user, other_user) }
+				
+				it "should successfully defriend the two users" do
+					expect do
+						delete "destroy", id: other_user.id, friend_id: other_user.id, format: "mobile"
+					end.to change { user.friends.count }.by(-1)
+					
+					response.body.should == {status: "success"}.to_json
+				end
 			end
 			
 			describe "when that person is not one of the users friends" do
-			
+				it "should not defriend the two users and should respond with a failure indicator saying the two users are not friends" do
+					delete "destroy", id: other_user.id, friend_id: other_user.id, format: "mobile"
+					
+					response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+				end
 			end
 		end
 	end

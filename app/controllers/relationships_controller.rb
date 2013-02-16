@@ -3,6 +3,7 @@ class RelationshipsController < ApplicationController
 
   before_filter :before_create, only: [:create]
   before_filter :before_update, only: [:update]
+  before_filter :before_destroy, only: [:destroy]
   
   after_filter :after_create, only: [:create]
   after_filter :after_update, only: [:update]
@@ -38,8 +39,13 @@ class RelationshipsController < ApplicationController
   end
 
   def destroy
-    Relationship.find(params[:id]).destroy
-    redirect_to :back
+	@destroyed = @relationship.destroy
+	
+	respond_to do |format|
+		format.html { redirect_to :back }
+		format.js
+		format.mobile { render json: {status: "success"} }
+	end
   end
   
   def mobile_destroy
@@ -83,6 +89,24 @@ class RelationshipsController < ApplicationController
 			format.js
 			format.mobile { render json: {status: "failure", failure_reason: "NO_FRIEND_REQUEST"} }
 		end
+	end
+  end
+  
+  def before_destroy
+	if params[:friend_id]
+		@friend = User.find_by_id(params[:friend_id])
+		
+		if !@friend.friends?(current_user)
+			respond_to do |format|
+				format.html
+				format.js
+				format.mobile { render json: {status: "failure", failure_reason: "NOT_FRIENDS"} }
+			end
+		else	
+			@relationship = current_user.get_relationship(@friend)
+		end
+	else
+		@relationship = Relationship.find(params[:id])
 	end
   end
   
