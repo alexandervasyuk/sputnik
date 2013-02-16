@@ -80,6 +80,10 @@ describe PostsController do
 					end
 				end
 			end
+		
+			describe "who wants to delete a post" do
+			
+			end
 		end
 		
 		describe "who is not logged in" do
@@ -99,10 +103,10 @@ describe PostsController do
 		describe "who is logged in" do
 			before { sign_in(user) }
 			
-			describe "who wants to create a new post" do
-				describe "who is friends with the creator of the micropost" do
-					before { make_friends(user, friend) }
-					
+			describe "who is friends with the creator of the micropost" do
+				before { make_friends(user, friend) }
+				
+				describe "who wants to create a new post" do
 					describe "who is using valid values" do
 						describe "who is not participating in the micropost" do
 							it "should create the post and should make the user participating in the micropost afterwards" do							
@@ -155,16 +159,44 @@ describe PostsController do
 					end
 				end
 				
-				describe "who is not friends with the creator of the micropost" do
-					it "should not create the post and should receive error indicator tobe friends with the creator" do
-						event_post = {}
+				describe "who wants to delete a post" do
+					describe "who owns the post" do
+						let(:post) { FactoryGirl.create(:post, user: user, micropost: micropost) }
 						
-						expect do
-							post "create", post: {content: "Something ridiculous", micropost_id: micropost.id}, format: "mobile"
-						end.not_to change { Post.all.count }
-						
-						response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+						it "should destroy the micropost" do
+							expect do
+								expect do
+									post "destroy", id: post.id, format: "mobile"
+								end.to change { user.posts }.by(-1)
+							end.to change { micropost.posts }.by(-1)
+							
+							response.body.should == {status: "success"}.to_json
+						end
 					end
+					
+					describe "who does not own the post" do
+						let(:post) { FactoryGirl.create(:post, user: friend, micropost: micropost) }
+						
+						it "should not destroy the micropost but should receive an error indicator saying I must own the post to delete it" do
+							expect do
+								post "destroy", id: post.id, format: "mobile"
+							end.not_to change { Post.all.count }
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
+						end
+					end
+				end
+			end
+			
+			describe "who is not friends with the creator of the micropost" do
+				it "should not create the post and should receive an error indicator to be friends with the creator" do
+					event_post = {}
+					
+					expect do
+						post "create", post: {content: "Something ridiculous", micropost_id: micropost.id}, format: "mobile"
+					end.not_to change { Post.all.count }
+					
+					response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
 				end
 			end
 		end
@@ -175,6 +207,14 @@ describe PostsController do
 					post "create", post: {content: "Something ridiculous", micropost_id: micropost.id}, format: "mobile"
 				end.not_to change { Post.all.count }
 					
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+			
+			it "should not delete the post and should receive an error indicator saying I must log in" do
+				expect do
+					post "destroy", id: 10, format: "mobile"
+				end.not_to change { Post.all.count }
+				
 				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 			end
 		end

@@ -5,7 +5,7 @@ class PostsController < ApplicationController
   before_filter :signed_in_user
   before_filter :valid_micropost, only: [:create]
   before_filter :friends_with_creator, only: [:create]
-  before_filter :before_create, only: [:create]
+  before_filter :before_create, only: [:create]	
   
   before_filter :correct_user, only: :destroy
   
@@ -49,8 +49,6 @@ class PostsController < ApplicationController
   end
   
   def mobile_refresh
-	logger.debug "mobile refresh checking feed latest: #{session[:feed_latest]}"
-  
 	@micropost = current_user.feed.find(params[:micropost_id])
 	
 	if @micropost
@@ -75,8 +73,17 @@ class PostsController < ApplicationController
   private
 
   def correct_user
-    @post = current_user.posts.find_by_id(params[:id])
-    redirect_to root_url if @post.nil?
+	Rails.logger.debug("\n\nASDFASDF\n\n")
+  
+    @post = current_user.posts.find(params[:id])
+	
+    if @post.nil?
+		respond_to do |format|
+			format.html { redirect_to root_url, flash: {error: "You must own the post to delete it"} }
+			
+			format.mobile { render json: {status: "failure", failure_reason: "NOT_OWNER"} }
+		end
+	end
   end
   
   def valid_micropost

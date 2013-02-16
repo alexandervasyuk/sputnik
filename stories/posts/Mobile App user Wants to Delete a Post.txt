@@ -3,10 +3,26 @@ Mobile App User Wants to Delete a Post
 Scenarios:
 
 Given: I am logged in
-And:   I am friends with the creator
+And:   I am friends with the creator/am the creator
 And:   I made the post
 When:  I request to delete the post
 Then:  It should be deleted
 And:   I should receive a success indicator
 
 Given: I am logged in
+And:   I am friends with the creator/am the creator
+And:   I did not make the post
+When:  I request to delete the post
+Then:  It should not be deleted
+And:   I should receive a failure indicator saying that I need to be the owner of that post
+
+Given: I am logged in
+And:   I am not friends with the creator/am the creator
+When:  I request to delete the post
+Then:  It should not be deleted
+And:   I should receive a failure indicator saying that I need to be friends with the creator
+
+Given: I am not logged in
+When:  I request to delete the post
+Then:  It should not be deleted
+And:   I should receive a failure indicator saying that I need to be logged in
