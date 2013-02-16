@@ -35,26 +35,55 @@ describe RelationshipsController do
 			end
 			
 			describe "when the two users have a relationship" do
-				it "should not send the friend request and should respond with a failure indicator" do
+				it "should not send the friend request when there is already a friend request between the two users and should respond with a failure indicator" do
+					user.friend_request(other_user)
+					
+					expect do
+						expect do
+							post "create", requested_id: other_user.id, format: "mobile"
+						end.not_to change { user.get_relationship(other_user) }
+					end.not_to change { other_user.notifications.count }
+					
+					response.body.should == {status: "failure", failure_reason: "RELATIONSHIP_EXISTS"}.to_json
+				end
 				
+				it "should not send the friend request when an original friend request was ignored" do
+					user.friend_request(other_user)
+					other_user.ignore(user)
+					
+					expect do
+						expect do
+							post "create", requested_id: other_user.id, format: "mobile"
+						end.not_to change { user.get_relationship(other_user) }
+					end.not_to change { other_user.notifications.count }
+					
+					response.body.should == {status: "failure", failure_reason: "RELATIONSHIP_EXISTS"}.to_json
 				end
 			end
 		end
 		
 		describe "who wants to accept a friend request" do
 			describe "when there is a pending friend request from the other user" do
-				it "should successfully accept the friend request" do
+				before { other_user.friend_request(user) }
 				
+				it "should successfully accept the friend request" do
+					post "update", id: other_user.id, type: "ACCEPT", format: "mobile"
+					
+					response.body.should == {status: "success"}.to_json
 				end
 				
 				it "should alert the user who sent the friend request that their request has been accepted" do
-				
+					expect do
+						post "update", id: other_user.id, type: "ACCEPT", format: "mobile"
+					end.to change { other_user.notifications.count }.by(1)
 				end
 			end
 			
 			describe "when there is not a pending friend request from the other user" do
 				it "should not make the two users friends and should respond with a failure indicator saying there is no pending request" do
-				
+					post "update", id: other_user.id, type: "ACCEPT", format: "mobile"
+					
+					response.body.should == {status: "failure", failure_reason: "NO_FRIEND_REQUEST"}.to_json
 				end
 			end
 		end
@@ -165,21 +194,21 @@ describe RelationshipsController do
 			
 		end
 		
-		it "should work correctly on mobile app" do
-			relationship = user.get_relationship(other_user)
-			relationship.friend_status.should == "PENDING"
-		
-			input = {type: "ACCEPT", id: user.id}
-			
-			user.friends?(other_user).should == false
-			
-			post "mobile_update", input
-			json_response = {status: "success"}.to_json
-			
-			user.friends?(other_user).should == true
-			
-			response.body.should == json_response
-		end
+		#it "should work correctly on mobile app" do
+	#		relationship = user.get_relationship(other_user)
+	#		relationship.friend_status.should == "PENDING"
+	#	
+	#		input = {type: "ACCEPT", id: user.id}
+	#		
+	#		user.friends?(other_user).should == false
+	#		
+	#		post "mobile_update", input
+	#		json_response = {status: "success"}.to_json
+	#		
+	#		user.friends?(other_user).should == true
+	#		
+	#		response.body.should == json_response
+	#	end
 	end
 		
 	describe "ignoring friend requests" do
