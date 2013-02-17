@@ -92,8 +92,6 @@ class PollsController < ApplicationController
 	end
 	
 	def initialize_proposals
-		Rails.logger.info("\n\n\n\nPARAMETERS: #{params[:initial_proposals]}\n\n\n\n")
-	
 		if params[:initial_proposals]
 			params[:initial_proposals].each_with_index do |data, index|
 				@poll.proposals.create(data)

@@ -78,9 +78,14 @@ FactoryGirl.define do
 	micropost
   end
   
-  factory :characteristic do
+  factory :characteristics_app do
 	sequence(:id) { |n| }
 	micropost
+  end
+  
+  factory :characteristic do
+	sequence(:id) { |n| }
+	characteristics_app
   end
   
   factory :notification do
