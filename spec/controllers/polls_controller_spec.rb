@@ -24,6 +24,16 @@ describe PollsController do
 								
 								response.body.should == { status: "success", failure_reason: "" }.to_json
 							end
+							
+							it "should create a new poll with the values from the initial proposals" do
+								proposals = (0..5).to_a.collect { |item| {content: "asdfasdf"} }
+							
+								post "create", poll: {micropost_id: micropost.id, poll_type: "NONE", question: "some question?" }, initial_proposals: proposals, format: "mobile"
+								
+								latest_poll = Poll.last
+								
+								latest_poll.proposals.count.should == proposals.count
+							end
 						end
 						
 						describe "who does not provide all the correct info to make a poll" do

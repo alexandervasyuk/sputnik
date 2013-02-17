@@ -4,6 +4,8 @@ class PollsController < ApplicationController
 	before_filter :valid_micropost
 	before_filter :friends_with_creator
 	
+	after_filter :initialize_proposals, only: [:create]
+	
 	protect_from_forgery
 	
 	def create
@@ -61,6 +63,14 @@ class PollsController < ApplicationController
 				format.html { redirect_to :back, flash: { error: "Cannot make a poll on this happening, please friend the creator first" } }
 				format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
 				format.js { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+			end
+		end
+	end
+	
+	def initialize_proposals
+		if params[:initial_proposals]
+			params[:initial_proposals].each do |initial_proposal|
+				@poll.proposals.create(initial_proposal)
 			end
 		end
 	end
