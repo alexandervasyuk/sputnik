@@ -20,4 +20,13 @@ module UsersHelper
 		end
 	end
   end
+  
+  def check_participating_in(micropost)
+	if !current_user.participating?(micropost)
+		respond_to do |format|
+			format.html { redirect_to :back, flash: { error: "Cannot make a poll on this happening, please participate in it first" } }
+			format.mobile { render json: { status: "failure", failure_reason: "NOT_PARTICIPATING" } }
+		end
+	end
+  end	
 end
