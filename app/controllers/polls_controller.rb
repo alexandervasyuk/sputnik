@@ -1,12 +1,22 @@
 class PollsController < ApplicationController
 	
 	before_filter :signed_in_user
-	before_filter :valid_micropost
-	before_filter :friends_with_creator
+	
+	before_filter :detail_prepare, only: [:detail]
+	
+	before_filter :valid_micropost, only: [:create]
+	before_filter :friends_with_creator, only: [:create, :detail]
+	before_filter :participating_in_micropost, only: [:detail]
 	
 	after_filter :initialize_proposals, only: [:create]
 	
 	protect_from_forgery
+	
+	def detail
+		respond_to do |format|
+			format.mobile { render json: {status: "success", poll_type: @poll.poll_type, question: @poll.question, proposals: @poll.proposals.collect { |proposal| proposal.to_mobile } } }
+		end
+	end
 	
 	def create
 		@poll = @micropost.polls.build(params[:poll])
@@ -45,6 +55,11 @@ class PollsController < ApplicationController
 	
 	private
 	
+	def detail_prepare
+		@poll = Poll.find(params[:id])
+		@micropost = @poll.micropost
+	end
+	
 	def valid_micropost
 		@micropost = Micropost.find_by_id(params[:poll][:micropost_id])
 		
@@ -63,6 +78,15 @@ class PollsController < ApplicationController
 				format.html { redirect_to :back, flash: { error: "Cannot make a poll on this happening, please friend the creator first" } }
 				format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
 				format.js { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+			end
+		end
+	end
+	
+	def participating_in_micropost
+		if !current_user.participating?(@micropost)
+			respond_to do |format|
+				format.html { redirect_to :back, flash: { error: "Cannot make a poll on this happening, please participate in it first" } }
+				format.mobile { render json: { status: "failure", failure_reason: "NOT_PARTICIPATING" } }
 			end
 		end
 	end

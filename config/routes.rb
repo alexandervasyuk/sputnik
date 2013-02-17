@@ -10,6 +10,12 @@ Sputnik::Application.routes.draw do
       get :detail
     end
   end
+  
+  resources :polls do
+	member do
+		get :detail
+	end
+  end
 
   resources :sessions, only: [:new, :create, :destroy]
   resources :participations, only: [:create, :destroy]

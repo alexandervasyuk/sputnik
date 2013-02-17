@@ -1,0 +1,24 @@
+Mobile User Who Wants to Pull Information About a Poll
+
+Scenarios:
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I am participating in the event
+When:  I request to pull information about a poll
+Then:  I should receive the information about the poll
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I am not participating in the event
+When:  I request to pull information about a poll
+Then:  I should receive a failure indicator saying I should participate first
+
+Given: I am logged in
+And:   I am not friends with the creator
+When:  I request to pull information about a poll
+Then:  I should receive a failure indicator saying I need to be friends with the creator
+
+Given: I am not logged in
+When:  I request to pull information about a poll
+Then:  I should receive a failure indicator saying I need to log in

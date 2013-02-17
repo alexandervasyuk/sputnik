@@ -2,8 +2,13 @@ require 'spec_helper'
 
 describe PollsController do
 	let(:user) { FactoryGirl.create(:user) }
+	let(:friend) { FactoryGirl.create(:user) }
 	let(:non_friend) { FactoryGirl.create(:user) }
 	let(:micropost) { FactoryGirl.create(:micropost, user: user) }
+	
+	before do 
+		make_friends(user, friend)
+	end
 	
 	describe "mobile app user" do
 		describe "who wants to create a new poll" do
@@ -95,6 +100,52 @@ describe PollsController do
 					end.not_to change { Poll.all.count }
 					
 					response.body.should == { status: "failure", failure_reason: "LOGIN" }.to_json
+				end
+			end
+		end
+	
+		describe "who wants to pull details about a poll" do
+			let(:poll) { FactoryGirl.create(:poll, micropost: micropost) }
+		
+			describe "who is logged in" do
+				describe "who is friends with the creator" do
+					before { sign_in(friend) }
+				
+					describe "who is participating in the micropost" do
+						before { friend.participate(micropost) }
+						
+						it "should receive information about the poll" do
+							get "detail", id: poll.id, format: "mobile"
+							
+							response.body.should == {status: "success", poll_type: poll.poll_type, question: poll.question, proposals: poll.proposals.collect { |proposal| proposal.to_mobile } }.to_json
+						end
+					end
+					
+					describe "who is not participating in the micropost" do
+						it "should not receive any information about the poll and should recieve a failure indicator saying I need to participate in the micropost" do
+							get "detail", id: poll.id, format: "mobile"
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_PARTICIPATING"}.to_json
+						end
+					end
+				end
+				
+				describe "who is not friends with the creator" do
+					before { sign_in(non_friend) }
+				
+					it "should not receive any information about the poll and should receive a failure indicator saying I need to be friends with the creator" do
+						get "detail", id: poll.id, format: "mobile"
+						
+						response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+					end
+				end
+			end
+			
+			describe "who is not logged in" do
+				it "should not receive any information about the poll and should receive a failure indicator saying I need to log in" do
+					get "detail", id: poll.id, format: "mobile"
+					
+					response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 				end
 			end
 		end
