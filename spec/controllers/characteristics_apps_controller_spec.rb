@@ -49,7 +49,7 @@ describe CharacteristicsAppsController do
 				
 				it "should not create a new characteristics app and should respond with a friends failure" do
 					expect do
-						post "create", micropost_id: non_apped_micropost.id, format: "mobile"
+						post "create", characteristics_app: {micropost_id: non_apped_micropost.id}, format: "mobile"
 					end.not_to change { non_apped_micropost.characteristics_app }
 					
 					response.body.should == {status:"failure", failure_reason: "NOT_FRIENDS"}.to_json
@@ -68,7 +68,7 @@ describe CharacteristicsAppsController do
 		describe "who is not logged in" do
 			it "should not create a new characteristics app and should respond with a login failure" do
 				expect do
-					post "create", micropost_id: non_apped_micropost.id, format: "mobile"
+					post "create", characteristics_app: {micropost_id: non_apped_micropost.id}, format: "mobile"
 				end.not_to change { non_apped_micropost.characteristics_app }
 				
 				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
