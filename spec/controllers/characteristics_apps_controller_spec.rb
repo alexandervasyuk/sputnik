@@ -14,55 +14,70 @@ describe CharacteristicsAppsController do
 		end
 	
 		describe "who is logged in" do
-			describe "who is friends with the creator of the micropost" do
-				before { sign_in(friend) }
-				
-				describe "who is participating in the micropost" do
-					describe "when there is not a characteristics app" do
-						before { friend.participate(non_apped_micropost) }
+			describe "who is trying to create to a valid micropost" do
+				describe "who is friends with the creator of the micropost" do
+					before { sign_in(friend) }
 					
-						describe "who wants to create a new characteristics app" do
+					describe "who is participating in the micropost" do
+						describe "when there is not a characteristics app" do
+							before { friend.participate(non_apped_micropost) }
+						
+							describe "who wants to create a new characteristics app" do
+								it "should create a characteristics app" do
+									expect do
+										post "create", characteristics_app: {micropost_id: non_apped_micropost.id}, format: "mobile"
+									end.to change { non_apped_micropost.reload.characteristics_app }
+									
+									updated_app = non_apped_micropost.characteristics_app
+									
+									response.body.should == {status: "success"}.to_json
+								end
+							end
 							
+							describe "who wants to destroy a characteristics app" do
+								it "should not destroy a characteristics app and should respond with a no characteristics app to destroy failure" do
+									expect do
+										delete "destroy", id: 10, format: "mobile"
+									end.not_to change { micropost.reload.characteristics_app }
+									
+									response.body.should == {status: "failure", failure_reason: "INVALID_CHARACTERISTICS_APP"}.to_json
+								end
+							end
 						end
 						
-						describe "who wants to destroy a characteristics app" do
+						describe "when there is a characteristic app" do
+							before { friend.participate(micropost) }
 						
+							describe "who wants to create a new characteristics app" do
+								
+							end
+							
+							describe "who wants to destroy a characteristics app" do
+								
+							end
 						end
 					end
 					
-					describe "when there is a characteristic app" do
-						before { friend.participate(micropost) }
-					
-						describe "who wants to create a new characteristics app" do
-						
+					describe "who is not participating in the micropost" do
+						it "should not create a new characteristics app and should respond with a participating failure" do
+							expect do
+								post "create", characteristics_app: {micropost_id: non_apped_micropost.id}, format: "mobile"
+							end.not_to change { non_apped_micropost.characteristics_app }
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_PARTICIPATING"}.to_json
 						end
 						
-						describe "who wants to destroy a characteristics app" do
-						
+						it "should not destroy a characteristics app and should respond with a participating failure" do
+							expect do
+								delete "destroy", id: characteristics_app.id, format: "mobile"
+							end.not_to change { micropost.characteristics_app }
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_PARTICIPATING"}.to_json
 						end
 					end
 				end
 				
-				describe "who is not participating in the micropost" do
-					it "should not create a new characteristics app and should respond with a participating failure" do
-						expect do
-							post "create", characteristics_app: {micropost_id: non_apped_micropost.id}, format: "mobile"
-						end.not_to change { non_apped_micropost.characteristics_app }
-						
-						response.body.should == {status: "failure", failure_reason: "NOT_PARTICIPATING"}.to_json
-					end
-					
-					it "should not destroy a characteristics app and should respond with a participating failure" do
-						expect do
-							delete "destroy", id: characteristics_app.id, format: "mobile"
-						end.not_to change { micropost.characteristics_app }
-						
-						response.body.should == {status: "failure", failure_reason: "NOT_PARTICIPATING"}.to_json
-					end
-				end
-			end
-			
-			describe "who is not friends with the creator of the micropost" do
+				describe "who is not friends with the creator of the micropost" do
 				before { sign_in(non_friend) }
 				
 				it "should not create a new characteristics app and should respond with a friends failure" do
@@ -79,6 +94,29 @@ describe CharacteristicsAppsController do
 					end.not_to change { micropost.characteristics_app }
 					
 					response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+				end
+			end
+			end
+		
+			describe "who is trying to create to an invalid micropost" do
+				before { sign_in(user) }
+			
+				it "should not create a new characteristics app and should respond with an invalid micropost failure" do
+					expect do
+						post "create", characteristics_app: {micropost_id: 1000}, format: "mobile"
+					end.not_to change { non_apped_micropost.characteristics_app }
+					
+					response.body.should == {status: "failure", failure_reason: "INVALID_MICROPOST"}.to_json
+				end
+				
+				it "should not destroy a characteristics app and should respond with an invalid micropost failure" do
+					invalid_characteristics_app = FactoryGirl.create(:characteristics_app, micropost_id: 1000)
+				
+					expect do
+						delete "destroy", id: invalid_characteristics_app.id, format: "mobile"
+					end.not_to change { micropost.characteristics_app }
+					
+					response.body.should == {status: "failure", failure_reason: "INVALID_MICROPOST"}.to_json
 				end
 			end
 		end

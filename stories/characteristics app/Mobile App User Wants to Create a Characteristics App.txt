@@ -3,6 +3,7 @@ Mobile App User Wants to Create a Characteristics App
 Scenarios:
 
 Given: I am logged in
+And:   I am trying to create to a valid micropost
 And:   I am friends with the creator of the micropost
 And:   I am participating in the micropost
 And:   There is not already a characteristics app
@@ -11,6 +12,7 @@ Then:  It should create a new characteristics app
 And:   I should receive a success indicator
 
 Given: I am logged in
+And:   I am trying to create to a valid micropost
 And:   I am friends with the creator of the micropost
 And:   I am participating in the micropost
 And:   There is already a characteristics app
@@ -19,6 +21,7 @@ Then:  It should not create a new characteristics app
 And:   I should receive a failure indicator saying that I already have a characteristics app
 
 Given: I am logged in
+And:   I am trying to create to a valid micropost
 And:   I am friends with the creator of the micropost
 And:   I am not participating in the micropost
 When:  I try to create a new characteristics app
@@ -26,10 +29,17 @@ Then:  It should not create a new characteristics app
 And:   I should receive a failure indicator saying that I need to participate in the event
 
 Given: I am logged in
+And:   I am trying to create to a valid micropost
 And:   I am not friends with the creator of the micropost
 When:  I try to create a new characteristics app
 Then:  It should not create a new characteristics app
 And:   I should receive a failure indicator saying that I need to be friends with the creator of the micropost
+
+Given: I am logged in
+And:   I am trying to create to an invalid micropost
+When:  I try to create a new characteristics app
+Then:  It should not create a new characteristics app
+And:   I should receive a failure indicator saying that I need to create to a valid micropost
 
 Given: I am not logged in
 When:  I try to create a new characteristics app

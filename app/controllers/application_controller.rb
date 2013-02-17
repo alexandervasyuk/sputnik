@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   include MicropostsHelper
   include CropHelper
   include NotificationsHelper
+  include CharacteristicsAppHelper
   include GoogleHelper
   include ProposalsHelper
   include PostsHelper
