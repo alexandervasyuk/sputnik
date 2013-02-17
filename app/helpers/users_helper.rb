@@ -11,4 +11,13 @@ module UsersHelper
   def has_microposts?
     return current_user.followed_users.length > 0
   end
+  
+  def check_friends_with_creator(friends)
+	if !friends
+		respond_to do |format|
+			format.html {redirect_to :back, flash: {error: "You must become friends with the user who created that event to view its details" } }
+			format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+		end
+	end
+  end
 end

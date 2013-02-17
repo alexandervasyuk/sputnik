@@ -7,6 +7,7 @@ class MicropostsController < ApplicationController
   #Before Filters
   before_filter :signed_in_user
   before_filter :friends_with_creator, only: [:detail]
+  
   before_filter :correct_user, only: [:destroy, :update, :edit]
   before_filter :time_input_parser, only: [:create, :update]
   before_filter :detail_prepare, only: [:detail]
@@ -243,14 +244,8 @@ class MicropostsController < ApplicationController
   #BEFORE FILTER - before filter that checks if the current user is friends with the owner of the miropost
   def friends_with_creator
 	@micropost = Micropost.find(params[:id])
-	@friends = current_user.friends?(@micropost.user)
 	
-	if !@friends
-		respond_to do |format|
-			format.html {redirect_to :back, flash: {error: "You must become friends with the user who created that event to view its details" } }
-			format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
-		end
-	end
+	check_friends_with_creator(current_user.friends?(@micropost.user))
   end
   
   #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
