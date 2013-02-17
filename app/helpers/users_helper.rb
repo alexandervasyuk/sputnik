@@ -17,6 +17,7 @@ module UsersHelper
 		respond_to do |format|
 			format.html {redirect_to :back, flash: {error: "You must become friends with the user who created that event to view its details" } }
 			format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+			format.js { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
 		end
 	end
   end

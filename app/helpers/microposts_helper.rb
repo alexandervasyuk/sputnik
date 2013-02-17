@@ -33,4 +33,14 @@ module MicropostsHelper
 		
 		return []
 	end
+	
+	def check_valid_micropost(micropost)
+		if !@micropost
+			respond_to do |format|
+				format.html { redirect_to :back, flash: { error: "Cannot make a poll on that micropost" } }
+				format.mobile { render json: {status: "failure", failure_reason: "INVALID_MICROPOST"} }
+				format.js { render json: {status: "failure", failure_reason: "INVALID_MICROPOST"} }
+			end
+		end
+	end
 end

@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   include UsersHelper
   include RelationshipsHelper
+  include MicropostsHelper
   include CropHelper
   include NotificationsHelper
   include GoogleHelper

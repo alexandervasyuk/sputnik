@@ -3,8 +3,9 @@ class PollsController < ApplicationController
 	before_filter :signed_in_user
 	
 	before_filter :detail_prepare, only: [:detail]
+	before_filter :create_prepare, only: [:create]
 	
-	before_filter :valid_micropost, only: [:create]
+	before_filter :valid_micropost, only: [:create, :detail]
 	before_filter :friends_with_creator, only: [:create, :detail]
 	before_filter :participating_in_micropost, only: [:detail]
 	
@@ -60,26 +61,16 @@ class PollsController < ApplicationController
 		@micropost = @poll.micropost
 	end
 	
-	def valid_micropost
+	def create_prepare
 		@micropost = Micropost.find_by_id(params[:poll][:micropost_id])
-		
-		if !@micropost
-			respond_to do |format|
-				format.html { redirect_to :back, flash: { error: "Cannot make a poll on that micropost" } }
-				format.mobile { render json: {status: "failure", failure_reason: "INVALID_MICROPOST"} }
-				format.js { render json: {status: "failure", failure_reason: "INVALID_MICROPOST"} }
-			end
-		end
+	end
+	
+	def valid_micropost
+		check_valid_micropost(@micropost)
 	end
 	
 	def friends_with_creator
-		if !@micropost || (@micropost && !@micropost.user) || (@micropost && @micropost.user && !current_user.friends?(@micropost.user))
-			respond_to do |format|
-				format.html { redirect_to :back, flash: { error: "Cannot make a poll on this happening, please friend the creator first" } }
-				format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
-				format.js { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
-			end
-		end
+		check_friends_with_creator(current_user.friends?(@micropost.user))
 	end
 	
 	def participating_in_micropost
