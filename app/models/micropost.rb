@@ -23,7 +23,7 @@ class Micropost < ActiveRecord::Base
   has_many :polls, dependent: :destroy
   
   #Characteristic
-  has_many :characteristics, dependent: :destroy
+  has_one :characteristics_app, dependent: :destroy
   
   default_scope order: 'microposts.created_at DESC'
   

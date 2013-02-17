@@ -11,13 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130205055851) do
+ActiveRecord::Schema.define(:version => 20130217062901) do
 
   create_table "characteristics", :force => true do |t|
-    t.integer  "micropost_id"
+    t.integer  "characteristics_app_id"
     t.string   "characteristic"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
+  end
+
+  create_table "characteristics_apps", :force => true do |t|
+    t.integer  "micropost_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "characteristics_users", :id => false, :force => true do |t|
@@ -61,11 +67,14 @@ ActiveRecord::Schema.define(:version => 20130205055851) do
   create_table "microposts", :force => true do |t|
     t.string   "content"
     t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
     t.string   "location"
     t.datetime "time"
     t.text     "invitees"
+    t.boolean  "content_proposal",  :default => true
+    t.boolean  "time_proposal",     :default => true
+    t.boolean  "location_proposal", :default => true
     t.decimal  "latitude"
     t.decimal  "longitude"
     t.datetime "end_time"

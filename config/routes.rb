@@ -26,6 +26,7 @@ Sputnik::Application.routes.draw do
   resources :proposals, only: [:create, :update, :destroy]
   resources :polls, only: [:create, :update, :destroy]
   resources :characteristics, only: [:create, :update, :destroy]
+  resources :characteristics_apps, only: [:create, :destroy]
   resources :notifications, only: [:index]
   
   root to: 'static_pages#home'

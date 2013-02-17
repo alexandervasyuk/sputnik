@@ -1,0 +1,31 @@
+Mobile App User Wants to Destroy a Characteristics App
+
+Scenarios:
+
+Given: I am logged in
+And:   I am friends with the creator of the micropost
+And:   I am participating in the micropost
+And:   There is a characteristics app
+When:  I try to destroy the characteristics app
+Then:  I should successfully destroy the characteristics app
+
+Given: I am logged in
+And:   I am friends with the creator of the micropost
+And:   I am participating in the micropost
+And:   There is not a characteristics app
+When:  I try to destroy the characteristics app
+Then:  I should not change anything about the micropost
+And:   I should receive a failure indicator saying that there is no characteristics app to destroy
+
+Given: I am logged in
+And:   I am friends with the creator of the micropost
+And:   I am not participating in the micropost
+When:  I try to destroy the characteristics app
+Then:  I should not change anything about the micropost
+And:   I should receive a failure indicator saying that I need to be participating in the micropost
+
+Given: I am logged in
+And:   I am not friends with the creator of the micropost
+when:  I try to destroy the characteristics app
+Then:  I should not change anything about the micropost
+And:   I should receive a failure indicator saying that I need to be participating in the micropost
