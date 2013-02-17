@@ -36,8 +36,9 @@ describe PollsController do
 								post "create", poll: {micropost_id: micropost.id, poll_type: "NONE", question: "some question?" }, initial_proposals: proposals, format: "mobile"
 								
 								latest_poll = Poll.last
-								
 								latest_poll.proposals.count.should == proposals.count
+								
+								response.body.should == { status: "success", failure_reason: "" }.to_json
 							end
 						end
 						
@@ -107,6 +108,12 @@ describe PollsController do
 		describe "who wants to pull details about a poll" do
 			let(:poll) { FactoryGirl.create(:poll, micropost: micropost) }
 		
+			before do
+				5.times do 
+					FactoryGirl.create(:proposal, poll: poll)
+				end
+			end
+		
 			describe "who is logged in" do
 				describe "who is friends with the creator" do
 					before { sign_in(friend) }
@@ -116,6 +123,8 @@ describe PollsController do
 						
 						it "should receive information about the poll" do
 							get "detail", id: poll.id, format: "mobile"
+							
+							poll.proposals.count.should > 0
 							
 							response.body.should == {status: "success", poll_type: poll.poll_type, question: poll.question, proposals: poll.proposals.collect { |proposal| proposal.to_mobile } }.to_json
 						end
