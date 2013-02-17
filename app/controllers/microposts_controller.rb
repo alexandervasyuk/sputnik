@@ -42,16 +42,6 @@ class MicropostsController < ApplicationController
 		end
 	end
   end
-  
-  def mobile_create
-	if @created
-		
-	else
-		json_response = {status: "failure", feed: [], pool: [], created: {}}
-		
-		render json: json_response
-	end
-  end
 
   #Action responsible for destroying a micropost from the database
   def destroy
@@ -158,7 +148,7 @@ class MicropostsController < ApplicationController
 				replies_data << post.to_mobile
 			end
 
-			json_response = {status:"success", failure_reason: "", micropost: @micropost.to_mobile, replies_data: replies_data}
+			json_response = {status:"success", failure_reason: "", micropost: @micropost.to_mobile, polls: @micropost.polls.collect { |poll| poll.to_mobile }, replies_data: replies_data}
 
 			render json: json_response
 		end

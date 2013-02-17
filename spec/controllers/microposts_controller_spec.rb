@@ -323,13 +323,13 @@ describe MicropostsController do
 							replies_data << {replier_picture: post.user.avatar.url, replier_id: post.user.id, reply_text: post.content, reply_picture: post.photo.url, replier_name: post.user.name, posted_time: post.created_at}
 						end
 						
-						micropost.polls.reverse.each do |poll|
+						micropost.polls.each do |poll|
 							polls_data << poll.to_mobile
 						end
 						
 						post "detail", id: micropost.id, format: "mobile"
 						
-						response_json = {status: "success", failure_reason: "", micropost: micropost.to_mobile, replies_data: replies_data}.to_json
+						response_json = {status: "success", failure_reason: "", micropost: micropost.to_mobile, polls: polls_data, replies_data: replies_data}.to_json
 						
 						response.body.should == response_json
 					end
