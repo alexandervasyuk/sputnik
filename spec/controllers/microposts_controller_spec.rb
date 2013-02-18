@@ -294,7 +294,11 @@ describe MicropostsController do
 				describe "when the micropost is valid" do
 					describe "who is the owner of the micropost" do
 						it "should successfully destroy the micropost" do
+							expect do
+								delete "destroy", id: destroy_micropost.id, format: "mobile"
+							end.to change { Micropost.find_by_id(destroy_micropost.id) }
 							
+							response.body.should == {status: "success"}
 						end
 						
 						it "should destroy all related data" do
@@ -306,8 +310,6 @@ describe MicropostsController do
 						before { sign_in(non_creator) }
 					
 						it "should receive a failure indicator saying the user must be the owner of the micropost" do
-							Rails.logger.debug("\n\nNon Creator\n\n")
-						
 							#expect do 
 							delete "destroy", id: destroy_micropost.id, format: "mobile"
 							#end.not_to change { Micropost.all.count }

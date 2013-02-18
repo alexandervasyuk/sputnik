@@ -15,6 +15,9 @@ class MicropostsController < ApplicationController
   before_filter :detail_prepare, only: [:detail]
   before_filter :create_prepare, only: [:create]
   
+  #After Filters
+  after_filter :destroy_cleanup, only: [:destroy]
+  
   #Valid sources
   respond_to :html, :js
   
@@ -48,26 +51,11 @@ class MicropostsController < ApplicationController
 
   #Action responsible for destroying a micropost from the database
   def destroy
-	Rails.logger.debug("\n\nDestructing\n\n")
-  
-	if !@micropost.participations.empty?
-		@micropost.participations.each do |participation|
-			participation.delete
-		end
-	end
-	
-    add_to_deleted(@micropost)
-    
 	@micropost.destroy
     
 	respond_to do |format|
-		format.html do
-			redirect_to root_url
-		end
-		
-		format.mobile do
-			render json: {status: "success", failure_reason: ""}
-		end
+		format.html { redirect_to root_url }
+		format.mobile { render json: {status: "success"} }
 	end
   end
 
@@ -207,10 +195,6 @@ class MicropostsController < ApplicationController
 
   #BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
   def correct_user
-	Rails.logger.debug("\n\nChecking Owner\n\n")
-	Rails.logger.debug("\n\nMicropost User: #{@micropost.user.id}\n\n")
-	Rails.logger.debug("\n\nCurrent User: #{current_user.id}\n\n")
-  
     check_owner_of(@micropost)
   end
   
@@ -303,5 +287,10 @@ class MicropostsController < ApplicationController
 		@created = true
 		current_user.participate(@micropost)
 	end
+  end
+  
+  #AFTER FILTER - after filter that does the necessary clean up work for the destroya ction
+  def destroy_cleanup
+	add_to_deleted(@micropost)
   end
 end
