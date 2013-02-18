@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe MicropostsController do
 	let(:user) { FactoryGirl.create(:user) }
+	let(:non_creator) { FactoryGirl.create(:user) }
 	let(:destroy_micropost) { FactoryGirl.create(:micropost, content: "content1", user: user) }
 	let(:update_micropost) { FactoryGirl.create(:micropost, content: "content2", user: user) }
 	
@@ -290,7 +291,41 @@ describe MicropostsController do
 			end
 			
 			describe "who wants to destroy a micropost" do
-			
+				describe "when the micropost is valid" do
+					describe "who is the owner of the micropost" do
+						it "should successfully destroy the micropost" do
+							
+						end
+						
+						it "should destroy all related data" do
+							
+						end
+					end
+					
+					describe "who is not the owner of the micropost" do
+						before { sign_in(non_creator) }
+					
+						it "should receive a failure indicator saying the user must be the owner of the micropost" do
+							Rails.logger.debug("\n\nNon Creator\n\n")
+						
+							#expect do 
+							delete "destroy", id: destroy_micropost.id, format: "mobile"
+							#end.not_to change { Micropost.all.count }
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
+						end
+					end
+				end
+				
+				describe "when the micropost is invalid" do
+					it "should receive a failure indicator saying the micropost must be valid" do
+						expect do
+							delete "destroy", id: 1000, format: "mobile"
+						end.not_to change { Micropost.all.count }
+						
+						response.body.should == {status: "failure", failure_reason: "INVALID_MICROPOST"}.to_json
+					end
+				end
 			end
 			
 			describe "who wants to update a micropost" do

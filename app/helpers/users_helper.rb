@@ -15,7 +15,7 @@ module UsersHelper
   def check_friends_with_creator(friends)
 	if !friends
 		respond_to do |format|
-			format.html {redirect_to :back, flash: {error: "You must become friends with the user who created that event to view its details" } }
+			format.html { redirect_to :back, flash: {error: "You must become friends with the user who created that event to view its details" } }
 			format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
 			format.js { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
 		end
@@ -25,9 +25,19 @@ module UsersHelper
   def check_participating_in(micropost)
 	if !current_user.participating?(micropost)
 		respond_to do |format|
-			format.html { redirect_to :back, flash: { error: "Cannot make a poll on this happening, please participate in it first" } }
+			format.html { redirect_to :back, flash: { error: "please participate in this happening first" } }
 			format.mobile { render json: { status: "failure", failure_reason: "NOT_PARTICIPATING" } }
 		end
 	end
   end	
+  
+  def check_owner_of(micropost)
+	if micropost.user.id != current_user.id
+		respond_to do |format|
+			format.html { redirect_to :back, flash: {error: "You must be the owner of this happening to do that"} }
+			format.mobile { render json: { status: "failure", failure_reason: "NOT_OWNER" } }
+			format.js { }
+		end
+	end
+  end
 end

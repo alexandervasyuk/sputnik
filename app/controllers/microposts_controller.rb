@@ -1,9 +1,16 @@
 class MicropostsController < ApplicationController  
   #Before Filters
   before_filter :signed_in_user
+  
+  before_filter :destroy_prepare, only: [:destroy]
+  before_filter :update_prepare, only: [:update]
+  before_filter :create_prepare_new, only: [:create]
+  before_filter :detail_prepare_new, only: [:detail]
+  
   before_filter :friends_with_creator, only: [:detail]
   
   before_filter :correct_user, only: [:destroy, :update, :edit]
+  
   before_filter :time_input_parser, only: [:create, :update]
   before_filter :detail_prepare, only: [:detail]
   before_filter :create_prepare, only: [:create]
@@ -200,11 +207,11 @@ class MicropostsController < ApplicationController
 
   #BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
   def correct_user
-    @micropost = current_user.microposts.find_by_id(params[:id])
-    
-	if @micropost.nil?
-    	redirect_to root_url, flash: {error: "You cannot access this happpening =P"}
-    end
+	Rails.logger.debug("\n\nChecking Owner\n\n")
+	Rails.logger.debug("\n\nMicropost User: #{@micropost.user.id}\n\n")
+	Rails.logger.debug("\n\nCurrent User: #{current_user.id}\n\n")
+  
+    check_owner_of(@micropost)
   end
   
   def illegal_emails
@@ -238,10 +245,33 @@ class MicropostsController < ApplicationController
 	end
   end
   
-  #BEFORE FILTER - before filter that checks if the current user is friends with the owner of the miropost
-  def friends_with_creator
-	@micropost = Micropost.find(params[:id])
+  # BEFORE FILTER - 
+  def destroy_prepare
+	Rails.logger.debug("\n\nDestroy Prepare\n\n")
+  
+	@micropost = Micropost.find_by_id(params[:id])
 	
+	check_valid_micropost(@micropost)
+  end
+  
+  def update_prepare
+	@micropost = Micropost.find_by_id(params[:id])
+	
+	check_valid_micropost(@micropost)
+  end
+  
+  def create_prepare_new
+	
+  end
+  
+  def detail_prepare_new
+	@micropost = Micropost.find_by_id(params[:id])
+	
+	check_valid_micropost(@micropost)
+  end
+  
+  # BEFORE FILTER - before filter that checks if the current user is friends with the owner of the miropost
+  def friends_with_creator
 	check_friends_with_creator(current_user.friends?(@micropost.user))
   end
   
