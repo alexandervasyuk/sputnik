@@ -46,14 +46,31 @@ describe CharacteristicsAppsController do
 						end
 						
 						describe "when there is a characteristic app" do
-							before { friend.participate(micropost) }
+							before do 
+								friend.participate(non_apped_micropost) 
+								friend.participate(micropost)
+							end
 						
 							describe "who wants to create a new characteristics app" do
+								it "should not create a characteristics app and should return a failure message saying the app exists" do
+									characteristics_app.micropost(true)
 								
+									expect do
+										post "create", characteristics_app: {micropost_id: micropost.id}, format: "mobile"
+									end.not_to change { micropost.characteristics_app }
+									
+									response.body.should == {status: "failure", failure_reason: "APP_EXISTS"}.to_json
+								end
 							end
 							
 							describe "who wants to destroy a characteristics app" do
-								
+								it "should destroy a characteristics app successfully" do
+									delete "destroy", id: characteristics_app.id, format: "mobile"
+									
+									micropost.characteristics_app.should be_nil
+									
+									response.body.should == {status: "success"}.to_json
+								end
 							end
 						end
 					end

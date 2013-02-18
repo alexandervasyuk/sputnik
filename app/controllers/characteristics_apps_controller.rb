@@ -5,6 +5,7 @@ class CharacteristicsAppsController < ApplicationController
 	before_filter :before_destroy, only: [:destroy]
 	
 	before_filter :valid_micropost, only: [:create, :destroy]
+	before_filter :characteristics_app_exists, only: [:create]
 	before_filter :friends_with_creator, only: [:create, :destroy]
 	before_filter :participating_in_micropost, only: [:create, :destroy]
 	
@@ -44,6 +45,10 @@ class CharacteristicsAppsController < ApplicationController
 	
 	def valid_micropost
 		check_valid_micropost(@micropost)
+	end
+	
+	def characteristics_app_exists
+		check_characteristics_app_exists(@micropost.characteristics_app(true))
 	end
 	
 	def friends_with_creator

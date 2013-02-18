@@ -8,4 +8,14 @@ module CharacteristicsAppHelper
 			end
 		end
 	end
+	
+	def check_characteristics_app_exists(characteristics_app)
+		if !characteristics_app.nil?
+			respond_to do |format|
+				format.html { redirect_to :back, flash: {error: "Cannot create a new characteristics app, one already exists" } }
+				format.mobile { render json: {status: "failure", failure_reason: "APP_EXISTS"} }
+				format.js { }
+			end
+		end
+	end
 end
