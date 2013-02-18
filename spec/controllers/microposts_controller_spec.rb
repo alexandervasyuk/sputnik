@@ -298,11 +298,31 @@ describe MicropostsController do
 								delete "destroy", id: destroy_micropost.id, format: "mobile"
 							end.to change { Micropost.find_by_id(destroy_micropost.id) }
 							
-							response.body.should == {status: "success"}
+							response.body.should == {status: "success"}.to_json
 						end
 						
-						it "should destroy all related data" do
+						it "should destroy all polls data" do
+							generate_polls_for(destroy_micropost, 5)
 							
+							expect do
+								delete "destroy", id: destroy_micropost.id, format: "mobile"
+							end.to change { Poll.all.count }.by(-5)
+						end
+						
+						it "should destroy all participation data" do
+							generate_participants(destroy_micropost, 5)
+							
+							expect do
+								delete "destroy", id: destroy_micropost.id, format: "mobile"
+							end.to change { Participation.all.count }.by(-5)
+						end
+						
+						it "should destroy all posts" do
+							generate_posts_for(destroy_micropost, 5)
+							
+							expect do
+								delete "destroy", id: destroy_micropost.id, format: "mobile"
+							end.to change { Post.all.count }.by(-5)
 						end
 					end
 					
