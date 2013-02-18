@@ -4,6 +4,7 @@ describe ProposalsController do
 	let(:poll) { FactoryGirl.create(:poll) }
 	let(:micropost) { poll.micropost }
 	let(:creator) { micropost.user }
+	let(:update_proposal) { FactoryGirl.create(:proposal, poll: poll) }
 
 	before do
 		@participant = FactoryGirl.create(:user)
@@ -313,7 +314,11 @@ describe ProposalsController do
 			end
 			
 			describe "who is not logged in" do
-			
+				it "should receive a failure indicator saying I need to log in" do
+					put "update", id: update_proposal.id, format: "mobile"
+					
+					response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+				end
 			end
 		end
 	end

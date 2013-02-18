@@ -2,8 +2,9 @@ class ProposalsController < ApplicationController
 	include TimeHelper
 
 	#Before Filters
-	before_filter :time_input_parser, only: [:create, :update]
 	before_filter :signed_in_user
+	
+	before_filter :time_input_parser, only: [:create]
 	before_filter :valid_poll
 	before_filter :friends_with_creator
 	before_filter :participating_user, only: [:create, :update]
