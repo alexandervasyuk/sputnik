@@ -4,6 +4,11 @@ describe ProposalsController do
 	let(:poll) { FactoryGirl.create(:poll) }
 	let(:micropost) { poll.micropost }
 	let(:creator) { micropost.user }
+	
+	let(:user) { FactoryGirl.create(:user) }
+	let(:friend) { FactoryGirl.create(:user) }
+	let(:non_friend) { FactoryGirl.create(:user) }
+	
 	let(:update_proposal) { FactoryGirl.create(:proposal, poll: poll) }
 
 	before do
@@ -14,6 +19,8 @@ describe ProposalsController do
 		
 		make_friends(@participant, creator)
 		make_friends(@non_participant, creator)
+		
+		make_friends(creator, friend)
 	end
 	
 	describe "desktop app user" do
@@ -284,32 +291,62 @@ describe ProposalsController do
 	
 		describe "who wants to update a proposal" do
 			describe "who is logged in" do
-				describe "who is friends with the creator" do
-					describe "who is picking a valid proposal to update" do
-						describe "who is participating in the micropost" do
-						
-						end
+				describe "who is picking a valid proposal to update" do
+					describe "who is friends with the creator" do
+						before { sign_in(friend) }	
 						
 						describe "who is not participating in the micropost" do
-						
+							it "should make the user participating in the micropost" do
+								expect do
+									put "update", id: update_proposal.id, format: "mobile"
+								end.to change { friend.reload.participating?(micropost) }.from(false).to(true)
+								
+								response.body.should == {status: "success"}.to_json
+							end
 						end
 						
 						describe "who has selected that proposal" do
-						
+							before { choose_proposal(friend, update_proposal) }
+							
+							it "should unselect the proposal and give a success indicator" do
+								expect do
+									put "update", id: update_proposal.id, format: "mobile"
+								end.to change { friend.proposals.all.count }.by(-1)
+								
+								response.body.should == {status: "success"}.to_json
+							end
 						end
 						
 						describe "who has not selected that proposal" do
-						
+							it "should select the proposal and give a success indicator" do
+								expect do
+									put "update", id: update_proposal.id, format: "mobile"
+								end.to change { friend.proposals.all.count }.by(1)
+								
+								response.body.should == {status: "success"}.to_json
+							end
 						end
 					end
 					
-					describe "who is picking an invalid proposal to update" do
+					describe "who is not friends with the creator" do
+						before { sign_in(non_friend) }
 					
+						it "should receive a failure indicator saying I need to be friends with the creator" do
+							put "update", id: update_proposal.id, format: "mobile"
+							
+							response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+						end
 					end
 				end
 				
-				describe "who is not friends with the creator" do
+				describe "who is picking an invalid proposal to update" do
+					before { sign_in(creator) }
 				
+					it "should receive a failure indicator saying I need to pick a valid proposal to update" do
+						put "update", id: 1000, format: "mobile"
+						
+						response.body.should == {status: "failure", failure_reason: "INVALID_PROPOSAL"}.to_json
+					end
 				end
 			end
 			

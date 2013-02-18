@@ -9,8 +9,10 @@ class ApplicationController < ActionController::Base
   include CharacteristicsAppHelper
   include GoogleHelper
   include ProposalsHelper
+  include PollsHelper
   include PostsHelper
   include BetaHelper
+  include TimeHelper
   
   def protect_against_forgery?
 	  unless request.format.mobile?

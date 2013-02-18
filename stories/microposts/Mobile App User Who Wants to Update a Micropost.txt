@@ -1,0 +1,28 @@
+Mobile App User Who Wants to Update a Micropost
+
+Scenarios:
+
+Given: I am logged in
+And:   I am the owner of the micropost + the micropost is valid
+And:   I give valid values for the new micropost details
+When:  I request to update a micropost
+Then:  I should successfully update the micropost
+And:   I should receive a success indicator and the data specified in the interface
+
+Given: I am logged in
+And:   I am the owner of the micropost + the micropost is valid
+And:   I give invalid values for the new micropost details
+When:  I request to update a micropost
+Then:  I should not update the micropost
+And:   I should receive a failure indicator with the failure reason be the validation error
+
+Given: I am logged in
+And:   I am not the owner of the micropost or the micropost is invalid
+When:  I request to update a micropost
+Then:  I should not update the micropost
+And:   I should receive a failure indicator saying I need to be the creator to update the micropost or that the micropost is invalid
+
+Given: I am not logged in
+When:  I request to update a micropost
+Then:  I should not update the micropost
+And:   I should receive a failure indicator saying I need to log in

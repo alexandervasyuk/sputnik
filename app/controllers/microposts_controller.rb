@@ -1,9 +1,4 @@
-class MicropostsController < ApplicationController
-  #Helper classes
-  include NotificationsHelper
-  include MicropostsHelper
-  include TimeHelper
-  
+class MicropostsController < ApplicationController  
   #Before Filters
   before_filter :signed_in_user
   before_filter :friends_with_creator, only: [:detail]
@@ -46,6 +41,8 @@ class MicropostsController < ApplicationController
 
   #Action responsible for destroying a micropost from the database
   def destroy
+	Rails.logger.debug("\n\nDestructing\n\n")
+  
 	if !@micropost.participations.empty?
 		@micropost.participations.each do |participation|
 			participation.delete

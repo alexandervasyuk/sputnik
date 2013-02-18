@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe MicropostsController do
-	let(:user) { FactoryGirl.create(:user) }		
+	let(:user) { FactoryGirl.create(:user) }
+	let(:destroy_micropost) { FactoryGirl.create(:micropost, content: "content1", user: user) }
+	let(:update_micropost) { FactoryGirl.create(:micropost, content: "content2", user: user) }
 	
 	describe "desktop app user" do
 		describe "who is logged in" do
@@ -292,7 +294,7 @@ describe MicropostsController do
 			end
 			
 			describe "who wants to update a micropost" do
-			
+				
 			end
 			
 			describe "who wants detail on a micropost" do
@@ -327,7 +329,7 @@ describe MicropostsController do
 							polls_data << poll.to_mobile
 						end
 						
-						post "detail", id: micropost.id, format: "mobile"
+						get "detail", id: micropost.id, format: "mobile"
 						
 						response_json = {status: "success", failure_reason: "", micropost: micropost.to_mobile, polls: polls_data, replies_data: replies_data}.to_json
 						
@@ -363,7 +365,7 @@ describe MicropostsController do
 					
 					session[:feed_latest] = first_event.updated_at + 1.seconds
 					
-					post "refresh", format: "mobile"
+					get "refresh", format: "mobile"
 
 					updates = [fourth_event.to_mobile, third_event.to_mobile, second_event.to_mobile]
 					to_delete = []
@@ -393,7 +395,7 @@ describe MicropostsController do
 					session[:to_delete].should include(fourth_event_id)
 					
 					sign_in(user)
-					post "refresh", format: "mobile"
+					get "refresh", format: "mobile"
 					
 					json_response = {status: "success", feed_items: [], to_delete: [fourth_event_id]}.to_json
 					
@@ -417,13 +419,13 @@ describe MicropostsController do
 					
 					sign_in(friend)
 					expect do
-						post "destroy", id: fourth_event.id
+						delete "destroy", id: fourth_event.id
 					end.to change { Micropost.all.count }.by(-1)
 					
 					session[:to_delete].should include(fourth_event_id)
 					
 					sign_in(user)
-					post "refresh", format: "mobile"
+					get "refresh", format: "mobile"
 					
 					json_response = {status: "success", feed_items: [fifth_event.to_mobile], to_delete: [fourth_event_id]}.to_json
 					
@@ -443,6 +445,38 @@ describe MicropostsController do
 				end.not_to change { Micropost.all.count }
 				
 				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+			
+			it "should not destroy a micropost and should respond with a login failure" do
+				expect do
+					delete "destroy", id: 1, format: "mobile"
+				end.not_to change { Micropost.all.count }
+				
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+			
+			it "should not update a micropost and should respond with a login failure" do
+				expect do
+					put "update", id: update_micropost.id, micropost: {content: "New Content", location: "New Location", time: "in 5 minutes"}, format: "mobile"
+				end.not_to change { update_micropost }
+				
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+			
+			it "should not pull details on a micropost and should respond with a login failure" do
+				get "detail", id: update_micropost.id, format: "mobile"
+				
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+			
+			it "should not pull the newest feed items and should respond with a login failure" do
+				get "refresh", format: "mobile"
+				
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+			
+			it "should not pull the newest pool items and should respond with a login failure" do
+				
 			end
 		end
 	end

@@ -1,0 +1,19 @@
+Mobile App User Who Wants to Destroy a Micropost
+
+Scenarios:
+
+Given: I am logged in
+And:   I am the owner of the micropost + the micropost is valid
+When:  I request to destroy a micropost
+Then:  I should destroy a micropost
+And:   I should receive a success indicator
+And:   All of the related data to the micropost should be destroyed
+
+Given: I am logged in
+And:   I am not the owner of the micropost or the micropost is invalid
+When:  I request to destroy a micropost
+Then:  I should get the corresponding micropost is invalid or not owner failure response
+
+Given: I am not logged in
+When:  I request to destroy a micropost
+Then:  I should receive a failure indicator saying I must log in

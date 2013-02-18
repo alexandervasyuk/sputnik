@@ -282,7 +282,7 @@ class User < ActiveRecord::Base
   # b. nil if user IF not participating
   def participating?(micropost)
 	if micropost.present?
-		participations.find_by_micropost_id(micropost.id)
+		return !participations.find_by_micropost_id(micropost.id).nil?
 	end
   end
 

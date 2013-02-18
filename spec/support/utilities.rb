@@ -31,6 +31,12 @@ def generate_participants(micropost, num_participants)
 	end
 end
 
+def choose_proposal(user, proposal)
+	proposal.users << user
+	
+	proposal.save
+end
+
 def generate_unread_notifications(user, num_notifications)
 	notifications = []
 
