@@ -351,7 +351,45 @@ describe MicropostsController do
 			end
 			
 			describe "who wants to update a micropost" do
+				describe "when the micropost is valid" do
+					describe "who is the owner of the micropost" do
+						describe "who gives valid values for the new micropost details" do
+							
+						end
+						
+						describe "who gives invalid values for the new micropost details" do
+							it "should not update the micropost for missing content and should receive a failure indicator saying I need to provide valid values" do
+								
+							end
+							
+							it "should not update the micropost for invalid time and should receive a failure indicator saying I need to provide valid values" do
+								
+							end
+							
+							it "should not update the micropost for only end time provide and should receive a failure indicator saying I need to provide valid values" do
+								
+							end
+						end
+					end
+					
+					describe "who is not the owner of the micropost" do
+						before { sign_in(non_creator) }
+						
+						it "should not update the micropost and should receive a failure indicator saying I must be the owner" do
+							put "update", id: update_micropost.id, micropost: {content: "New Content", location: "New Location", time: "in 5 minutes"}, format: "mobile"
+						
+							response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
+						end
+					end
+				end
 				
+				describe "when the micropost is invalid" do
+					it "should not update the micropost and should receive a failure indicator about invalid micropost" do
+						put "update", id: 1000, micropost: {content: "New Content", location: "New Location", time: "in 5 minutes"}, format: "mobile"
+						
+						response.body.should == {status: "failure", failure_reason: "INVALID_MICROPOST"}.to_json
+					end
+				end
 			end
 			
 			describe "who wants detail on a micropost" do
