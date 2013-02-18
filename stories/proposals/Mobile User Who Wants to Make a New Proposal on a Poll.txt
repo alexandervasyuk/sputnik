@@ -1,4 +1,4 @@
-I am a Desktop User who wants to make a new proposal on a poll
+Mobile User Who Wants to Make a New Proposal on a Poll
 
 Scenarios:
 
@@ -9,6 +9,7 @@ And:   I am picking a valid poll to put my proposal in
 When:  I try to submit a new proposal
 Then:  My proposal should go in to the poll
 And:   I should be participated in the event
+And:   I should receive a success indicator along with the data defined in the interface
 
 Given: I am logged in
 And:   I am friends with the creator
@@ -16,20 +17,21 @@ And:   I am participating in the event
 And:   I am picking a valid poll to put my proposal in
 When:  I try to submit a new proposal
 Then:  My proposal should go in to the pool
+And:   I should receive a success indicator along with the data defined in the interface
 
 Given: I am logged in
 And:   I am not friends with the creator
 When:  I try to submit a new proposal
 Then:  My proposal should not go in to the pool
-And:   I should receive a message saying I have to be friends with the creator
+And:   I should receive a failure indicator saying I have to be friends with the creator
 
 Given: I am logged in
 And:   I am not picking a valid poll to put my proposal in
 When:  I try to submit a new proposal
 Then:  My proposal should be ignored
-And:   I should receive a message saying I need to pick a valid poll
+And:   I should receive failure indicator saying I need to pick a valid poll
 
 Given: I am not logged in
 When:  I try to submit a new proposal
 Then:  My proposal should be ignored
-And:   I should be redirected to the login page
+And:   I should receive a failure indicator saying I need to log in
