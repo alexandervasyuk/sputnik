@@ -1,0 +1,46 @@
+Mobile App User Who Wants to Update a Proposal
+
+Scenarios:
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I am participating in the micropost
+And:   I am picking a valid proposal to update
+And:   I did not select that proposal
+When:  I try to update a proposal
+Then:  I should select that proposal
+And:   I should receive a success indicator with the data defined in the interface
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I am participating in the micropost
+And:   I am picking a valid proposal to update
+And:   I did select that proposal
+When:  I try to update a proposal
+Then:  I should not select that proposal
+And:   I should receive a success indicator with the data defined in the interface
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I am picking a valid proposal to update
+And:   I not am participating in the micropost
+When:  I try to update a proposal
+Then:  I should do the behaviors defined above and also be participating in the micropost
+
+Given: I am logged in
+And:   I am friends with the creator
+And:   I am not picking a valid proposal to update
+When:  I try to update a proposal
+Then:  I should not update that proposal
+And:   I should receive a failure indicator saying that that proposal is invalid
+
+Given: I am logged in
+And:   I am not friends with the creator
+When:  I try to update a proposal
+Then:  I should not update that proposal
+And:   I should receive a failure indicator saying that I need to be friends with the creator
+
+Given: I am not logged in
+When:  I try to update a proposal
+Then:  I should not update that proposal
+And:   I should receive a failure indicator saying that I need to log in
