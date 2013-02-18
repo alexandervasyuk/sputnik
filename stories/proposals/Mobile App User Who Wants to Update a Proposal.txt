@@ -13,8 +13,8 @@ And:   I should receive a success indicator with the data defined in the interfa
 
 Given: I am logged in
 And:   I am friends with the creator
-And:   I am participating in the micropost
 And:   I am picking a valid proposal to update
+And:   I am participating in the micropost
 And:   I did select that proposal
 When:  I try to update a proposal
 Then:  I should not select that proposal

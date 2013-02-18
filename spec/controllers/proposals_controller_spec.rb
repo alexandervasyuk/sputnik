@@ -280,5 +280,41 @@ describe ProposalsController do
 				end
 			end
 		end
+	
+		describe "who wants to update a proposal" do
+			describe "who is logged in" do
+				describe "who is friends with the creator" do
+					describe "who is picking a valid proposal to update" do
+						describe "who is participating in the micropost" do
+						
+						end
+						
+						describe "who is not participating in the micropost" do
+						
+						end
+						
+						describe "who has selected that proposal" do
+						
+						end
+						
+						describe "who has not selected that proposal" do
+						
+						end
+					end
+					
+					describe "who is picking an invalid proposal to update" do
+					
+					end
+				end
+				
+				describe "who is not friends with the creator" do
+				
+				end
+			end
+			
+			describe "who is not logged in" do
+			
+			end
+		end
 	end
 end
