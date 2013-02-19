@@ -1,0 +1,30 @@
+Mobile App User Who Wants to Invite Using Email
+
+Scenarios:
+
+Given: I am logged in
+And:   I am the creator of the micropost
+And:   I enter comma separated emails
+And:   Users are not part of happening already
+When:  I request to invite them to the micropost
+Then:  They should receive a temporary account
+And:   They should receive a friend request from me
+And:   They should be invited to my micropost
+
+Given: I am logged in
+And:   I am the creator of the micropost
+And:   I do not enter comma separated emails
+When:  I request to invite them to the micropost
+Then:  No requests should be sent
+And:   I should receive a failure indicator saying the input is invalid
+
+Given: I am logged in
+And:   I am not the creator of the micropost
+When:  I request to invite users to the micropost
+Then:  No requests should be sent
+And:   I should receive a failure indicator saying that I need to be the creator to invite users
+
+Given: I am not logged in
+When:  I request to invite users to the micropost
+Then:  No requests should be sent
+And:   I should receive a failure indicator saying that I need to sign in first before I can send invites to a micropost

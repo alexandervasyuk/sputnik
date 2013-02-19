@@ -1,0 +1,29 @@
+Micropost User Who Wants to Invite a Friend on Happening
+
+Scenarios:
+
+Given: I am logged in
+And:   I own the happening
+And:   I have selected one of my friends
+When:  I try to invite them to join my happening
+Then:  I should successfully invite them to join
+And:   I should receive a success indicator
+And:   The invited user should receive a notification and an email notifying them of this.
+
+Given: I am logged in
+And:   I own the happening
+And:   I did not select one of my friends
+When:  I try to invite them to join my happening
+Then:  I should not invite them to join my happening
+And:   I should receive a failure indicator saying I can only invite my friends
+
+Given: I am logged in
+And:   I do not own the happening
+When:  I try to invite them to join the happening
+Then:  I should not invite them to join the happening
+And:   I should receive a failure indicator saying I need to be the owner to invite others
+
+Given: I am not logged in
+When:  I try to invite a user to join a happening
+Then:  I should not invite them to join the happening
+And:   I should receive a failure indicator saying I need to log in

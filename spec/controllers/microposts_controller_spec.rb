@@ -557,6 +557,36 @@ describe MicropostsController do
 			describe "who wants to pull the newest pool items" do
 			
 			end
+		
+			describe "who wants to invite a friend on happening to the micropost" do
+				describe "who is the creator" do
+					describe "who is inviting one their friends" do
+						it "should successfully invite them to the micropost" do
+						
+						end
+						
+						it "should send a notification and email notifying the invitee of this" do
+						
+						end
+					end
+					
+					describe "who is inviting a user who is not one of their friends" do
+						it "should not invite them to join and should receive a failure indicator saying that only friends can be invited this way" do
+						
+						end
+					end
+				end
+				
+				describe "who is not the creator" do
+					it "should not invite them and should receive a failure indicator saying only creators can invite" do
+					
+					end
+				end
+			end
+			
+			describe "who wants to invite friends using emails" do
+				
+			end
 		end
 		
 		describe "who is not logged in" do
@@ -597,6 +627,10 @@ describe MicropostsController do
 			end
 			
 			it "should not pull the newest pool items and should respond with a login failure" do
+				
+			end
+		
+			it "should not invite a friend on happening to a micropost and should respond with a login failure" do
 				
 			end
 		end
