@@ -4,11 +4,9 @@ class MicropostsController < ApplicationController
   
   before_filter :destroy_prepare, only: [:destroy]
   before_filter :update_prepare, only: [:update]
-  before_filter :create_prepare_new, only: [:create]
   before_filter :detail_prepare, only: [:detail]
   
   before_filter :friends_with_creator, only: [:detail]
-  
   before_filter :correct_user, only: [:destroy, :update, :edit]
   
   before_filter :start_time_input_parser, only: [:create, :update]
@@ -20,6 +18,7 @@ class MicropostsController < ApplicationController
   after_filter :destroy_cleanup, only: [:destroy]
   after_filter :update_cleanup, only: [:update]
   after_filter :detail_cleanup, only: [:detail]
+  after_filter :create_cleanup, only: [:create]
   
   #Valid sources
   respond_to :html, :js
@@ -31,7 +30,6 @@ class MicropostsController < ApplicationController
   #cache_sweeper :event_sweeper, only: [:create, :update, :destroy]
   
   #Action responsible for creating a new micropost from form inputs
-  #Input interface - content, location, time
   def create
 	respond_to do |format|
 		if @created
@@ -86,7 +84,7 @@ class MicropostsController < ApplicationController
     end
   end
   
-  #This action is triggered when a user hits the invite  button on one of his friends
+  #This action is triggered when a user hits the invite button on one of his friends
   def invite
   	@micropost = Micropost.find(params[:event_id])
   	@invitee = User.find(params[:invitee_id])
@@ -139,6 +137,7 @@ class MicropostsController < ApplicationController
   	redirect_to :back, notice: "Invitations sent successfully!"
   end
 
+  # This action is triggered when the user requests for the information on a single micropost
   def detail
 	respond_to do |format|
 		format.html do
@@ -154,7 +153,7 @@ class MicropostsController < ApplicationController
 	end
   end
   
-  #Action responsible for rendering an updated user feed
+  # This action is triggered when the user wants to receive an update on their feed through AJAX
   def refresh
 	to_delete = retrieve_deleted
   
@@ -199,23 +198,7 @@ class MicropostsController < ApplicationController
 
   private
 
-  #BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
-  def correct_user
-    check_owner_of(@micropost)
-  end
-  
-  def illegal_emails
-  	redirect_to :back, :flash => { :error => "Invites were not sent because emails were not separated by commas" }
-  end 
-  
-  def start_time_input_parser
-	params[:micropost][:time] = parse_start_time(params[:micropost][:time])
-  end
-  
-  #BEFORE FILTER - Helper method that selects and parses the time input according to its syntax
-  def time_input_parser
-	params[:micropost][:end_time] = parse_end_time(params[:micropost][:end_time])
-  end
+  # Preparation Filters
   
   # BEFORE FILTER - 
   def destroy_prepare
@@ -224,14 +207,19 @@ class MicropostsController < ApplicationController
 	check_valid_micropost(@micropost)
   end
   
+  # BEFORE FILTER -
   def update_prepare
 	@micropost = Micropost.find_by_id(params[:id])
 	
 	check_valid_micropost(@micropost)
   end
   
-  def create_prepare_new
+  # BEFORE FILTER - before filter that prepares the relevant information for create (web app and mobile)
+  def create_prepare
+	@micropost = current_user.microposts.build(params[:micropost])
+    @micropost.invitees = {}
 	
+	@created = @micropost.save
   end
   
   def detail_prepare
@@ -251,21 +239,34 @@ class MicropostsController < ApplicationController
 	end
   end
   
+  # Input Filters
+  
+  # BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
+  def correct_user
+    check_owner_of(@micropost)
+  end
+  
+  # BEFORE FILTER
+  def illegal_emails
+  	redirect_to :back, :flash => { :error => "Invites were not sent because emails were not separated by commas" }
+  end 
+  
+  # BEFORE FILTER - Helper method that selects and parses the time input according to its syntax for the time field
+  def start_time_input_parser
+	params[:micropost][:time] = parse_start_time(params[:micropost][:time])
+  end
+  
+  #BEFORE FILTER - Helper method that selects and parses the time input according to its syntax for the end time field
+  def time_input_parser
+	params[:micropost][:end_time] = parse_end_time(params[:micropost][:end_time])
+  end
+  
   # BEFORE FILTER - before filter that checks if the current user is friends with the owner of the miropost
   def friends_with_creator
 	check_friends_with_creator(current_user.friends?(@micropost.user))
   end
   
-  #BEFORE FILTER - before filter that prepares the relevant information for create (web app and mobile)
-  def create_prepare
-	@micropost = current_user.microposts.build(params[:micropost])
-    @micropost.invitees = {}
-	
-	if @micropost.save
-		@created = true
-		current_user.participate(@micropost)
-	end
-  end
+  # Cleanup After Filters
   
   #AFTER FILTER - after filter that does the necessary clean up work for the destroy action
   def destroy_cleanup
@@ -282,5 +283,9 @@ class MicropostsController < ApplicationController
   
   def detail_cleanup
 	set_latest_post(@micropost, @post_items.first)
+  end
+  
+  def create_cleanup
+	current_user.participate(@micropost)
   end
 end
