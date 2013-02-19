@@ -34,8 +34,12 @@ module MicropostsHelper
 		return []
 	end
 	
+	def is_valid_micropost?(micropost)
+		return !micropost.nil?
+	end
+	
 	def check_valid_micropost(micropost)
-		if !@micropost
+		if !is_valid_micropost?(micropost)
 			respond_to do |format|
 				format.html { redirect_to :back, flash: { error: "That is an invalid happening" } }
 				format.mobile { render json: {status: "failure", failure_reason: "INVALID_MICROPOST"} }

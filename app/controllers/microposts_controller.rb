@@ -5,7 +5,7 @@ class MicropostsController < ApplicationController
   before_filter :destroy_prepare, only: [:destroy]
   before_filter :update_prepare, only: [:update]
   before_filter :create_prepare_new, only: [:create]
-  before_filter :detail_prepare_new, only: [:detail]
+  before_filter :detail_prepare, only: [:detail]
   
   before_filter :friends_with_creator, only: [:detail]
   
@@ -13,13 +13,13 @@ class MicropostsController < ApplicationController
   
   before_filter :start_time_input_parser, only: [:create, :update]
   before_filter :time_input_parser, only: [:create, :update]
-  
-  before_filter :detail_prepare, only: [:detail]
+
   before_filter :create_prepare, only: [:create]
   
   #After Filters
   after_filter :destroy_cleanup, only: [:destroy]
   after_filter :update_cleanup, only: [:update]
+  after_filter :detail_cleanup, only: [:detail]
   
   #Valid sources
   respond_to :html, :js
@@ -141,15 +141,13 @@ class MicropostsController < ApplicationController
 
   def detail
 	respond_to do |format|
-		format.html
+		format.html do
+			@post = current_user.posts.build(micropost_id: params[:id])
+			
+			@friends = current_user.friends			
+		end
 		format.mobile do
-			replies_data = []
-
-			@micropost.posts.each do |post|
-				replies_data << post.to_mobile
-			end
-
-			json_response = {status:"success", failure_reason: "", micropost: @micropost.to_mobile, polls: @micropost.polls.collect { |poll| poll.to_mobile }, replies_data: replies_data}
+			json_response = {status:"success", failure_reason: "", micropost: @micropost.to_mobile, polls: @polls.collect { |poll| poll.to_mobile }, replies_data: @post_items.collect { |post_item| post_item.to_mobile } }
 
 			render json: json_response
 		end
@@ -236,34 +234,26 @@ class MicropostsController < ApplicationController
 	
   end
   
-  def detail_prepare_new
+  def detail_prepare
 	@micropost = Micropost.find_by_id(params[:id])
 	
 	check_valid_micropost(@micropost)
+	
+	if is_valid_micropost?(@micropost)
+		#Reply data
+		@post_items = @micropost.posts.reverse!
+		
+		#Polls
+		@polls = @micropost.polls.all
+		
+		#Gather Participants
+		@participants = @micropost.participating_users
+	end
   end
   
   # BEFORE FILTER - before filter that checks if the current user is friends with the owner of the miropost
   def friends_with_creator
 	check_friends_with_creator(current_user.friends?(@micropost.user))
-  end
-  
-  #BEFORE FILTER - before filter that prepares the relevant information for detail (web app and mobile)
-  def detail_prepare
-	  @post = current_user.posts.build(micropost_id:params[:id])
-	  @polls = @micropost.polls.all
-	  
-	  @friends = current_user.friends
-	  
-	  #Gather Participants
-	  @participants = []
-	  @micropost.participations.each do |participation|
-		@participants << User.find(participation.user_id)
-	  end
-	  
-	  #Reply data
-	  @post_items = @micropost.posts.reverse!
-	  
-	  set_latest_post(@micropost, @post_items.first)
   end
   
   #BEFORE FILTER - before filter that prepares the relevant information for create (web app and mobile)
@@ -288,5 +278,9 @@ class MicropostsController < ApplicationController
 		#Micropost has been successfully updated
 		update_micropost(@micropost)
 	end
+  end
+  
+  def detail_cleanup
+	set_latest_post(@micropost, @post_items.first)
   end
 end

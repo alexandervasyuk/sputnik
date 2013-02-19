@@ -56,10 +56,6 @@ class Micropost < ActiveRecord::Base
   	return self.invitees[user.id]
   end
   
-  #def after_post(post_id)
-	#self.posts.where("id > :id", {id: post_id})
-  #end
-  
   def to_mobile
 	participants = []
   
@@ -70,6 +66,20 @@ class Micropost < ActiveRecord::Base
 	end
   
   	{id: self.id, creator_picture: self.user.avatar.url, creator_id: self.user.id, creator_name: self.user.name, event_title: self.content, event_location: self.location, event_time: self.time, event_end_time: self.end_time, latitude: self.latitude, longitude: self.longitude, participations: participants}
+  end
+  
+  def posts_to_mobile
+	posts.collect { |post| post.to_mobile }
+  end
+  
+  def participating_users
+	participants = []
+  
+	participations.each do |participation|
+		participants << User.find(participation.user_id)
+	end
+	
+	return participants
   end
   
   #These are the actual participants in an event
