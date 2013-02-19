@@ -22,6 +22,16 @@ module UsersHelper
 	end
   end
   
+  def check_valid_invitee(invitee)
+	if !current_user.friends?(invitee)
+		respond_to do |format|
+			format.html { redirect_to :back, flash: {error: "You can only invite your friends this way" } }
+			format.mobile { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+			format.js { render json: { status: "failure", failure_reason: "NOT_FRIENDS" } }
+		end
+	end
+  end
+  
   def check_participating_in(micropost)
 	if !current_user.participating?(micropost)
 		respond_to do |format|

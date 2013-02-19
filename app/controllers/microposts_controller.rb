@@ -7,9 +7,13 @@ class MicropostsController < ApplicationController
   before_filter :detail_prepare, only: [:detail]
   before_filter :invite_prepare, only: [:invite]
   
+  # User Filters
   before_filter :friends_with_creator, only: [:detail]
   before_filter :correct_user, only: [:destroy, :update, :edit, :invite]
   
+  before_filter :valid_invitee, only: [:invite]
+  
+  # Time Filters
   before_filter :start_time_input_parser, only: [:create, :update]
   before_filter :time_input_parser, only: [:create, :update]
 
@@ -247,6 +251,12 @@ class MicropostsController < ApplicationController
   end
   
   # Input Filters
+  
+  def valid_invitee
+	@invitee = User.find_by_id(params[:invitee_id])
+	
+	check_valid_invitee(@invitee)
+  end
   
   # BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
   def correct_user

@@ -562,31 +562,55 @@ describe MicropostsController do
 			end
 		
 			describe "who wants to invite a friend on happening to the micropost" do
-				describe "who is the creator" do
-					describe "who is inviting one their friends" do
-						it "should successfully invite them to the micropost" do
+				before do
+					generate_invitees_for(invite_micropost, 3)
+				end
+				
+				describe "who is inviting to a valid micropost" do
+					describe "who is the creator" do				
+						describe "who is inviting one their friends" do
+							it "should successfully invite them to the micropost" do
+								
+							end
 							
+							it "should send a notification and email notifying the invitee of this" do
+							
+							end
 						end
 						
-						it "should send a notification and email notifying the invitee of this" do
+						describe "who is inviting a user who is not one of their friends" do
+							it "should not invite them to join and should receive a failure indicator saying that only friends can be invited this way" do
+								expect do
+									post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
+								end.not_to change { invite_micropost.invitees }
 						
+								response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
+							end
 						end
 					end
 					
-					describe "who is inviting a user who is not one of their friends" do
-						it "should not invite them to join and should receive a failure indicator saying that only friends can be invited this way" do
-						
+					describe "who is not the creator" do
+						before do 
+							sign_in(non_creator)
+						end
+					
+						it "should not invite them and should receive a failure indicator saying only creators can invite" do
+							expect do
+								post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
+							end.not_to change { invite_micropost.invitees }
+					
+							response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
 						end
 					end
 				end
 				
-				describe "who is not the creator" do
-					before { sign_in(non_creator) }
-				
+				describe "who is inviting to an invalid micropost" do
 					it "should not invite them and should receive a failure indicator saying only creators can invite" do
-						post "invite", micropost_id: invite_micropost, invitee_id: invitee.id, format: "mobile"
+						expect do
+							post "invite", micropost_id: 1000, invitee_id: invitee.id, format: "mobile"
+						end.not_to change { invite_micropost.invitees }
 				
-						response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
+						response.body.should == {status: "failure", failure_reason: "INVALID_MICROPOST"}.to_json
 					end
 				end
 			end
