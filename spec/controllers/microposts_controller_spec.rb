@@ -353,9 +353,19 @@ describe MicropostsController do
 			describe "who wants to update a micropost" do
 				describe "when the micropost is valid" do
 					describe "who is the owner of the micropost" do
-						describe "who gives valid values for the new micropost details" do
+						describe "who gives valid values for the new micropost details" do							
 							it "should update the micropost and receive a success indicator" do
+								expect do
+									expect do
+										expect do
+											expect do
+												put "update", id: update_micropost.id, micropost: {content: "NEW CONTENT", location: "NEW LOCATION", time: "in 30 minutes", end_time: "in 1 hour"}, format: "mobile"
+											end.to change { update_micropost.reload.content }
+										end.to change { update_micropost.reload.location }
+									end.to change { update_micropost.reload.time }
+								end.to change { update_micropost.reload.end_time }
 								
+								response.body.should == {status: "success"}.to_json
 							end
 						end
 						
