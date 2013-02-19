@@ -5,6 +5,9 @@ describe MicropostsController do
 	let(:non_creator) { FactoryGirl.create(:user) }
 	let(:destroy_micropost) { FactoryGirl.create(:micropost, content: "content1", user: user) }
 	let(:update_micropost) { FactoryGirl.create(:micropost, content: "content2", user: user) }
+	let(:invite_micropost) { FactoryGirl.create(:micropost, content: "content3", user: user) }
+	
+	let(:invitee) { FactoryGirl.create(:user) }
 	
 	describe "desktop app user" do
 		describe "who is logged in" do
@@ -631,7 +634,9 @@ describe MicropostsController do
 			end
 		
 			it "should not invite a friend on happening to a micropost and should respond with a login failure" do
+				post "invite", micropost_id: invite_micropost, invite_id: invitee.id, format: "mobile"
 				
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 			end
 		end
 	end
