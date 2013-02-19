@@ -42,9 +42,9 @@ describe MicropostsController do
 						
 							expect do
 								post "create", micropost
-							end.not_to change { Micropost.all.count }
+							end.not_to change { Micropost.find(:all).count }
 							
-							response.should render_template("static_pages/home")
+							#response.should render_template("static_pages/home")
 						end
 					end
 				end
@@ -354,20 +354,34 @@ describe MicropostsController do
 				describe "when the micropost is valid" do
 					describe "who is the owner of the micropost" do
 						describe "who gives valid values for the new micropost details" do
-							
+							it "should update the micropost and receive a success indicator" do
+								
+							end
 						end
 						
 						describe "who gives invalid values for the new micropost details" do
 							it "should not update the micropost for missing content and should receive a failure indicator saying I need to provide valid values" do
-								
+								expect do
+									put "update", id: update_micropost.id, micropost: {content: nil, time: "in 5 minutes"}, format: "mobile"
+								end.not_to change { Micropost.find_by_id(update_micropost.id) }
+						
+								response.body.should == {status: "failure", failure_reason: "INVALID_CONTENT"}.to_json
 							end
 							
 							it "should not update the micropost for invalid time and should receive a failure indicator saying I need to provide valid values" do
-								
+								expect do
+									put "update", id: update_micropost.id, micropost: {content: "content", time: "invalid"}, format: "mobile"
+								end.not_to change { Micropost.find_by_id(update_micropost.id) }
+						
+								response.body.should == {status: "failure", failure_reason: "TIME_FORMAT"}.to_json
 							end
 							
 							it "should not update the micropost for only end time provide and should receive a failure indicator saying I need to provide valid values" do
-								
+								expect do
+									put "update", id: update_micropost.id, micropost: {content: "content", end_time: "in 5 minutes"}, format: "mobile"
+								end.not_to change { Micropost.find_by_id(update_micropost.id) }
+						
+								response.body.should == {status: "failure", failure_reason: "INVALID_TIME"}.to_json
 							end
 						end
 					end
@@ -376,7 +390,9 @@ describe MicropostsController do
 						before { sign_in(non_creator) }
 						
 						it "should not update the micropost and should receive a failure indicator saying I must be the owner" do
-							put "update", id: update_micropost.id, micropost: {content: "New Content", location: "New Location", time: "in 5 minutes"}, format: "mobile"
+							expect do
+								put "update", id: update_micropost.id, micropost: {content: "New Content", location: "New Location", time: "in 5 minutes"}, format: "mobile"
+							end.not_to change { Micropost.find_by_id(update_micropost.id) }
 						
 							response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
 						end

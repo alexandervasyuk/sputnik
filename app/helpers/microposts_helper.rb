@@ -43,4 +43,14 @@ module MicropostsHelper
 			end
 		end
 	end
+	
+	def mobile_micropost_errors(micropost)
+		if micropost.errors.include?(:content)
+			render json: {status: "failure", failure_reason: "INVALID_CONTENT"}
+		elsif micropost.errors.include?(:time)
+			render json: {status: "failure", failure_reason: "INVALID_TIME"}
+		elsif micropost.errors.include?(:end_time)	
+			render json: {status: "failure", failure_reason: "INVALID_END_TIME"}
+		end
+	end
 end

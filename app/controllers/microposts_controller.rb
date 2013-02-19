@@ -11,12 +11,15 @@ class MicropostsController < ApplicationController
   
   before_filter :correct_user, only: [:destroy, :update, :edit]
   
+  before_filter :start_time_input_parser, only: [:create, :update]
   before_filter :time_input_parser, only: [:create, :update]
+  
   before_filter :detail_prepare, only: [:detail]
   before_filter :create_prepare, only: [:create]
   
   #After Filters
   after_filter :destroy_cleanup, only: [:destroy]
+  after_filter :update_cleanup, only: [:update]
   
   #Valid sources
   respond_to :html, :js
@@ -61,20 +64,25 @@ class MicropostsController < ApplicationController
 
   #Action responsible for returning the micropost data and populating a form for the user to edit
   def edit
-    @micropost = Micropost.find(params[:id])
+	@micropost = Micropost.find(params[:id])
   end
 
   #Action that updates the micropost that the user specifies
   def update
-    @micropost = Micropost.find(params[:id])
-
-    if @micropost.update_attributes(params[:micropost])
-      #Micropost has been successfully updated
-      update_micropost(@micropost)
-      
-      redirect_to(action:'detail', id:@micropost.id)
+	@updated = @micropost.update_attributes(params[:micropost])
+  
+    if @updated
+		respond_to do |format|
+			format.html { redirect_to detail_micropost_path(@micropost) }
+			format.mobile { render json: {status: "success"} }
+			format.js { }
+		end
     else
-      render 'edit'
+		respond_to do |format|
+			format.html { render 'edit' }
+			format.mobile { mobile_micropost_errors(@micropost) }
+			format.js { }
+		end
     end
   end
   
@@ -202,37 +210,17 @@ class MicropostsController < ApplicationController
   	redirect_to :back, :flash => { :error => "Invites were not sent because emails were not separated by commas" }
   end 
   
+  def start_time_input_parser
+	params[:micropost][:time] = parse_start_time(params[:micropost][:time])
+  end
+  
   #BEFORE FILTER - Helper method that selects and parses the time input according to its syntax
   def time_input_parser
-	user_time = params[:micropost][:time]
-	params[:micropost][:time] = parse_time(params[:micropost][:time]) if !user_time.blank?
-  
-	end_user_time = params[:micropost][:end_time]
-	params[:micropost][:end_time] = parse_time(params[:micropost][:end_time]) if !end_user_time.blank?
-  
-	@micropost = current_user.microposts.build(params[:micropost])
-  
-	# Case where the user types something but the text conversion fails
-	if (user_time && params[:micropost][:time].nil?) || (end_user_time && params[:micropost][:end_time].nil?)
-		respond_to do |format|
-			format.html do
-			   @micropost.errors[:time].clear
-			   @micropost.errors.add(:time, "incorrect time format")
-			   
-			   render 'static_pages/home'
-			end
-		   
-			format.mobile do
-				render json: {status: "failure", failure_reason: "TIME_FORMAT"}
-			end
-		end
-	end
+	params[:micropost][:end_time] = parse_end_time(params[:micropost][:end_time])
   end
   
   # BEFORE FILTER - 
   def destroy_prepare
-	Rails.logger.debug("\n\nDestroy Prepare\n\n")
-  
 	@micropost = Micropost.find_by_id(params[:id])
 	
 	check_valid_micropost(@micropost)
@@ -289,8 +277,16 @@ class MicropostsController < ApplicationController
 	end
   end
   
-  #AFTER FILTER - after filter that does the necessary clean up work for the destroya ction
+  #AFTER FILTER - after filter that does the necessary clean up work for the destroy action
   def destroy_cleanup
 	add_to_deleted(@micropost)
+  end
+  
+  #AFTER FILTER - after filter that does the necessary clean up work for the update action
+  def update_cleanup
+	if @updated
+		#Micropost has been successfully updated
+		update_micropost(@micropost)
+	end
   end
 end

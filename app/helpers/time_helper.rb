@@ -17,6 +17,34 @@ module TimeHelper
 		end
 	end
 	
+	def parse_start_time(time_string)
+		converted_time = parse_time(time_string)
+		
+		if (time_string != "" && time_string != nil) && converted_time.nil?
+			respond_to do |format|
+				format.html { redirect_to :back, flash: {error: "Invalid start time"} }
+				format.mobile { render json: {status: "failure", failure_reason: "TIME_FORMAT"} }
+				format.js { }
+			end
+		end
+		
+		return converted_time
+	end
+	
+	def parse_end_time(time_string)
+		converted_time = parse_time(time_string)
+		
+		if (time_string != "" && time_string != nil) && converted_time.nil?
+			respond_to do |format|
+				format.html { redirect_to :back, flash: {error: "Invalid end time"} }
+				format.mobile { render json: {status: "failure", failure_reason: "END_TIME_FORMAT"} }
+				format.js { }
+			end
+		end
+		
+		return converted_time
+	end
+	
 	def time_representation(start_time, end_time)
 		if start_time.present? && end_time.present?
 			start_time_string = start_time.in_time_zone(user_timezone).strftime('%l:%M%p')
