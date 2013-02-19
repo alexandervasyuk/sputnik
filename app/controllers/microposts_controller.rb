@@ -5,9 +5,10 @@ class MicropostsController < ApplicationController
   before_filter :destroy_prepare, only: [:destroy]
   before_filter :update_prepare, only: [:update]
   before_filter :detail_prepare, only: [:detail]
+  before_filter :invite_prepare, only: [:invite]
   
   before_filter :friends_with_creator, only: [:detail]
-  before_filter :correct_user, only: [:destroy, :update, :edit]
+  before_filter :correct_user, only: [:destroy, :update, :edit, :invite]
   
   before_filter :start_time_input_parser, only: [:create, :update]
   before_filter :time_input_parser, only: [:create, :update]
@@ -237,6 +238,12 @@ class MicropostsController < ApplicationController
 		#Gather Participants
 		@participants = @micropost.participating_users
 	end
+  end
+  
+  def invite_prepare
+	@micropost = Micropost.find_by_id(params[:micropost_id])
+	
+	check_valid_micropost(@micropost)
   end
   
   # Input Filters
