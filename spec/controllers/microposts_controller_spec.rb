@@ -654,7 +654,31 @@ describe MicropostsController do
 			end
 			
 			describe "who wants to invite friends using emails" do
+				describe "who is the creator of the micropost" do
+					describe "who enters comma separated emails" do
+						describe "when users are not part of the micropost" do
+							describe "when users are not already invited" do
+							
+							end
+							
+							describe "when users are already invited to the micropost" do
+							
+							end
+						end
+						
+						describe "when users are part of the micropost" do
+							
+						end
+					end
+					
+					describe "who does not enter comma separated emails" do
+						
+					end
+				end
 				
+				describe "who is not the creator of the micropost" do
+				
+				end
 			end
 		end
 		
