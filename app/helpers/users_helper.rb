@@ -37,9 +37,30 @@ module UsersHelper
 		respond_to do |format|
 			format.html { redirect_to :back, flash: { error: "please participate in this happening first" } }
 			format.mobile { render json: { status: "failure", failure_reason: "NOT_PARTICIPATING" } }
+			format.js { }
 		end
 	end
-  end	
+  end
+  
+  def check_not_participating_in(micropost)
+	if current_user.participating?(micropost)
+		respond_to do |format|
+			format.html { redirect_to :back, flash: { error: "That user is already participating in this happening" } }
+			format.mobile { render json: { status: "failure", failure_reason: "ALREADY_PARTICIPATING" } }
+			format.js { }
+		end
+	end
+  end
+  
+  def check_user_not_participating_in(user, micropost)
+	if user.participating?(micropost)
+		respond_to do |format|
+			format.html { redirect_to :back, flash: { error: "That user is already participating in this happening" } }
+			format.mobile { render json: { status: "failure", failure_reason: "ALREADY_PARTICIPATING" } }
+			format.js { }
+		end
+	end
+  end
   
   def check_owner_of(micropost)
 	if micropost.user.id != current_user.id

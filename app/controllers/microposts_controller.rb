@@ -12,6 +12,8 @@ class MicropostsController < ApplicationController
   before_filter :correct_user, only: [:destroy, :update, :edit, :invite]
   
   before_filter :valid_invitee, only: [:invite]
+  before_filter :already_participating_in, only: [:invite]
+  before_filter :already_invited_to, only: [:invite]
   
   # Time Filters
   before_filter :start_time_input_parser, only: [:create, :update]
@@ -24,6 +26,7 @@ class MicropostsController < ApplicationController
   after_filter :update_cleanup, only: [:update]
   after_filter :detail_cleanup, only: [:detail]
   after_filter :create_cleanup, only: [:create]
+  after_filter :invite_cleanup, only: [:invite]
   
   #Valid sources
   respond_to :html, :js
@@ -91,21 +94,13 @@ class MicropostsController < ApplicationController
   
   #This action is triggered when a user hits the invite button on one of his friends
   def invite
-  	@micropost = Micropost.find(params[:event_id])
-  	@invitee = User.find(params[:invitee_id])
-  	
-  	if !@micropost.invited?(@invitee) && !@invitee.participating?(@micropost)
-	  	@micropost.add_to_invited(@invitee)
+	@micropost.add_to_invited(@invitee)
 	
-	    #Creating a notification
-	    creator_id = @invitee.id
-	    message = User.find(@micropost.user_id).name + " invited you to '" + @micropost.content + "' happpening."
-	    link = detail_micropost_path(@micropost.id)
-	    create_notification(creator_id, message, link)
-	  	MicropostMailer.delay.invited(@micropost, @invitee)
-  	end
-  	
-  	respond_with @invitee
+	respond_to do |format|
+		format.html { }
+		format.mobile { render json: {status: "success"} }
+		format.js { }
+	end
   end
   
   def invite_emails
@@ -252,10 +247,21 @@ class MicropostsController < ApplicationController
   
   # Input Filters
   
+  # BEFORE FILTER -
   def valid_invitee
 	@invitee = User.find_by_id(params[:invitee_id])
 	
 	check_valid_invitee(@invitee)
+  end
+  
+  # BEFORE FILTER -
+  def already_participating_in
+	check_user_not_participating_in(@invitee, @micropost)
+  end
+  
+  # BEFORE FILTER - 
+  def already_invited_to
+	check_user_already_invited_to(@invitee, @micropost)
   end
   
   # BEFORE FILTER - Helper method that checks if the user who is trying to modify the micropost is the owner
@@ -273,7 +279,7 @@ class MicropostsController < ApplicationController
 	params[:micropost][:time] = parse_start_time(params[:micropost][:time])
   end
   
-  #BEFORE FILTER - Helper method that selects and parses the time input according to its syntax for the end time field
+  # BEFORE FILTER - Helper method that selects and parses the time input according to its syntax for the end time field
   def time_input_parser
 	params[:micropost][:end_time] = parse_end_time(params[:micropost][:end_time])
   end
@@ -285,12 +291,12 @@ class MicropostsController < ApplicationController
   
   # Cleanup After Filters
   
-  #AFTER FILTER - after filter that does the necessary clean up work for the destroy action
+  # AFTER FILTER - after filter that does the necessary clean up work for the destroy action
   def destroy_cleanup
 	add_to_deleted(@micropost)
   end
   
-  #AFTER FILTER - after filter that does the necessary clean up work for the update action
+  # AFTER FILTER - after filter that does the necessary clean up work for the update action
   def update_cleanup
 	if @updated
 		#Micropost has been successfully updated
@@ -298,11 +304,25 @@ class MicropostsController < ApplicationController
 	end
   end
   
+  # AFTER FILTER
   def detail_cleanup
 	set_latest_post(@micropost, @post_items.first)
   end
   
+  # AFTER FILTER
   def create_cleanup
 	current_user.participate(@micropost)
+  end
+  
+  # AFTER FILTER
+  def invite_cleanup
+	# Create the notification
+	creator_id = @invitee.id
+	message = User.find(@micropost.user_id).name + " invited you to '" + @micropost.content + "' happpening."
+	link = detail_micropost_path(@micropost.id)
+	create_notification(creator_id, message, link)
+	
+	# Mail it out
+	MicropostMailer.delay.invited(@micropost, @invitee)
   end
 end

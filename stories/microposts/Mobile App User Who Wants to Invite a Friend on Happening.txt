@@ -5,10 +5,29 @@ Scenarios:
 Given: I am logged in
 And:   I own the happening
 And:   I have selected one of my friends
+And:   My friend is not already participating in the happening
+And:   My friend is not already invited to the happening
 When:  I try to invite them to join my happening
 Then:  I should successfully invite them to join
 And:   I should receive a success indicator
 And:   The invited user should receive a notification and an email notifying them of this.
+
+Given: I am logged in
+And:   I own the happening
+And:   I have selected one of my friends
+And:   My friend is not already participating in the happening
+And:   My friend is already invited
+When:  I try to invite them to join my happening
+Then:  I should not invite them to join my happening
+And:   I should receive a failure indicator saying I can only invite my friends once
+
+Given: I am logged in
+And:   I own the happening
+And:   I have selected one of my friends
+And:   My friend is already participating in the happening
+When:  I try to invite them to join my happening
+Then:  I should not invite them to join my happening
+And:   I should receive a failure indicator saying I can only invite non participants
 
 Given: I am logged in
 And:   I own the happening

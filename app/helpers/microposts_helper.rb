@@ -48,6 +48,20 @@ module MicropostsHelper
 		end
 	end
 	
+	def check_invited_to(micropost)
+		
+	end
+	
+	def check_user_already_invited_to(user, micropost)
+		if micropost.invited?(user)
+			respond_to do |format|
+				format.html { redirect_to :back, flash: { error: "That user is already invited to this happening" } }
+				format.mobile { render json: {status: "failure", failure_reason: "ALREADY_INVITED"} }
+				format.js { }
+			end
+		end
+	end	
+	
 	def mobile_micropost_errors(micropost)
 		if micropost.errors.include?(:content)
 			render json: {status: "failure", failure_reason: "INVALID_CONTENT"}

@@ -569,12 +569,46 @@ describe MicropostsController do
 				describe "who is inviting to a valid micropost" do
 					describe "who is the creator" do				
 						describe "who is inviting one their friends" do
-							it "should successfully invite them to the micropost" do
+							before { make_friends(user, invitee) }
+						
+							describe "who is inviting a user who is not already participating in the micropost" do
+								describe "who is inviting a user who has not already been invited to the micropost" do
+									it "should successfully invite them to the micropost" do
+										expect do
+											post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
+										end.to change { invite_micropost.reload.invitees }
 								
+										response.body.should == {status: "success"}.to_json
+									end
+									
+									it "should send a notification and email notifying the invitee of this" do
+										
+									end
+								end
+								
+								describe "who is inviting a user who has already been invited to the micropost" do
+									before { invite_micropost.add_to_invited(invitee) }
+								
+									it "should not invite them to join and should receive a failure indicator saying that only non invitees can be invited" do
+										expect do
+											post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
+										end.not_to change { invite_micropost.reload.invitees }
+								
+										response.body.should == {status: "failure", failure_reason: "ALREADY_INVITED"}.to_json
+									end
+								end
 							end
 							
-							it "should send a notification and email notifying the invitee of this" do
+							describe "who is inviting a user who is already participating in the micropost" do
+								before { invitee.participate(invite_micropost) }
+								
+								it "should not invite them to join and should receive a failure indicator saying that only non participants can be invited" do
+									expect do
+										post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
+									end.not_to change { invite_micropost.reload.invitees }
 							
+									response.body.should == {status: "failure", failure_reason: "ALREADY_PARTICIPATING"}.to_json
+								end
 							end
 						end
 						
@@ -582,7 +616,7 @@ describe MicropostsController do
 							it "should not invite them to join and should receive a failure indicator saying that only friends can be invited this way" do
 								expect do
 									post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
-								end.not_to change { invite_micropost.invitees }
+								end.not_to change { invite_micropost.reload.invitees }
 						
 								response.body.should == {status: "failure", failure_reason: "NOT_FRIENDS"}.to_json
 							end
@@ -597,7 +631,7 @@ describe MicropostsController do
 						it "should not invite them and should receive a failure indicator saying only creators can invite" do
 							expect do
 								post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
-							end.not_to change { invite_micropost.invitees }
+							end.not_to change { invite_micropost.reload.invitees }
 					
 							response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
 						end
@@ -608,7 +642,7 @@ describe MicropostsController do
 					it "should not invite them and should receive a failure indicator saying only creators can invite" do
 						expect do
 							post "invite", micropost_id: 1000, invitee_id: invitee.id, format: "mobile"
-						end.not_to change { invite_micropost.invitees }
+						end.not_to change { invite_micropost.reload.invitees }
 				
 						response.body.should == {status: "failure", failure_reason: "INVALID_MICROPOST"}.to_json
 					end
