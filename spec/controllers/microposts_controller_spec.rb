@@ -655,7 +655,7 @@ describe MicropostsController do
 			
 			describe "who wants to invite friends using emails" do
 				describe "who is the creator of the micropost" do
-					describe "who enters comma separated emails" do
+					describe "who enters valid comma separated emails" do
 						describe "when users are not part of the micropost" do
 							describe "when users are not already invited" do
 							
@@ -671,13 +671,21 @@ describe MicropostsController do
 						end
 					end
 					
-					describe "who does not enter comma separated emails" do
+					describe "who does not enter comma separated emails or valid emails" do
 						
 					end
 				end
 				
 				describe "who is not the creator of the micropost" do
+					before do
+						sign_in(non_creator)
+					end
 				
+					it "should not invite them to the micropost and should give the failure reason that only creators can invite others" do
+						post "invite_emails", micropost_id: invite_micropost.id, emails: ["asdfasdf", "asdf"], format: "mobile"
+							
+						response.body.should == {status: "failure", failure_reason: "NOT_OWNER"}.to_json
+					end
 				end
 			end
 		end
@@ -724,7 +732,13 @@ describe MicropostsController do
 			end
 		
 			it "should not invite a friend on happening to a micropost and should respond with a login failure" do
-				post "invite", micropost_id: invite_micropost, invite_id: invitee.id, format: "mobile"
+				post "invite", micropost_id: invite_micropost.id, invite_id: invitee.id, format: "mobile"
+				
+				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
+			end
+		
+			it "should not invite users using email and should respond with a login failure" do
+				post "invite_emails", micropost_id: invite_micropost.id, emails: ["asdfasdf", "asdfasdf"], format: "mobile"
 				
 				response.body.should == {status: "failure", failure_reason: "LOGIN"}.to_json
 			end

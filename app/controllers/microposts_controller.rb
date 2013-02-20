@@ -5,11 +5,11 @@ class MicropostsController < ApplicationController
   before_filter :destroy_prepare, only: [:destroy]
   before_filter :update_prepare, only: [:update]
   before_filter :detail_prepare, only: [:detail]
-  before_filter :invite_prepare, only: [:invite]
+  before_filter :invite_prepare, only: [:invite, :invite_emails]
   
   # User Filters
   before_filter :friends_with_creator, only: [:detail]
-  before_filter :correct_user, only: [:destroy, :update, :edit, :invite]
+  before_filter :correct_user, only: [:destroy, :update, :edit, :invite, :invite_emails]
   
   before_filter :valid_invitee, only: [:invite]
   before_filter :already_participating_in, only: [:invite]

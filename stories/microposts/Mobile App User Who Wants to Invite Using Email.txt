@@ -4,7 +4,7 @@ Scenarios:
 
 Given: I am logged in
 And:   I am the creator of the micropost
-And:   I enter comma separated emails
+And:   I enter valid comma separated emails
 And:   Users are not part of the happening already
 And:   Users are not already invited to the happening
 When:  I request to invite them to the micropost
@@ -14,7 +14,7 @@ And:   They should be invited to my micropost
 
 Given: I am logged in
 And:   I am the creator of the micropost
-And:   I enter comma separated emails
+And:   I enter valid comma separated emails
 And:   Users are not part of the happening already
 And:   Users are already invited to the happening
 When:  I request to invite them to the micropost
@@ -23,7 +23,7 @@ And:   I should receive a failure indicator saying that they are already invited
 
 Given: I am logged in
 And:   I am the creator of the micropost
-And:   I enter comma separated emails
+And:   I enter valid comma separated emails
 And:   Users are part of the happening already
 When:  I request to invite them to the micropost
 Then:  I should not invite them to the micropost
@@ -31,7 +31,7 @@ And:   I should receive a failure indicator saying that they are already partici
 
 Given: I am logged in
 And:   I am the creator of the micropost
-And:   I do not enter comma separated emails
+And:   I do not enter valid comma separated emails
 When:  I request to invite them to the micropost
 Then:  No requests should be sent
 And:   I should receive a failure indicator saying the input is invalid
