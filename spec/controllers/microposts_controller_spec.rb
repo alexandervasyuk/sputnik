@@ -582,7 +582,11 @@ describe MicropostsController do
 									end
 									
 									it "should send a notification and email notifying the invitee of this" do
-										
+										expect do
+											expect do
+												post "invite", micropost_id: invite_micropost.id, invitee_id: invitee.id, format: "mobile"
+											end.to change { invitee.reload.notifications.count }
+										end.to change { ActionMailer::Base.deliveries.count }
 									end
 								end
 								
